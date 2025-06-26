@@ -26,12 +26,15 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import { CloseOutlined } from "@mui/icons-material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const drawerWidth = 240;
 
-export default function Sidebar({ open, handleDrawerClose }) {
+export default function Sidebar({ open, handleDrawerClose, setOpen }) {
   const location = useLocation();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const menuItems1 = [
     {
@@ -151,8 +154,11 @@ export default function Sidebar({ open, handleDrawerClose }) {
   }));
   return (
     <div>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
+      <Drawer
+        variant={!isMobile ? "permanent" : open ? "permanent" : "temporary"}
+        open={open}
+      >
+        <DrawerHeader >
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -200,7 +206,12 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   {
                     minHeight: 48,
                     px: 2.5,
-                    bgcolor: location.pathname === item.path ? theme.palette.mode==="dark"?grey[800]:grey[300] : "",
+                    bgcolor:
+                      location.pathname === item.path
+                        ? theme.palette.mode === "dark"
+                          ? grey[800]
+                          : grey[300]
+                        : "",
                   },
                   open
                     ? {
@@ -254,7 +265,12 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   {
                     minHeight: 48,
                     px: 2.5,
-                    bgcolor: location.pathname === item.path ? theme.palette.mode==="dark"?grey[800]:grey[300] : "",
+                    bgcolor:
+                      location.pathname === item.path
+                        ? theme.palette.mode === "dark"
+                          ? grey[800]
+                          : grey[300]
+                        : "",
                   },
                   open
                     ? {
@@ -308,7 +324,12 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   {
                     minHeight: 48,
                     px: 2.5,
-                    bgcolor: location.pathname === item.path ? theme.palette.mode==="dark"?grey[800]:grey[300] : "",
+                    bgcolor:
+                      location.pathname === item.path
+                        ? theme.palette.mode === "dark"
+                          ? grey[800]
+                          : grey[300]
+                        : "",
                   },
                   open
                     ? {

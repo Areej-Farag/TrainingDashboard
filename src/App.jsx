@@ -47,7 +47,7 @@ export default function App() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <Header open={open} handleDrawerOpen={handleDrawerOpen} setMode={setMode} />
-      <Sidebar open={open} handleDrawerClose={handleDrawerClose}/>
+      <Sidebar open={open} handleDrawerClose={handleDrawerClose} setOpen={setOpen}/>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Outlet></Outlet>

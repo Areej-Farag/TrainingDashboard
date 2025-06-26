@@ -19,23 +19,22 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-
 export default function CustomGridFree() {
   const theme = useTheme();
   const allColumns = [
-  { field: "IDnumber", headerName: "ID", width: 70 },
-  { field: "RegestreID", headerName: "Regestre ID", width: 110 },
-  { field: "name", headerName: "Name", flex: 1 },
-  { field: "Email", headerName: "Email", flex: 1 },
-  { field: "Age", headerName: "Age", width: 70 },
-  { field: "Phone", headerName: "Phone", flex: 1 },
-  { field: "Address", headerName: "Address", flex: 1 },
-  { field: "City", headerName: "City", flex: 1 },
-  { field: "ZIPCode", headerName: "ZIP Code", width: 100 },
-  {
+    { field: "IDnumber", headerName: "ID", minWidth: 70 },
+    { field: "RegestreID", headerName: "Regestre ID", minWidth: 110 },
+    { field: "name", headerName: "Name", minWidth: 150 },
+    { field: "Email", headerName: "Email", minWidth: 150 },
+    { field: "Age", headerName: "Age", minWidth: 70 },
+    { field: "Phone", headerName: "Phone", minWidth: 150 },
+    { field: "Address", headerName: "Address", minWidth: 150 },
+    { field: "City", headerName: "City", minWidth: 150 },
+    { field: "ZIPCode", headerName: "ZIP Code", minWidth: 100 },
+    {
       field: "Actions",
       headerName: "Actions",
-      width: 170,
+      minWidth: 170,
       align: "center",
       headerAlign: "center",
       renderCell: () => {
@@ -67,223 +66,237 @@ export default function CustomGridFree() {
         );
       },
     },
-];
+  ];
 
-const initialRows = [
-  {
-    id: 1,
-    IDnumber: 1,
-    name: "Aymen Khalil ",
-    Email: "AymenKhalil123@gmail.com",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Admin",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 2,
-    IDnumber: 2,
-    name: "Data Grid Pro",
-    Email: "the Pro version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Admin",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 3,
-    IDnumber: 3,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "User",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 4,
-    IDnumber: 4,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "User",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 5,
-    IDnumber: 5,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Manager",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },  {
-    id: 6,
-    IDnumber: 1,
-    name: "Aymen Khalil ",
-    Email: "AymenKhalil123@gmail.com",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Admin",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 7,
-    IDnumber: 2,
-    name: "Data Grid Pro",
-    Email: "the Pro version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Admin",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 8,
-    IDnumber: 3,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "User",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 9,
-    IDnumber: 4,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "User",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
-  },
-  {
-    id: 10,
-    IDnumber: 5,
-    name: "Data Grid Premium",
-    Email: "the Premium version",
-    Age: "30",
-    Phone: "123-456-7890",
-    Access: "Manager",
-    Address: "Elmaadie St4",
-    ZIPCode: "91199",
-    City: "Cairo",
-    RegestreID: "12443",
+  const initialRows = [
+    {
+      id: 1,
+      IDnumber: 1,
+      name: "Aymen Khalil ",
+      Email: "AymenKhalil123@gmail.com",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Admin",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 2,
+      IDnumber: 2,
+      name: "Data Grid Pro",
+      Email: "the Pro version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Admin",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 3,
+      IDnumber: 3,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "User",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 4,
+      IDnumber: 4,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "User",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 5,
+      IDnumber: 5,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Manager",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 6,
+      IDnumber: 1,
+      name: "Aymen Khalil ",
+      Email: "AymenKhalil123@gmail.com",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Admin",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 7,
+      IDnumber: 2,
+      name: "Data Grid Pro",
+      Email: "the Pro version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Admin",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 8,
+      IDnumber: 3,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "User",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 9,
+      IDnumber: 4,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "User",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+    {
+      id: 10,
+      IDnumber: 5,
+      name: "Data Grid Premium",
+      Email: "the Premium version",
+      Age: "30",
+      Phone: "123-456-7890",
+      Access: "Manager",
+      Address: "Elmaadie St4",
+      ZIPCode: "91199",
+      City: "Cairo",
+      RegestreID: "12443",
+    },
+  ];
+
+  function CustomToolbar({
+    search,
+    setSearch,
+    columnVisibility,
+    setColumnVisibility,
+    exportCSV,
+  }) {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
+    const handleCloseMenu = () => setAnchorEl(null);
+
+    return (
+      <Box
+        sx={{
+          mb: 2,
+          p: 2,
+          borderRadius: 2,
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+          border: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          alignItems="center"
+          flexWrap="wrap"
+          justifyContent="space-between"
+        >
+          <Box>
+            <TextField
+              sx={{ flexGrow: 1, minWidth: 200 }}
+              size="small"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ mr: 1 }} />,
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 3 }}>
+            <IconButton
+              onClick={handleOpenMenu}
+              color="primary"
+              sx={{ border: "1px solid", borderColor: "divider" }}
+            >
+              <ViewColumnIcon />
+            </IconButton>
+            <Button
+              onClick={exportCSV}
+              variant="outlined"
+              startIcon={<FileDownloadIcon />}
+            >
+              Export CSV
+            </Button>
+          </Box>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleCloseMenu}
+            PaperProps={{
+              sx: {
+                maxHeight: 300,
+                bgcolor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
+              },
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ px: 2, py: 1 }}>
+              Toggle Columns
+            </Typography>
+            <Divider />
+            {allColumns.map((col) => (
+              <MenuItem key={col.field}>
+                <Checkbox
+                  checked={columnVisibility[col.field]}
+                  onChange={(e) =>
+                    setColumnVisibility((prev) => ({
+                      ...prev,
+                      [col.field]: e.target.checked,
+                    }))
+                  }
+                />
+                {col.headerName}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Stack>
+      </Box>
+    );
   }
-];
-
-function CustomToolbar({
-  search,
-  setSearch,
-  columnVisibility,
-  setColumnVisibility,
-  exportCSV,
-}) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl(null);
-
-  return (
-    <Box
-      sx={{
-        mb: 2,
-        p: 2,
-        borderRadius: 2,
-        backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
-        border: `1px solid ${theme.palette.divider}`,
-      }}
-    >
-      <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-        <TextField
-          size="small"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          InputProps={{
-            startAdornment: <SearchIcon sx={{ mr: 1 }} />,
-          }}
-        />
-        <Button
-          onClick={exportCSV}
-          variant="outlined"
-          startIcon={<FileDownloadIcon />}
-        >
-          Export CSV
-        </Button>
-
-        <IconButton
-          onClick={handleOpenMenu}
-          color="primary"
-          sx={{ border: "1px solid", borderColor: "divider" }}
-        >
-          <ViewColumnIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleCloseMenu}
-          PaperProps={{
-            sx: {
-              maxHeight: 300,
-              bgcolor: theme.palette.background.paper,
-              color: theme.palette.text.primary,
-            },
-          }}
-        >
-          <Typography variant="subtitle2" sx={{ px: 2, py: 1 }}>
-            Toggle Columns
-          </Typography>
-          <Divider />
-          {allColumns.map((col) => (
-            <MenuItem key={col.field}>
-              <Checkbox
-                checked={columnVisibility[col.field]}
-                onChange={(e) =>
-                  setColumnVisibility((prev) => ({
-                    ...prev,
-                    [col.field]: e.target.checked,
-                  }))
-                }
-              />
-              {col.headerName}
-            </MenuItem>
-          ))}
-        </Menu>
-      </Stack>
-    </Box>
-  );
-}
   const [search, setSearch] = React.useState("");
   const [columnVisibility, setColumnVisibility] = React.useState(
     Object.fromEntries(allColumns.map((col) => [col.field, true]))
@@ -317,10 +330,8 @@ function CustomToolbar({
   };
 
   return (
-    <Box sx={{ width: "100%", height: 400 }}>
-      <Typography variant="h5">
-        Contacts
-      </Typography>
+    <Box sx={{ overflow: "hidden", p: 2, width: "90vw", m: "auto" }}>
+      <Typography variant="h5">Contacts</Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
         List of all contacts
       </Typography>
@@ -331,16 +342,47 @@ function CustomToolbar({
         setColumnVisibility={setColumnVisibility}
         exportCSV={exportCSV}
       />
-      <DataGrid
-        rows={filteredRows}
-        columns={visibleColumns}
-        pageSize={5}
-        rowsPerPageOptions={[5, 10]}
+      <Box
         sx={{
-          bgcolor: "background.paper",
-          color: "text.primary",
+          width: "100%",
+          height: "70vh",
+          overflow: "hidden",
         }}
-      />
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            overflowX: "auto",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              height: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: theme.palette.grey[400],
+              borderRadius: "4px",
+            },
+          }}
+        >
+          {/* <Box sx={{ minWidth: isMobile ? "600px" : "800px", height: "100%" }}> */}
+          <DataGrid
+            checkboxSelection
+            rows={filteredRows}
+            columns={visibleColumns}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10]}
+            sx={{
+              bgcolor: "background.paper",
+              color: "text.primary",
+              fontSize: 12,
+              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
+              "& .MuiDataGrid-virtualScroller": {
+                overflowX: "auto",
+              },
+            }}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 }

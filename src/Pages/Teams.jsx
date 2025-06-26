@@ -1,11 +1,18 @@
 import React from "react";
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
 const rows = [
   {
     id: 1,
@@ -56,46 +63,51 @@ const rows = [
 
 export default function Teams() {
   const theme = useTheme();
-  const columns = [
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // للتحقق من حجم الشاشة
+
+  const MyColumns = [
     {
       field: "IDnumber",
       headerName: "ID",
-      width: 50,
+      width: isMobile ? 50 : 70, // عرض أصغر للموبايل
       align: "center",
       headerAlign: "center",
     },
     {
       field: "name",
       headerName: "Product Name",
-      flex: 1,
+      width: isMobile ? 150 : 200, // تقليل العرض للموبايل
       align: "center",
       headerAlign: "center",
     },
+
     {
       field: "Email",
       headerName: "Email",
-      flex: 1,
+      width: isMobile ? 150 : 200, // تقليل العرض للموبايل
       align: "center",
       headerAlign: "center",
+      hide: isMobile, // إخفاء العمود على الموبايل إذا لزم الأمر
     },
     {
       field: "Age",
       headerName: "Age",
-      width: 50,
+      width: 60,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Phone",
       headerName: "Phone",
-      flex: 1,
+      width: isMobile ? 120 : 150, // تقليل العرض للموبايل
       align: "center",
       headerAlign: "center",
+      hide: isMobile, // إخفاء العمود على الموبايل إذا لزم الأمر
     },
     {
       field: "Access",
       headerName: "Access",
-      width: 150,
+      width: 120,
       align: "center",
       headerAlign: "center",
       renderCell: ({ row: { Access } }) => {
@@ -127,8 +139,7 @@ export default function Teams() {
             ) : (
               <SecurityOutlinedIcon sx={{ fontSize: "small" }} />
             )}
-
-            <Typography sx={{ fontSize: "16px" }}>{Access}</Typography>
+            <Typography sx={{ fontSize: "14px" }}>{Access}</Typography>
           </Box>
         );
       },
@@ -136,30 +147,32 @@ export default function Teams() {
     {
       field: "Actions",
       headerName: "Actions",
-      width: 170,
+      width: 120,
       align: "center",
       headerAlign: "center",
       renderCell: () => {
         return (
-          <Box>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
             <Button
               sx={{
+                my: "7px",
                 border: `1px solid ${theme.palette.secondary.dark}`,
                 color: theme.palette.secondary.dark,
-                mx: "5px",
-                width: "20px",
+                width: "40px",
                 height: "30px",
+                minWidth: "30px",
               }}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
             <Button
               sx={{
+                m: "7px",
                 border: `1px solid ${theme.palette.error.dark}`,
-                mx: "5px",
                 color: theme.palette.error.dark,
-                width: "20px",
+                width: "43px",
                 height: "30px",
+                minWidth: "30px",
               }}
             >
               <DeleteOutlineOutlinedIcon sx={{ fontSize: "small" }} />
@@ -169,13 +182,51 @@ export default function Teams() {
       },
     },
   ];
-  return (
-    <div>
-      <Typography variant="h4">Teams</Typography>
 
-      <div style={{ height: "70vh", width: "98%", margin: "auto" }}>
-        <DataGrid rows={rows} columns={columns} />
-      </div>
-    </div>
+  return (
+    <Box sx={{ overflow: "hidden", p: 2, width: "90vw", m: "auto" }}>
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        Teams
+      </Typography>
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            overflowX: "auto",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              height: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: theme.palette.grey[400],
+              borderRadius: "4px",
+            },
+          }}
+        >
+          {/* <Box sx={{ minWidth: isMobile ? "600px" : "800px", height: "100%" }}> */}
+          <DataGrid
+            checkboxSelection
+            rows={rows}
+            columns={MyColumns}
+            disableRowSelectionOnClick
+            sx={{
+              fontSize: 12,
+              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
+              "& .MuiDataGrid-virtualScroller": {
+                overflowX: "auto",
+              },
+            }}
+          />
+          {/* </Box> */}
+        </Box>
+      </Box>
+    </Box>
   );
 }

@@ -139,19 +139,19 @@ export default function Invoices() {
   ];
 
   const columns = [
-    { field: "IDnumber", headerName: "ID", width: 70 },
-    { field: "RegestreID", headerName: "Regestre ID", width: 110 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "Email", headerName: "Email", flex: 1 },
-    { field: "Age", headerName: "Age", width: 70 },
-    { field: "Phone", headerName: "Phone", flex: 1 },
-    { field: "Address", headerName: "Address", flex: 1 },
-    { field: "City", headerName: "City", flex: 1 },
-    { field: "ZIPCode", headerName: "ZIP Code", width: 100 },
+    { field: "IDnumber", headerName: "ID", minWidth: 70 },
+    { field: "RegestreID", headerName: "Regestre ID", minWidth: 110 },
+    { field: "name", headerName: "Name", minWidth: 150 },
+    { field: "Email", headerName: "Email", minWidth: 150 },
+    { field: "Age", headerName: "Age", minWidth: 70 },
+    { field: "Phone", headerName: "Phone", minWidth: 150 },
+    { field: "Address", headerName: "Address", minWidth: 150 },
+    { field: "City", headerName: "City", minWidth: 150 },
+    { field: "ZIPCode", headerName: "ZIP Code", minWidth: 100 },
     {
       field: "Actions",
       headerName: "Actions",
-      width: 170,
+      minWidth: 170,
       align: "center",
       headerAlign: "center",
       renderCell: () => {
@@ -185,16 +185,51 @@ export default function Invoices() {
     },
   ];
   return (
-    <div>
+    <Box sx={{ overflow: "hidden", p: 1, width: "90vw", m: "auto" }}>
       <Typography variant="h5" style={{ marginLeft: "10px" }}>
         Invoices
       </Typography>
       <Typography variant="body1" style={{ margin: "5px 10px" }}>
         List of all Invoices
       </Typography>
-      <div style={{ height: "70vh", width: "98%", margin: "auto" }}>
-        <DataGrid checkboxSelection rows={rows} columns={columns} />
-      </div>
-    </div>
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            overflowX: "auto",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              height: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: theme.palette.grey[400],
+              borderRadius: "4px",
+            },
+          }}
+        >
+          {/* <Box sx={{ minWidth: isMobile ? "600px" : "800px", height: "100%" }}> */}
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            checkboxSelection
+            sx={{
+              fontSize: 12,
+              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
+              "& .MuiDataGrid-virtualScroller": {
+                overflowX: "auto", // تأكيد السكرول الأفقي داخل الجدول
+              },
+            }}
+          />
+          {/* </Box> */}
+        </Box>
+      </Box>
+    </Box>
   );
 }

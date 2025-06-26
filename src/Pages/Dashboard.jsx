@@ -5,7 +5,6 @@ import Geo from "../Components/Geo";
 import Line from "../Components/Line";
 import Bar from "../Components/Bar";
 import ChartPaper from "../Components/ChartPaper";
-import secPaper from "../Components/SecPaper";
 import { DownloadOutlined } from "@mui/icons-material";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";

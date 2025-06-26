@@ -124,6 +124,7 @@ export default function ChartPaper({ data, title, text, icon, increse , mySchema
         width: "310px",
         p: "10px",
         justifyContent: "space-between",
+        background: theme.palette.divider,
       }}
     >
       <Box
