@@ -18,8 +18,9 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-
+import { useModal } from "../Context/ModalContext";
 export default function CustomGridFree() {
+  const { showModal } = useModal();
   const theme = useTheme();
   const allColumns = [
     { field: "IDnumber", headerName: "ID", minWidth: 70 },
@@ -48,10 +49,16 @@ export default function CustomGridFree() {
                 width: "20px",
                 height: "30px",
               }}
+              onClick={() => showModal("EditContact" , () => {
+                console.log("EditContact");
+              })}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
             <Button
+                 onClick={() => showModal("You Sure wants to delete this contact" , () => {
+                console.log("DeleteContact");
+              })}
               sx={{
                 border: `1px solid ${theme.palette.error.dark}`,
                 mx: "5px",

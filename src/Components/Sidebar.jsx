@@ -154,7 +154,7 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
   }));
   return (
     <div>
-      <Drawer
+      <Drawer sx={{ position:"fixed"  ,zIndex: 100 }} 
         variant={!isMobile ? "permanent" : open ? "permanent" : "temporary"}
         open={open}
       >

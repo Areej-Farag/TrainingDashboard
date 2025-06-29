@@ -1,6 +1,6 @@
 import React from "react";
 import { ResponsiveLine } from "@nivo/line";
-import { Box, useTheme , Typography } from "@mui/material";
+import { Box, useTheme , Typography , useMediaQuery } from "@mui/material";
 
 const MyData = [
   {
@@ -271,6 +271,7 @@ const MyData = [
 ];
 export default function Line({ data = MyData ,  title ="" , text="" }) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const Mytheme = {
     // background: "#ffffff",
     text: {
@@ -386,38 +387,52 @@ export default function Line({ data = MyData ,  title ="" , text="" }) {
     <Box sx={{ width: "100%", height: "90%" }}>
          <Typography variant="h5">{title}</Typography>
       <Typography variant="body1">{text}</Typography>
-      <ResponsiveLine /* or Line for fixed dimensions */
-        data={data}
-        theme={Mytheme}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-        yScale={{
-          type: "linear",
-          min: "auto",
-          max: "auto",
-          stacked: true,
-          reverse: false,
-        }}
-        curve="catmullRom"
-        axisBottom={{ legend: "transportation", legendOffset: 36 }}
-        axisLeft={{ legend: "count", legendOffset: -44 }}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "seriesColor" }}
-        pointLabelYOffset={-12}
-        enableTouchCrosshair={true}
-        useMesh={true}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            translateX: 100,
-            itemWidth: 80,
-            itemHeight: 22,
-            symbolShape: "circle",
-          },
-        ]}
-      />
+     <ResponsiveLine
+  data={data}
+  theme={Mytheme}
+  margin={{
+    top: 50,
+    right: isMobile ? 20 : 110,
+    bottom: isMobile ? 90 : 50,
+    left: isMobile ? 35 : 60,
+  }}
+  yScale={{
+    type: "linear",
+    min: "auto",
+    max: "auto",
+    stacked: true,
+    reverse: false,
+  }}
+  curve="catmullRom"
+  axisBottom={{
+    legend: "transportation",
+    legendOffset: isMobile ? 36 : 36,
+    tickRotation: isMobile ? -30 : 0,
+  }}
+  axisLeft={{
+    legend: isMobile ? "" : "count",
+    legendOffset: -44,
+  }}
+  pointSize={8}
+  pointColor={{ theme: "background" }}
+  pointBorderWidth={2}
+  pointBorderColor={{ from: "seriesColor" }}
+  pointLabelYOffset={-12}
+  enableTouchCrosshair={true}
+  useMesh={true}
+  legends={[
+    {
+      anchor: isMobile ? "bottom" : "bottom-right",
+      direction: isMobile ? "row" : "column",
+      translateX: isMobile ? 0 : 100,
+      translateY: isMobile ? 70 : 0,
+      itemWidth: isMobile ? 80 : 80,
+      itemHeight: 22,
+      symbolShape: "circle",
+    },
+  ]}
+/>
+
     </Box>
   );
 }

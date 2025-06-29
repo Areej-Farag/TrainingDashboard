@@ -1,5 +1,6 @@
 import { Box, useTheme , Typography } from "@mui/material";
 import { ResponsivePie } from "@nivo/pie";
+
 const Mydata = [
   {
     "id": "erlang",
@@ -171,7 +172,7 @@ export default function MyPie({ data = Mydata ,  title ="" , text="" }) {
             anchor: "bottom",
             direction: "row",
             translateY: 56,
-            itemWidth: 100,
+            itemWidth: 80,
             itemHeight: 18,
             symbolShape: "circle",
           },

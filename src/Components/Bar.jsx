@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 
 const Mydata = [
@@ -38,148 +38,163 @@ const Mydata = [
   },
 ];
 
-export default function Bars({ data = Mydata ,  title ="" , text="" }) {
+export default function Bars({ data = Mydata, title = "", text = "" }) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const Mytheme = {
-  // background: "#ffffff",
-  text: {
-    fontSize: 11,
-    fill: "#ffffff",
-    outlineWidth: 0,
-    outlineColor: "#ffffff",
-  },
-  axis: {
-    domain: {
-      line: {
-        
-        stroke: "#777777",
-        strokeWidth: 1,
-      },
-    },
-    legend: {
-      text: {
-        color: "#ffffff",
-        fontSize: 12,
-        fill: theme.palette.text.primary,
-        outlineWidth: 0,
-        outlineColor: "#ffffff",
-      },
-    },
-    ticks: {
-      line: {
-        stroke: "#777777",
-        strokeWidth: 1,
-      },
-      text: {
-   
-        fontSize: 11,
-        fill: theme.palette.text.primary,
-        outlineWidth: 0,
-        outlineColor: "#ffffff",
-      },
-    },
-  },
-  grid: {
-    line: {
-      stroke: "#dddddd",
-      strokeWidth: 1,
-    },
-  },
-  legends: {
-    title: {
-      text: {
-        fontSize: 11,
-        fill: theme.palette.text.primary,
-        outlineWidth: 0,
-        outlineColor: "#ffffff",
-      },
-    },
+    // background: "#ffffff",
     text: {
       fontSize: 11,
-      fill: theme.palette.text.primary,
+      fill: "#ffffff",
       outlineWidth: 0,
       outlineColor: "#ffffff",
     },
-    ticks: {
-      line: {},
+    axis: {
+      domain: {
+        line: {
+          stroke: "#777777",
+          strokeWidth: 1,
+        },
+      },
+      legend: {
+        text: {
+          color: "#ffffff",
+          fontSize: 12,
+          fill: theme.palette.text.primary,
+          outlineWidth: 0,
+          outlineColor: "#ffffff",
+        },
+      },
+      ticks: {
+        line: {
+          stroke: "#777777",
+          strokeWidth: 1,
+        },
+        text: {
+          fontSize: 11,
+          fill: theme.palette.text.primary,
+          outlineWidth: 0,
+          outlineColor: "#ffffff",
+        },
+      },
+    },
+    grid: {
+      line: {
+        stroke: "#dddddd",
+        strokeWidth: 1,
+      },
+    },
+    legends: {
+      title: {
+        text: {
+          fontSize: 11,
+          fill: theme.palette.text.primary,
+          outlineWidth: 0,
+          outlineColor: "#ffffff",
+        },
+      },
       text: {
-        fontSize: 10,
+        fontSize: 11,
         fill: theme.palette.text.primary,
         outlineWidth: 0,
         outlineColor: "#ffffff",
       },
+      ticks: {
+        line: {},
+        text: {
+          fontSize: 10,
+          fill: theme.palette.text.primary,
+          outlineWidth: 0,
+          outlineColor: "#ffffff",
+        },
+      },
     },
-  },
-  annotations: {
-    text: {
-      fontSize: 13,
-      fill: theme.palette.text.primary,
-      outlineWidth: 2,
-      outlineColor: "#ffffff",
-      outlineOpacity: 1,
+    annotations: {
+      text: {
+        fontSize: 13,
+        fill: theme.palette.text.primary,
+        outlineWidth: 2,
+        outlineColor: "#ffffff",
+        outlineOpacity: 1,
+      },
+      link: {
+        stroke: "#000000",
+        strokeWidth: 1,
+        outlineWidth: 2,
+        outlineColor: "#ffffff",
+        outlineOpacity: 1,
+      },
+      outline: {
+        stroke: "#000000",
+        strokeWidth: 2,
+        outlineWidth: 2,
+        outlineColor: "#ffffff",
+        outlineOpacity: 1,
+      },
+      symbol: {
+        fill: "#000000",
+        outlineWidth: 2,
+        outlineColor: "#ffffff",
+        outlineOpacity: 1,
+      },
     },
-    link: {
-      stroke: "#000000",
-      strokeWidth: 1,
-      outlineWidth: 2,
-      outlineColor: "#ffffff",
-      outlineOpacity: 1,
+    tooltip: {
+      wrapper: {},
+      container: {
+        background: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        fontSize: 12,
+      },
+      basic: {},
+      chip: {},
+      table: {},
+      tableCell: {},
+      tableCellValue: {},
     },
-    outline: {
-      stroke: "#000000",
-      strokeWidth: 2,
-      outlineWidth: 2,
-      outlineColor: "#ffffff",
-      outlineOpacity: 1,
-    },
-    symbol: {
-      fill: "#000000",
-      outlineWidth: 2,
-      outlineColor: "#ffffff",
-      outlineOpacity: 1,
-    },
-  },
-  tooltip: {
-    wrapper: {},
-    container: {
-      background: theme.palette.background.default,
-      color: theme.palette.text.primary,
-      fontSize: 12,
-    },
-    basic: {},
-    chip: {},
-    table: {},
-    tableCell: {},
-    tableCellValue: {},
-  },
-};
+  };
   return (
-    <Box sx={{ height: "95%", width: "100%"  }} justifyContent={"center"}>
-         <Typography variant="h5">{title}</Typography>
+    <Box sx={{ height: "95%", width: "100%" }} justifyContent={"center"}>
+      <Typography variant="h5">{title}</Typography>
       <Typography variant="body1">{text}</Typography>
-      <ResponsiveBar
-      theme={Mytheme}
-        data={data}
-        keys={["Spain", "France", "Germany"]} // ✅ لازم
-        indexBy="year"
-        labelSkipWidth={12}
-        labelSkipHeight={12}
-        colors={{ scheme: "purple_orange" }}
-        legends={[
-          {
-            dataFrom: "keys",
-            anchor: "bottom-right",
-            direction: "column",
-            translateX: 120,
-            itemsSpacing: 3,
-            itemWidth: 100,
-            itemHeight: 16,
-          },
-        ]}
-        axisBottom={{ legend: "year", legendOffset: 32 }}
-        axisLeft={{ legend: "minimum wage / month", legendOffset: -50 }}
-        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-      />
+     <ResponsiveBar
+  theme={Mytheme}
+  data={data}
+  keys={["Spain", "France", "Germany"]}
+  indexBy="year"
+  labelSkipWidth={12}
+  labelSkipHeight={12}
+  colors={{ scheme: "purple_orange" }}
+  legends={[
+    {
+      dataFrom: "keys",
+      anchor: isMobile ? "bottom" : "bottom-right",
+      direction: isMobile ? "row" : "column", 
+      translateX: isMobile ? 0 : 120,
+      translateY: isMobile ? 70 : 0,
+      itemsSpacing: 4,
+      itemWidth: isMobile ? 80 : 60,
+      itemHeight: 16,
+      symbolSize: 12,
+    },
+  ]}
+  axisBottom={{
+    legend: "year",
+    legendOffset: isMobile ? 36 : 32,
+    tickRotation: isMobile ? -30 : 0,
+  }}
+  axisLeft={{
+    legend: isMobile ? "" : "minimum wage / month", 
+    legendOffset: -50,
+  }}
+  margin={{
+    top: 40,
+    right: isMobile ? 20 : 130,
+    bottom: isMobile ? 90 : 50,
+    left: isMobile ? 30 : 60,
+  }}
+/>
+
     </Box>
   );
 }

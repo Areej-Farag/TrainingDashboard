@@ -3,7 +3,9 @@ import { Box, Button, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useModal } from "../Context/ModalContext";
 export default function Invoices() {
+  const { showModal } = useModal();
   const theme = useTheme();
   const rows = [
     {
@@ -165,7 +167,12 @@ export default function Invoices() {
                 width: "20px",
                 height: "30px",
               }}
+              onClick={() => showModal("EditInvoices" , () => {
+                // EditTeam handler
+                console.log("EditInvoices");
+              })}
             >
+              
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
             <Button
@@ -176,6 +183,10 @@ export default function Invoices() {
                 width: "20px",
                 height: "30px",
               }}
+              onClick={() => showModal("You Sure wants to delete this invoice" , () => {
+                // DeleteTeam handler
+                console.log("DeleteInvoices");
+              })}
             >
               <DeleteOutlineOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>

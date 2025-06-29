@@ -12,6 +12,7 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useModal } from "../Context/ModalContext";
 
 const rows = [
   {
@@ -64,7 +65,7 @@ const rows = [
 export default function Teams() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // للتحقق من حجم الشاشة
-
+  const { showModal } = useModal();
   const MyColumns = [
     {
       field: "IDnumber",
@@ -162,10 +163,18 @@ export default function Teams() {
                 height: "30px",
                 minWidth: "30px",
               }}
+              onClick={() => showModal("EditTeam" , () => {
+                // EditTeam handler
+                console.log("EditTeam");
+              })}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
             <Button
+            onClick={() => showModal("You Sure wants to delete this team" , () => {
+              // DeleteTeam handler
+              console.log("DeleteTeam");
+            })}
               sx={{
                 m: "7px",
                 border: `1px solid ${theme.palette.error.dark}`,

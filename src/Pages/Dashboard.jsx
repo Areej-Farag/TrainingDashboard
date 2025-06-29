@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import MyPie from "../Components/Pie";
 import Geo from "../Components/Geo";
 import Line from "../Components/Line";
@@ -10,6 +10,7 @@ import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutl
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import AllInclusiveOutlinedIcon from "@mui/icons-material/AllInclusiveOutlined";
+
 const Pie1 = [
   {
     id: "ruby",
@@ -69,9 +70,11 @@ const Pie4 = [
 
 export default function Dashboard() {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Stack direction="column" spacing={9} sx={{ mt: 2, width: "100%" }}>
       <Button
+      style={{  marginBottom: isMobile? "20px" : "0px" }}
         variant="contained"
         sx={{
           width: "200px",

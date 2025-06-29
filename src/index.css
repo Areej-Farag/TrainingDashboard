@@ -10,7 +10,8 @@
   width: 2px;
 }
 body {
-  width: 100vw;
+  width: 99vw;
+  
 }
 ::-webkit-scrollbar-track {
   background: #f0f0f0;
