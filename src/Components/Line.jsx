@@ -110,7 +110,7 @@ const MyData = [
     ],
   },
   {
-    id: "us",
+    id: "USA",
     data: [
       {
         x: "plane",
@@ -422,11 +422,13 @@ export default function Line({ data = MyData ,  title ="" , text="" }) {
   useMesh={true}
   legends={[
     {
+      symbolSize: 10,
+      itemsSpacing:2,
       anchor: isMobile ? "bottom" : "bottom-right",
       direction: isMobile ? "row" : "column",
       translateX: isMobile ? 0 : 100,
       translateY: isMobile ? 70 : 0,
-      itemWidth: isMobile ? 80 : 80,
+      itemWidth: isMobile ? 62 : 80,
       itemHeight: 22,
       symbolShape: "circle",
     },

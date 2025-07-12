@@ -1,46 +1,47 @@
-import { Box, useTheme , Typography } from "@mui/material";
+import { Box, useTheme, Typography , useMediaQuery} from "@mui/material";
 import { ResponsivePie } from "@nivo/pie";
 
 const Mydata = [
   {
-    "id": "erlang",
-    "label": "erlang",
-    "value": 438,
-    "color": "hsl(189, 70%, 50%)"
+    id: "erlang",
+    label: "erlang",
+    value: 438,
+    color: "hsl(189, 70%, 50%)",
   },
   {
-    "id": "ruby",
-    "label": "ruby",
-    "value": 483,
-    "color": "hsl(335, 70%, 50%)"
+    id: "ruby",
+    label: "ruby",
+    value: 483,
+    color: "hsl(335, 70%, 50%)",
   },
   {
-    "id": "haskell",
-    "label": "haskell",
-    "value": 388,
-    "color": "hsl(346, 70%, 50%)"
+    id: "haskell",
+    label: "haskell",
+    value: 388,
+    color: "hsl(346, 70%, 50%)",
   },
   {
-    "id": "go",
-    "label": "go",
-    "value": 187,
-    "color": "hsl(293, 70%, 50%)"
+    id: "go",
+    label: "go",
+    value: 187,
+    color: "hsl(293, 70%, 50%)",
   },
   {
-    "id": "java",
-    "label": "java",
-    "value": 455,
-    "color": "hsl(193, 70%, 50%)"
-  }
-]
+    id: "java",
+    label: "java",
+    value: 455,
+    color: "hsl(193, 70%, 50%)",
+  },
+];
 
-export default function MyPie({ data = Mydata ,  title ="" , text="" }) {
+export default function MyPie({ data = Mydata, title = "", text = "" }) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const Mytheme = {
     // background: "#ffffff",
     text: {
       fontSize: 11,
-      fill:theme.palette.text.primary,
+      fill: theme.palette.text.primary,
       outlineWidth: 0,
       outlineColor: "#ffffff",
     },
@@ -172,7 +173,7 @@ export default function MyPie({ data = Mydata ,  title ="" , text="" }) {
             anchor: "bottom",
             direction: "row",
             translateY: 56,
-            itemWidth: 65,
+            itemWidth: isMobile ? 60 : 80,
             itemHeight: 18,
             symbolShape: "circle",
           },

@@ -10,6 +10,11 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Stack } from "@mui/material";
 import logo from "../utilis/Images/HayaLogo.jpg";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 // Icons imports
 import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -77,8 +82,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 function Header({ open, handleDrawerOpen, setMode }) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <AppBar position="fixed" open={open} sx={{background: theme.palette.primary.main}}>
+    <AppBar
+      position="fixed"
+      open={open}
+      sx={{ background: theme.palette.primary.main }}
+    >
       <Toolbar>
         <IconButton
           color="inherit"
@@ -90,11 +109,15 @@ function Header({ open, handleDrawerOpen, setMode }) {
             ...(open && { display: "none" }),
           }}
         >
-          <img src={logo} alt="logo" style={{ width: "40px", height: "40px" }}/>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: "40px", height: "40px" }}
+          />
         </IconButton>
         <Stack
           direction="row"
-          justifyContent="space-between"
+          justifyContent="flex-end"
           alignItems="center"
           sx={{ width: "100%" }}
         >
@@ -107,43 +130,84 @@ function Header({ open, handleDrawerOpen, setMode }) {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          <Stack direction="row" spacing={1}>
-            {theme.palette.mode === "dark" ? (
+          {isMobile ? (
+            <>
+              <IconButton color="inherit" onClick={handleMenuOpen}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={isMenuOpen}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setMode((mode) => (mode === "dark" ? "light" : "dark"));
+                    localStorage.setItem(
+                      "mode",
+                      theme.palette.mode === "dark" ? "light" : "dark"
+                    );
+                    handleMenuClose();
+                  }}
+                >
+                  {theme.palette.mode === "dark" ? (
+                    <WbSunnyOutlinedIcon />
+                  ) : (
+                    <BedtimeOutlinedIcon />
+                  )}
+                  &nbsp; Theme
+                </MenuItem>
+                <MenuItem onClick={handleMenuClose}>
+                  <NotificationsNoneOutlinedIcon />
+                  &nbsp; Notifications
+                </MenuItem>
+                <MenuItem onClick={handleMenuClose}>
+                  <SettingsOutlinedIcon />
+                  &nbsp; Settings
+                </MenuItem>
+                <MenuItem onClick={handleMenuClose}>
+                  <PermIdentityOutlinedIcon />
+                  &nbsp; Profile
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Stack direction="row" spacing={1}>
               <IconButton
                 color="inherit"
                 onClick={() => {
-                  setMode( (mode) => mode === "dark" ? "light" : "dark" );
-                  localStorage.setItem("mode","light");
-                  console.log(theme.palette.mode);
-
+                  setMode((mode) => (mode === "dark" ? "light" : "dark"));
+                  localStorage.setItem(
+                    "mode",
+                    theme.palette.mode === "dark" ? "light" : "dark"
+                  );
                 }}
               >
-                <BedtimeOutlinedIcon />
+                {theme.palette.mode === "dark" ? (
+                  <BedtimeOutlinedIcon />
+                ) : (
+                  <WbSunnyOutlinedIcon />
+                )}
               </IconButton>
-            ) : (
-              <IconButton
-                color="inherit"
-                onClick={() => {
-                  setMode((mode) => mode === "dark" ? "light" : "dark");
-                  localStorage.setItem("mode", "dark");
-                  console.log(theme.palette.mode);
-
-                }}
-              >
-                <WbSunnyOutlinedIcon />
+              <IconButton color="inherit">
+                <NotificationsNoneOutlinedIcon />
               </IconButton>
-            )}
-
-            <IconButton color="inherit">
-              <NotificationsNoneOutlinedIcon />
-            </IconButton>
-            <IconButton color="inherit">
-              <SettingsOutlinedIcon />
-            </IconButton>
-            <IconButton color="inherit">
-              <PermIdentityOutlinedIcon />
-            </IconButton>
-          </Stack>
+              <IconButton color="inherit">
+                <SettingsOutlinedIcon />
+              </IconButton>
+              <IconButton color="inherit">
+                <PermIdentityOutlinedIcon />
+              </IconButton>
+            </Stack>
+          )}
         </Stack>
       </Toolbar>
     </AppBar>
