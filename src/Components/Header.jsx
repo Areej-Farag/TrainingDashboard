@@ -9,7 +9,7 @@ import { styled, alpha, useTheme } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Stack } from "@mui/material";
-import logo from "../utilis/Images/HayaLogo.jpg";
+import logo from "../Assests/Images/HayaLogo.jpg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
