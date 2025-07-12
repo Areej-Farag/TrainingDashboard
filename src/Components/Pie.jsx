@@ -172,7 +172,7 @@ export default function MyPie({ data = Mydata ,  title ="" , text="" }) {
             anchor: "bottom",
             direction: "row",
             translateY: 56,
-            itemWidth: 80,
+            itemWidth: 65,
             itemHeight: 18,
             symbolShape: "circle",
           },

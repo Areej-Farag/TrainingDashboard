@@ -12,7 +12,7 @@ import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import { useLocation, useNavigate } from "react-router-dom";
-import { grey } from "@mui/material/colors";
+import { purple } from "@mui/material/colors";
 
 // mui icons  import
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -154,11 +154,16 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
   }));
   return (
     <div>
-      <Drawer sx={{ position:"fixed"  ,zIndex: 100 }} 
+      <Drawer
+        sx={{
+          position: "fixed",
+          zIndex: 100,
+          background: theme.palette.primary.main,
+        }}
         variant={!isMobile ? "permanent" : open ? "permanent" : "temporary"}
         open={open}
       >
-        <DrawerHeader >
+        <DrawerHeader sx={{ background: theme.palette.primary.main }}>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -167,8 +172,12 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider />
-        <Stack justifyContent={"center"} alignItems={"center"}>
+        <Divider sx={{ background: "#6A2181" }} />
+        <Stack
+          justifyContent={"center"}
+          alignItems={"center"}
+          sx={{ background: theme.palette.primary.main }}
+        >
           <Avatar
             alt="Remy Sharp"
             src="https://th.bing.com/th/id/OIP.9lp-AzhvWVzYdKMb9E8tLQHaHs?r=0&rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3"
@@ -196,8 +205,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
           </Typography>
         </Stack>
 
-        <Divider />
-        <List>
+        <Divider sx={{ background: "#6A2181" }} />
+        <List sx={{ background: theme.palette.primary.main }}>
           {menuItems1.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -209,8 +218,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
                     bgcolor:
                       location.pathname === item.path
                         ? theme.palette.mode === "dark"
-                          ? grey[800]
-                          : grey[300]
+                          ? purple[300]
+                          : purple[200]
                         : "",
                   },
                   open
@@ -255,8 +264,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <List>
+        <Divider sx={{ background: "#6A2181" }} />
+        <List sx={{ background: theme.palette.primary.main }}>
           {menuItems2.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -268,8 +277,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
                     bgcolor:
                       location.pathname === item.path
                         ? theme.palette.mode === "dark"
-                          ? grey[800]
-                          : grey[300]
+                          ? purple[300]
+                          : purple[400]
                         : "",
                   },
                   open
@@ -314,8 +323,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <List>
+        <Divider sx={{ background: "#6A2181" }} />
+        <List sx={{ background: theme.palette.primary.main }}>
           {menuItems3.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -327,8 +336,8 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
                     bgcolor:
                       location.pathname === item.path
                         ? theme.palette.mode === "dark"
-                          ? grey[800]
-                          : grey[300]
+                          ? purple[300]
+                          : purple[400]
                         : "",
                   },
                   open

@@ -161,8 +161,8 @@ export default function Invoices() {
           <Box>
             <Button
               sx={{
-                border: `1px solid ${theme.palette.secondary.dark}`,
-                color: theme.palette.secondary.dark,
+                border: `1px solid ${theme.palette.secondary.main}`,
+                color: theme.palette.secondary.main,
                 mx: "5px",
                 width: "20px",
                 height: "30px",
@@ -228,6 +228,7 @@ export default function Invoices() {
           {/* <Box sx={{ minWidth: isMobile ? "600px" : "800px", height: "100%" }}> */}
           <DataGrid
             rows={rows}
+            // @ts-ignore
             columns={columns}
             checkboxSelection
             sx={{

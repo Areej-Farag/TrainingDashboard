@@ -127,7 +127,7 @@ export default function Teams() {
               borderRadius: "5px",
               backgroundColor:
                 Access === "Admin"
-                  ? theme.palette.primary.dark
+                  ? theme.palette.success.main
                   : Access === "Manager"
                   ? theme.palette.warning.dark
                   : theme.palette.secondary.dark,
@@ -157,8 +157,8 @@ export default function Teams() {
             <Button
               sx={{
                 my: "7px",
-                border: `1px solid ${theme.palette.secondary.dark}`,
-                color: theme.palette.secondary.dark,
+                 border: `1px solid ${theme.palette.secondary.main}`,
+                color: theme.palette.secondary.main,
                 width: "40px",
                 height: "30px",
                 minWidth: "30px",
@@ -223,6 +223,7 @@ export default function Teams() {
           <DataGrid
             checkboxSelection
             rows={rows}
+            // @ts-ignore
             columns={MyColumns}
             disableRowSelectionOnClick
             sx={{

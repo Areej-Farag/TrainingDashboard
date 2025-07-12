@@ -9,7 +9,7 @@ import { styled, alpha, useTheme } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Stack } from "@mui/material";
-
+import logo from "../utilis/Images/HayaLogo.jpg";
 // Icons imports
 import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -78,7 +78,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function Header({ open, handleDrawerOpen, setMode }) {
   const theme = useTheme();
   return (
-    <AppBar position="fixed" open={open}>
+    <AppBar position="fixed" open={open} sx={{background: theme.palette.primary.main}}>
       <Toolbar>
         <IconButton
           color="inherit"
@@ -90,7 +90,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
             ...(open && { display: "none" }),
           }}
         >
-          <MenuIcon />
+          <img src={logo} alt="logo" style={{ width: "40px", height: "40px" }}/>
         </IconButton>
         <Stack
           direction="row"
