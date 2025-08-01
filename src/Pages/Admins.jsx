@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import '../Styles/main.Css';
+// import '../Styles/main.Css';
 import {
   Box,
   TextField,
