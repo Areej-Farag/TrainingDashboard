@@ -6,6 +6,7 @@ export const myTheme = (mode) => ({
       },
       secondary: {
         main: '#9d2da6',
+
       },
      mode,
      ...(mode === 'light' && {
@@ -21,6 +22,8 @@ export const myTheme = (mode) => ({
        // palette values for dark mode
        primary: {
         main: '#6A2181',
+
+      
       },
        secondary: {
          main: '#C05DB3',

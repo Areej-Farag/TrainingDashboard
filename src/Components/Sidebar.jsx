@@ -1,5 +1,12 @@
 import MuiDrawer from "@mui/material/Drawer";
-import { Stack, Typography } from "@mui/material";
+import {
+  Button,
+  ButtonBase,
+  Stack,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -11,7 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigation } from "react-router-dom";
 import { purple } from "@mui/material/colors";
 
 // mui icons  import
@@ -28,76 +35,85 @@ import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import { CloseOutlined } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useEffect, useState } from "react";
+import { useUserStore } from "../Stores/AuthStore";
 
 const drawerWidth = 240;
+const menuItems1 = [
+  {
+    text: "Dashboard",
+    icon: <HomeOutlinedIcon />,
+    path: "/",
+  },
+  {
+    text: "Admins",
+    icon: <GroupOutlinedIcon />,
+    path: "/admins",
+  },
+  {
+    text: "Users",
+    icon: <ContactsOutlinedIcon />,
+    path: "/users",
+  },
+  {
+    text: "Invoices Balances",
+    icon: <ListAltOutlinedIcon />,
+    path: "/invoices",
+  },
+];
 
+const menuItems2 = [
+  {
+    text: "Profile Form",
+    icon: <Person2OutlinedIcon />,
+    path: "/form",
+  },
+  {
+    text: "Calender",
+    icon: <CalendarTodayOutlinedIcon />,
+    path: "/calender",
+  },
+  {
+    text: "FAQ page",
+    icon: <HelpOutlineOutlinedIcon />,
+    path: "/faq",
+  },
+];
+const menuItems3 = [
+  {
+    text: "Bar Chart",
+    icon: <BarChartOutlinedIcon />,
+    path: "/bar",
+  },
+  {
+    text: "Pie Chart",
+    icon: <PieChartOutlinedIcon />,
+    path: "/pie",
+  },
+  {
+    text: "Line Chart",
+    icon: <ShowChartOutlinedIcon />,
+    path: "/line",
+  },
+  {
+    text: "Geo Chart",
+    icon: <MapOutlinedIcon />,
+    path: "/geo",
+  },
+];
 export default function Sidebar({ open, handleDrawerClose, setOpen }) {
+  const { user, logOut, error, getAdminData } = useUserStore();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const token = localStorage.getItem("token");
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
-  const menuItems1 = [
-    {
-      text: "Dashboard",
-      icon: <HomeOutlinedIcon />,
-      path: "/",
-    },
-    {
-      text: "Teams",
-      icon: <GroupOutlinedIcon />,
-      path: "/teams",
-    },
-    {
-      text: "Contacts Information",
-      icon: <ContactsOutlinedIcon />,
-      path: "/contacts",
-    },
-    {
-      text: "Invoices Balances",
-      icon: <ListAltOutlinedIcon />,
-      path: "/invoices",
-    },
-  ];
 
-  const menuItems2 = [
-    {
-      text: "Profile Form",
-      icon: <Person2OutlinedIcon />,
-      path: "/form",
-    },
-    {
-      text: "Calender",
-      icon: <CalendarTodayOutlinedIcon />,
-      path: "/calender",
-    },
-    {
-      text: "FAQ page",
-      icon: <HelpOutlineOutlinedIcon />,
-      path: "/faq",
-    },
-  ];
-  const menuItems3 = [
-    {
-      text: "Bar Chart",
-      icon: <BarChartOutlinedIcon />,
-      path: "/bar",
-    },
-    {
-      text: "Pie Chart",
-      icon: <PieChartOutlinedIcon />,
-      path: "/pie",
-    },
-    {
-      text: "Line Chart",
-      icon: <ShowChartOutlinedIcon />,
-      path: "/line",
-    },
-    {
-      text: "Geo Chart",
-      icon: <MapOutlinedIcon />,
-      path: "/geo",
-    },
-  ];
   const openedMixin = (theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create("width", {
@@ -143,7 +159,22 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
       },
     ],
   }));
-
+  const handleLogOut = async () => {
+    const success = await logOut();
+    if (success) {
+      setSnackbar({
+        open: true,
+        message: "Logout successful!",
+        severity: "success",
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: error || "Logout failed!",
+        severity: "error",
+      });
+    }
+  };
   const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
@@ -152,6 +183,13 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   }));
+
+  useEffect(() => {
+    if (token) {
+      getAdminData();
+      console.log(user);
+    }
+  }, [token]);
   return (
     <div>
       <Drawer
@@ -178,31 +216,70 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
           alignItems={"center"}
           sx={{ background: theme.palette.primary.main }}
         >
-          <Avatar
-            alt="Remy Sharp"
-            src="https://th.bing.com/th/id/OIP.9lp-AzhvWVzYdKMb9E8tLQHaHs?r=0&rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3"
-            sx={{
-              width: open ? 56 : 40,
-              height: open ? 56 : 40,
-              my: 1,
-              border: 2,
-              borderColor: "grey",
-            }}
-            style={{ transition: " all ease-in-out 1s" }}
-          />
-          <Typography
-            sx={{ fontSize: open ? 18 : 0 }}
-            style={{ transition: " all ease-in-out 1s" }}
-          >
-            John Doe
-          </Typography>
-          <Typography
-            sx={{ fontSize: open ? 14 : 0 }}
-            style={{ transition: " all ease-in-out 1s" }}
-            color="primary"
-          >
-            Admin
-          </Typography>
+          {token ? (
+            <>
+              <Avatar
+                alt={user?.name}
+                src={user?.image_url}
+                sx={{
+                  width: open ? 56 : 40,
+                  height: open ? 56 : 40,
+                  my: 1,
+                  border: 2,
+                  borderColor: "grey",
+                  transition: "all ease-in-out 1s",
+                  "& img": {
+                    objectFit: "contain",
+                  },
+                }}
+              />
+
+              <Typography
+                sx={{ fontSize: open ? 18 : 0 }}
+                style={{ transition: " all ease-in-out 1s" }}
+              >
+                {user?.name}
+              </Typography>
+              <Typography
+                sx={{ fontSize: open ? 14 : 0 }}
+                style={{ transition: " all ease-in-out 1s" }}
+                color="primary"
+              >
+                {user?.type}
+              </Typography>
+              {open ? (
+                <Button
+                  sx={{
+                    padding: "5px 10px",
+                    borderRadius: "10px",
+                    marginBottom: "10px",
+                    backgroundColor: "#fff",
+                    color: theme.palette.primary.main,
+                  }}
+                  onClick={handleLogOut}
+                >
+                  Log Out
+                </Button>
+              ) : (
+                ""
+              )}
+            </>
+          ) : open ? (
+            <Button
+              sx={{
+                color: theme.palette.primary.main,
+                backgroundColor: "#fff",
+                padding: "5px 10px",
+                borderRadius: "10px",
+                my: "10px",
+              }}
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+          ) : (
+            ""
+          )}
         </Stack>
 
         <Divider sx={{ background: "#6A2181" }} />
@@ -383,6 +460,20 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
           ))}
         </List>
       </Drawer>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -1,5 +1,7 @@
-import * as React from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import '../Styles/main.Css';
+
 import {
   Box,
   TextField,
@@ -12,6 +14,7 @@ import {
   Stack,
   Divider,
   useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -19,22 +22,32 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useModal } from "../Context/ModalContext";
+import AdminPageForm from "../Components/Forms/AdminPageForm";
+import { PersonAddAlt1 } from "@mui/icons-material";
+import { useUserStore } from "../Stores/UserStore";
 
-// ✅ CustomToolbar defined outside to avoid re-renders
+// Define CustomToolbar as a separate component
 function CustomToolbar({
   search,
   setSearch,
   columnVisibility,
   setColumnVisibility,
   exportCSV,
-  allColumns,
+  MyColumns,
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
+  const searchInputRef = useRef(null); // Add ref for TextField
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
+
+  // Maintain focus after typing
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    searchInputRef.current?.focus(); // Ensure focus stays on the input
+  };
 
   return (
     <Box
@@ -42,8 +55,7 @@ function CustomToolbar({
         mb: 2,
         p: 2,
         borderRadius: 2,
-        backgroundColor:
-          theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+        backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
         border: `1px solid ${theme.palette.divider}`,
       }}
     >
@@ -56,11 +68,12 @@ function CustomToolbar({
       >
         <Box>
           <TextField
+            inputRef={searchInputRef}
             sx={{ flexGrow: 1, minWidth: 200 }}
             size="small"
             placeholder="Search..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             InputProps={{
               startAdornment: <SearchIcon sx={{ mr: 1 }} />,
             }}
@@ -105,7 +118,7 @@ function CustomToolbar({
             Toggle Columns
           </Typography>
           <Divider />
-          {allColumns.map((col) => (
+          {MyColumns.map((col) => (
             <MenuItem key={col.field}>
               <Checkbox
                 checked={columnVisibility[col.field]}
@@ -128,54 +141,119 @@ function CustomToolbar({
 export default function CustomGridFree() {
   const { showModal } = useModal();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { getUsers, loading, error, users } = useUserStore();
+  const [openAddForm, setOpenAddForm] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const allColumns = [
-    { field: "IDnumber", headerName: "ID", minWidth: 70 },
-    { field: "RegestreID", headerName: "Regestre ID", minWidth: 110 },
-    { field: "name", headerName: "Name", minWidth: 150 },
-    { field: "Email", headerName: "Email", minWidth: 150 },
-    { field: "Age", headerName: "Age", minWidth: 70 },
-    { field: "Phone", headerName: "Phone", minWidth: 150 },
-    { field: "Address", headerName: "Address", minWidth: 150 },
-    { field: "City", headerName: "City", minWidth: 150 },
-    { field: "ZIPCode", headerName: "ZIP Code", minWidth: 100 },
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  useEffect(() => {
+    console.log("users updated:", users);
+  }, [users]);
+
+  const MyColumns = [
+    {
+      field: "IDnumber",
+      headerName: "ID",
+      width: isMobile ? 50 : 70,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "name",
+      headerName: "User Name",
+      width: isMobile ? 150 : 200,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "Email",
+      headerName: "Email",
+      width: isMobile ? 150 : 200,
+      align: "center",
+      headerAlign: "center",
+      hide: isMobile,
+    },
+    {
+      field: "Type",
+      headerName: "Type",
+      width: 60,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "Phone",
+      headerName: "Phone",
+      width: isMobile ? 120 : 150,
+      align: "center",
+      headerAlign: "center",
+      hide: isMobile,
+    },
+    {
+      field: "gender",
+      headerName: "Gender",
+      width: isMobile ? 150 : 200,
+      align: "center",
+      headerAlign: "center",
+      hide: isMobile,
+    },
+    {
+      field: "CreatedAt",
+      headerName: "Created At",
+      width: 170,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "UpdatedAt",
+      headerName: "Updated At",
+      width: 170,
+      align: "center",
+      headerAlign: "center",
+    },
     {
       field: "Actions",
       headerName: "Actions",
-      minWidth: 170,
+      width: 170,
       align: "center",
       headerAlign: "center",
-      renderCell: () => {
+      renderCell: (params) => {
+        const userID = params.row.id;
         return (
-          <Box>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
             <Button
               sx={{
+                my: "7px",
                 border: `1px solid ${theme.palette.secondary.main}`,
                 color: theme.palette.secondary.main,
-                mx: "5px",
-                width: "20px",
+                width: "40px",
                 height: "30px",
+                minWidth: "30px",
               }}
-              onClick={() =>
-                showModal("EditContact", () => {
-                  console.log("EditContact");
-                })
-              }
+              onClick={() => {
+                setSelectedUser(params.row);
+                setOpenEditForm(true);
+              }}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
             <Button
               onClick={() =>
-                showModal("You Sure wants to delete this contact", () => {
-                  console.log("DeleteContact");
+                showModal("Are you sure you want to delete this admin?", () => {
+                  // DestroyAdmin(adminId);
                 })
               }
               sx={{
+                m: "7px",
                 border: `1px solid ${theme.palette.error.dark}`,
-                mx: "5px",
                 color: theme.palette.error.dark,
-                width: "20px",
+                width: "43px",
                 height: "30px",
+                minWidth: "30px",
               }}
             >
               <DeleteOutlineOutlinedIcon sx={{ fontSize: "small" }} />
@@ -186,84 +264,30 @@ export default function CustomGridFree() {
     },
   ];
 
-  const initialRows = [
-    {
-      id: 1,
-      IDnumber: 1,
-      name: "Aymen Khalil ",
-      Email: "AymenKhalil123@gmail.com",
-      Age: "30",
-      Phone: "123-456-7890",
-      Access: "Admin",
-      Address: "Elmaadie St4",
-      ZIPCode: "91199",
-      City: "Cairo",
-      RegestreID: "12443",
-    },
-    {
-      id: 2,
-      IDnumber: 2,
-      name: "Data Grid Pro",
-      Email: "the Pro version",
-      Age: "30",
-      Phone: "123-456-7890",
-      Access: "Admin",
-      Address: "Elmaadie St4",
-      ZIPCode: "91199",
-      City: "Cairo",
-      RegestreID: "12443",
-    },
-    {
-      id: 3,
-      IDnumber: 3,
-      name: "Data Grid Premium",
-      Email: "the Premium version",
-      Age: "30",
-      Phone: "123-456-7890",
-      Access: "User",
-      Address: "Elmaadie St4",
-      ZIPCode: "91199",
-      City: "Cairo",
-      RegestreID: "12443",
-    },
-    {
-      id: 4,
-      IDnumber: 4,
-      name: "Data Grid Premium",
-      Email: "the Premium version",
-      Age: "30",
-      Phone: "123-456-7890",
-      Access: "User",
-      Address: "Elmaadie St4",
-      ZIPCode: "91199",
-      City: "Cairo",
-      RegestreID: "12443",
-    },
-    {
-      id: 5,
-      IDnumber: 5,
-      name: "Data Grid Premium",
-      Email: "the Premium version",
-      Age: "30",
-      Phone: "123-456-7890",
-      Access: "Manager",
-      Address: "Elmaadie St4",
-      ZIPCode: "91199",
-      City: "Cairo",
-      RegestreID: "12443",
-    },
-  ];
+  const initialRows = useMemo(() => {
+    return (
+      users?.map((user) => ({
+        id: user.id,
+        IDnumber: user.id,
+        name: user.name,
+        Email: user.email,
+        Type: user.type,
+        Phone: user.phone,
+        gender: user.gender== 1? "Male" : "Female",
+        CreatedAt: new Date(user.created_at).toLocaleString(),
+        UpdatedAt: new Date(user.updated_at).toLocaleString(),
+      })) || []
+    );
+  }, [users]);
 
-  const [search, setSearch] = React.useState("");
-  const [columnVisibility, setColumnVisibility] = React.useState(
-    Object.fromEntries(allColumns.map((col) => [col.field, true]))
+  const [search, setSearch] = useState("");
+  const [columnVisibility, setColumnVisibility] = useState(
+    Object.fromEntries(MyColumns.map((col) => [col.field, true]))
   );
 
-  const visibleColumns = allColumns.filter(
-    (col) => columnVisibility[col.field]
-  );
+  const visibleColumns = MyColumns.filter((col) => columnVisibility[col.field]);
 
-  const filteredRows = initialRows.filter((row) =>
+  const filteredRows = initialRows?.filter((row) =>
     Object.values(row).some((val) =>
       val.toString().toLowerCase().includes(search.toLowerCase())
     )
@@ -287,11 +311,32 @@ export default function CustomGridFree() {
   };
 
   return (
-    <Box sx={{ overflow: "hidden", p: 2, width: "90vw", m: "auto" }}>
-      <Typography variant="h5">Contacts</Typography>
-      <Typography variant="body1" sx={{ mb: 2 }}>
-        List of all contacts
-      </Typography>
+    <Box
+      sx={{
+        overflow: "hidden",
+        p: 2,
+        width: "90vw",
+        m: "auto",
+        position: "relative",
+      }}
+    >
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Box>
+          <Typography variant="h5">Users</Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            List of all Users
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<PersonAddAlt1 />}
+          sx={{ mb: 2, height: "40px" }}
+          onClick={() => setOpenAddForm(true)}
+        >
+          Add User
+        </Button>
+      </Stack>
 
       <CustomToolbar
         search={search}
@@ -299,7 +344,7 @@ export default function CustomGridFree() {
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibility}
         exportCSV={exportCSV}
-        allColumns={allColumns}
+        MyColumns={MyColumns}
       />
 
       <Box sx={{ width: "100%", height: "70vh", overflow: "hidden" }}>
@@ -320,7 +365,7 @@ export default function CustomGridFree() {
         >
           <DataGrid
             checkboxSelection
-            rows={filteredRows}
+            rows={filteredRows || []}
             // @ts-ignore
             columns={visibleColumns}
             pageSize={5}
@@ -336,6 +381,33 @@ export default function CustomGridFree() {
             }}
           />
         </Box>
+      </Box>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 100,
+          width: { xs: "80%", sm: "40%" },
+          display: "flex",
+          borderRadius: "10px",
+          justifyContent: "center",
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+          border: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        {openAddForm && (
+          <AdminPageForm action="Add Admin" setOpen={setOpenAddForm} />
+        )}
+        {openEditForm && (
+          <AdminPageForm
+            action="Edit Admin"
+            setOpen={setOpenEditForm}
+            user={selectedUser}
+          />
+        )}
       </Box>
     </Box>
   );
