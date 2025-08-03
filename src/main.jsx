@@ -2,15 +2,16 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-
-// Routers imports
+import "./i18n";
+// Router imports
 import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-} from "react-router";
-import Invoices from "./Pages/Invoices";
+} from "react-router-dom";
+
+import Cities from "./Pages/Cities";
 import Dashboard from "./Pages/Dashboard";
 import Form from "./Pages/Form";
 import Admins from "./Pages/Admins";
@@ -22,22 +23,32 @@ import Users from "./Pages/Users";
 import FAQ from "./Pages/FAQ";
 import Calender from "./Pages/Calender";
 import Login from "./Auth/Login";
+import AdminPageForm from "./Components/Forms/AdminPageForm";
+import UserPageForm from "./Components/Forms/UserPageForm";
+import Countries from "./Pages/Countries";
 
+// Get token
+const Token = localStorage.getItem("token");
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route index element={<Dashboard />} /> ,
-      <Route path="/invoices" element={<Invoices />} /> ,
-      <Route path="/form" element={<Form />} /> ,
-      <Route path="/admins" element={<Admins />} /> ,
-      <Route path="/geo" element={<GeoChart />} /> ,
-      <Route path="/pie" element={<PieChart />} /> ,
-      <Route path="/line" element={<LineChart />} /> ,
-      <Route path="/bar" element={<BarsChar />} /> ,
-      <Route path="/users" element={<Users />} /> ,
-      <Route path="/faq" element={<FAQ />} /> ,
-      <Route path="/calender" element={<Calender />} />
-      <Route path="/login" element={<Login />} />
+      <Route index element={Token ? <Dashboard /> : <Login />} />
+      <Route path="cities" element={<Cities />} />
+      <Route path="countries" element={<Countries />} />
+      <Route path="form" element={<Form />} />
+      <Route path="admins" element={<Admins />} />
+      <Route path="geo" element={<GeoChart />} />
+      <Route path="pie" element={<PieChart />} />
+      <Route path="line" element={<LineChart />} />
+      <Route path="bar" element={<BarsChar />} />
+      <Route path="users" element={<Users />} />
+      <Route path="faq" element={<FAQ />} />
+      <Route path="calender" element={<Calender />} />
+      <Route path="login" element={<Login />} />
+      <Route path="/admin/add" element={<AdminPageForm />} />
+      <Route path="/admin/edit/:id" element={<AdminPageForm />} />
+        <Route path="/user/add" element={<UserPageForm />} />
+      <Route path="/user/edit/:id" element={<UserPageForm />} />
     </Route>
   )
 );

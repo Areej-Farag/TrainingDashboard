@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Stack,
   Typography,
@@ -6,17 +7,18 @@ import {
   useTheme,
   Box,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import CloseIcon from "@mui/icons-material/Close";
 import { useAdminStore } from "../../Stores/AdminStore";
+import { useParams, useNavigate } from "react-router-dom";
 
-export default function AdminPageForm({
-  action = "Add Admin",
-  user = {},
-  setOpen,
-}) {
-  const { AddAdmin, UpdateAdmin } = useAdminStore();
+export default function AdminPageForm() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const action = id ? "Edit Admin" : "Add Admin";
+  const { admins, AddAdmin, UpdateAdmin } = useAdminStore();
+  const [user, setUser] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -27,18 +29,23 @@ export default function AdminPageForm({
   const theme = useTheme();
 
   useEffect(() => {
+    if (id && admins?.length > 0) {
+      const found = admins.find((admin) => admin.id === Number(id));
+      if (found) {
+        setUser(found);
+      }
+    }
+  }, [id, admins]);
+
+  useEffect(() => {
     if (action === "Edit Admin" && user) {
-      setValue("image", user.image || "");
       setValue("id", user.id || "");
       setValue("name", user.name || "");
-      setValue("email", user.Email || "");
-      setValue("phone", user.Phone || "");
-      setValue("type", user.Type || "");
-      console.log("user from edit:", user);
+      setValue("email", user.email || "");
+      setValue("phone", user.phone || "");
+      setValue("type", user.type || "");
     }
-
-
-  }, [user, action, setValue]);
+  }, [user, action]);
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -47,7 +54,7 @@ export default function AdminPageForm({
     formData.append("email", data.email);
     formData.append("phone", data.phone);
     if (data.password) {
-      formData.append("password", data.password); 
+      formData.append("password", data.password);
     }
     formData.append("type", data.type);
     if (data.image && data.image[0]) {
@@ -57,15 +64,16 @@ export default function AdminPageForm({
     try {
       if (action === "Add Admin") {
         await AddAdmin(formData);
-      } else if (action === "Edit Admin" && user.id) {
+      } else if (action === "Edit Admin" && user?.id) {
         await UpdateAdmin(user.id, formData);
       }
+
       console.log("Form submitted:", data);
-      setOpen(false);
       reset();
     } catch (error) {
       console.error("Submission error:", error);
     }
+    navigate("/admins");
   };
 
   return (
@@ -73,21 +81,18 @@ export default function AdminPageForm({
       gap={2}
       p={2}
       sx={{
-        width: "100%",
+        margin: "auto",
+        width: "90%",
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
         position: "relative",
       }}
     >
-      <CloseIcon
-        onClick={() => setOpen(false)}
-        sx={{ position: "absolute", top: 0, right: 0, cursor: "pointer", color: "red" }}
-      />
-      <Typography variant="h6">{action}</Typography>
+      <Typography variant="h4" sx={{color: theme.palette.primary.main}}>{action}</Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        encType="multipart/form-data" 
+        encType="multipart/form-data"
         style={{ width: "100%" }}
       >
         <Stack spacing={2} sx={{ width: "100%" }}>
@@ -101,6 +106,7 @@ export default function AdminPageForm({
               placeholder="Name"
               label="Name"
               error={!!errors.name}
+              // @ts-ignore
               helperText={errors.name?.message}
             />
             <TextField
@@ -118,6 +124,7 @@ export default function AdminPageForm({
               })}
               placeholder="Email"
               error={!!errors.email}
+              // @ts-ignore
               helperText={errors.email?.message}
             />
             <TextField
@@ -129,22 +136,25 @@ export default function AdminPageForm({
               {...register("phone", { required: "Phone is required" })}
               placeholder="Phone"
               error={!!errors.phone}
+              // @ts-ignore
               helperText={errors.phone?.message}
             />
-            <TextField
+        {action === "Add Admin" &&    <TextField
               label="Password"
               sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("password", {
-                required: action === "Add Admin" ? "Password is required" : false,
+                required:
+                  action === "Add Admin" ? "Password is required" : false,
               })}
               placeholder="Password"
               type="password"
               error={!!errors.password}
+              // @ts-ignore
               helperText={errors.password?.message}
-            />
+            />}
           </Stack>
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <label htmlFor="image">Admin Image</label>
@@ -162,6 +172,7 @@ export default function AdminPageForm({
                 backgroundColor: theme.palette.background.default,
               }}
               {...register("type", { required: "Type is required" })}
+              // @ts-ignore
               error={!!errors.type}
             >
               <option value="">Select Type</option>

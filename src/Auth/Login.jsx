@@ -8,14 +8,14 @@ import {
   Alert,
 } from "@mui/material";
 import React from "react";
+// @ts-ignore
 import Logo from "../Assests/Images/HayaLogo.jpg";
-import { Link, useNavigate } from "react-router-dom";
-import { useUserStore } from "../Stores/AuthStore";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../Stores/AuthStore";
 
 export default function LogIn() {
   const theme = useTheme();
-  const navigate = useNavigate();
-  const { LogIn, error } = useUserStore();
+  const { LogIn, error } = useAuthStore();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -35,7 +35,7 @@ export default function LogIn() {
         severity: "success",
       });
       setTimeout(() => {
-        navigate("/");
+        window.location.reload();
       }, 1000);
     } else {
       setSnackbar({

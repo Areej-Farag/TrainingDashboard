@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
-
 import {
   Box,
   TextField,
@@ -14,7 +13,6 @@ import {
   Stack,
   Divider,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -22,12 +20,10 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useModal } from "../Context/ModalContext";
-import AdminPageForm from "../Components/Forms/AdminPageForm";
 import { PersonAddAlt1 } from "@mui/icons-material";
-import { useUserStore } from "../Stores/UserStore";
-import { useNavigate } from "react-router-dom";
+import { useCountriesStore } from "../Stores/CountriesStore";
+import CitiesAndCountriesPageForm from "../Components/Forms/CitiesAndCountriesForm";
 
-// Define CustomToolbar as a separate component
 function CustomToolbar({
   search,
   setSearch,
@@ -39,15 +35,14 @@ function CustomToolbar({
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
-  const searchInputRef = useRef(null); // Add ref for TextField
+  const searchInputRef = useRef(null);
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
 
-  // Maintain focus after typing
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    searchInputRef.current?.focus(); // Ensure focus stays on the input
+    searchInputRef.current?.focus();
   };
 
   return (
@@ -80,7 +75,6 @@ function CustomToolbar({
             }}
           />
         </Box>
-
         <Box sx={{ display: "flex", gap: 3 }}>
           <IconButton
             onClick={handleOpenMenu}
@@ -102,7 +96,6 @@ function CustomToolbar({
             Export CSV
           </Button>
         </Box>
-
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -139,66 +132,38 @@ function CustomToolbar({
   );
 }
 
-export default function CustomGridFree() {
+export default function Countries() {
   const { showModal } = useModal();
   const theme = useTheme();
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, loading, error, users } = useUserStore();
+  const [OpenEditModal, setOpenEditModal] = useState(false); // Fixed typo
+  const [OpenAddModal, setOpenAddModal] = useState(false); // Fixed typo
+  const { getCountries, countries, destroyCountry } = useCountriesStore();
+  const language = localStorage.getItem("lang");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    console.log("Fetching countries...");
+    getCountries();
+  }, [language]);
 
   useEffect(() => {
-    console.log("users updated:", users);
-  }, [users]);
+    console.log("Countries:", countries);
+  }, [countries]);
 
   const MyColumns = [
     {
       field: "IDnumber",
       headerName: "ID",
-      width: isMobile ? 50 : 70,
+      flex: 1,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "name",
-      headerName: "User Name",
-      width: isMobile ? 150 : 200,
+      headerName: "Country Name",
+      flex: 1,
       align: "center",
       headerAlign: "center",
-    },
-    {
-      field: "Email",
-      headerName: "Email",
-      width: isMobile ? 150 : 200,
-      align: "center",
-      headerAlign: "center",
-      hide: isMobile,
-    },
-    {
-      field: "Type",
-      headerName: "Type",
-      width: 60,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "Phone",
-      headerName: "Phone",
-      width: isMobile ? 120 : 150,
-      align: "center",
-      headerAlign: "center",
-      hide: isMobile,
-    },
-    {
-      field: "gender",
-      headerName: "Gender",
-      width: isMobile ? 150 : 200,
-      align: "center",
-      headerAlign: "center",
-      hide: isMobile,
     },
     {
       field: "CreatedAt",
@@ -221,7 +186,6 @@ export default function CustomGridFree() {
       align: "center",
       headerAlign: "center",
       renderCell: (params) => {
-        const userID = params.row.id;
         return (
           <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
             <Button
@@ -234,7 +198,9 @@ export default function CustomGridFree() {
                 minWidth: "30px",
               }}
               onClick={() => {
-                navigate(`/user/edit/${params.row.id}`);
+                console.log("Opening Edit Modal for country:", params.row);
+                setOpenEditModal(true); // Fixed typo
+                setSelectedCountry(params.row);
               }}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
@@ -242,7 +208,7 @@ export default function CustomGridFree() {
             <Button
               onClick={() =>
                 showModal("Are you sure you want to delete this admin?", () => {
-                  // DestroyAdmin(adminId);
+                  destroyCountry(params.row.id);
                 })
               }
               sx={{
@@ -264,19 +230,15 @@ export default function CustomGridFree() {
 
   const initialRows = useMemo(() => {
     return (
-      users?.map((user) => ({
-        id: user.id,
-        IDnumber: user.id,
-        name: user.name,
-        Email: user.email,
-        Type: user.type,
-        Phone: user.phone,
-        gender: user.gender == 1 ? "Male" : "Female",
-        CreatedAt: new Date(user.created_at).toLocaleString(),
-        UpdatedAt: new Date(user.updated_at).toLocaleString(),
+      countries?.map((country) => ({
+        id: country.id,
+        IDnumber: country.id,
+        name: country.name,
+        CreatedAt: new Date(country.created_at).toLocaleString(),
+        UpdatedAt: new Date(country.updated_at).toLocaleString(),
       })) || []
     );
-  }, [users]);
+  }, [countries, language]);
 
   const [search, setSearch] = useState("");
   const [columnVisibility, setColumnVisibility] = useState(
@@ -299,7 +261,6 @@ export default function CustomGridFree() {
     const csvContent = [headers, ...data].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", "table.csv");
@@ -320,9 +281,9 @@ export default function CustomGridFree() {
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Box>
-          <Typography variant="h5">Users</Typography>
+          <Typography variant="h5">Countries</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            List of all Users
+            List of all Countries
           </Typography>
         </Box>
         <Button
@@ -330,9 +291,12 @@ export default function CustomGridFree() {
           color="secondary"
           startIcon={<PersonAddAlt1 />}
           sx={{ mb: 2, height: "40px" }}
-          onClick={() => navigate("/user/add")}
+          onClick={() => {
+            console.log("Opening Add Modal");
+            setOpenAddModal(true); // Fixed typo
+          }}
         >
-          Add User
+          Add Country
         </Button>
       </Stack>
 
@@ -364,7 +328,6 @@ export default function CustomGridFree() {
           <DataGrid
             checkboxSelection
             rows={filteredRows || []}
-            // @ts-ignore
             columns={visibleColumns}
             pageSize={5}
             rowsPerPageOptions={[5, 10]}
@@ -380,22 +343,40 @@ export default function CustomGridFree() {
           />
         </Box>
       </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 100,
-          width: { xs: "80%", sm: "40%" },
-          display: "flex",
-          borderRadius: "10px",
-          justifyContent: "center",
-          backgroundColor:
-            theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
-          border: `1px solid ${theme.palette.divider}`,
-        }}
-      ></Box>
+
+      {(OpenAddModal || OpenEditModal) && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1300, // Increased zIndex
+            width: { xs: "80%", sm: "40%" },
+            display: "flex",
+            borderRadius: "10px",
+            justifyContent: "center",
+            backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          {OpenAddModal && (
+            <CitiesAndCountriesPageForm
+              fromWhere="countries"
+              setOpen={setOpenAddModal}
+              action="Add Country"
+            />
+          )}
+          {OpenEditModal && (
+            <CitiesAndCountriesPageForm
+              fromWhere="countries"
+              setOpen={setOpenEditModal}
+              action="Edit Country"
+              country={selectedCountry}
+            />
+          )}
+        </Box>
+      )}
     </Box>
   );
 }

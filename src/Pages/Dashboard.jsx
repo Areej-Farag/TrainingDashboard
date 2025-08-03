@@ -1,5 +1,13 @@
 import React from "react";
-import { Box, Button, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import MyPie from "../Components/Pie";
 import Geo from "../Components/Geo";
 import Line from "../Components/Line";
@@ -10,6 +18,8 @@ import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutl
 import AddShoppingCartOutlinedIcon from "@mui/icons-material/AddShoppingCartOutlined";
 import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import AllInclusiveOutlinedIcon from "@mui/icons-material/AllInclusiveOutlined";
+import Logo from "../Assests/Images/HayaLogo.jpg";
+import { useTranslation } from "react-i18next";
 
 const Pie1 = [
   {
@@ -68,13 +78,18 @@ const Pie4 = [
   },
 ];
 
+const user = localStorage.getItem("user")
+  ? JSON.parse(localStorage.getItem("user"))
+  : null;
+
 export default function Dashboard() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  return (
+  const {t} = useTranslation();
+  return user?.type === "0" ? (
     <Stack direction="column" spacing={9} sx={{ mt: 2, width: "100%" }}>
       <Button
-      style={{  marginBottom: isMobile? "20px" : "0px" }}
+        style={{ marginBottom: isMobile ? "20px" : "0px" }}
         variant="contained"
         sx={{
           width: "200px",
@@ -147,7 +162,7 @@ export default function Dashboard() {
       </Stack>
 
       <Stack
-      spacing={2}
+        spacing={2}
         direction={{ md: "row-reverse", xs: "column" }}
         sx={{
           my: 2,
@@ -156,81 +171,203 @@ export default function Dashboard() {
           justifyContent: { md: "space-between", xs: "center" },
         }}
       >
-        <Box sx={{ width: { md: "32%", xs: "100%" }, height: "100%" , overflow: "scroll", display: "flex", flexDirection: "column" , gap: "7px" }}>
-          
-          <Paper sx={{ p: 2}}>
-            <Typography variant="body1" color={theme.palette.secondary.main}>Recent Transactions</Typography>
+        <Box
+          sx={{
+            width: { md: "32%", xs: "100%" },
+            height: "100%",
+            overflow: "scroll",
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+          }}
+        >
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="body1" color={theme.palette.secondary.main}>
+              Recent Transactions
+            </Typography>
           </Paper>
-            <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-              <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-            <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-              <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-              <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-              <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
-              <Paper sx={{ p: 2 , display: "flex", justifyContent: "space-between" , alignItems: "center" , width: "100%" , height: "60px" }}>
-              <Box>
-                <Typography variant="subtitle1">sec2Paper</Typography>
-                <Typography variant="subtitle2">sec2Paper</Typography>
-              </Box>
-              <Typography variant="subtitle2">2/5/5555</Typography>
-              <Box>
-                <Button variant="contained" color="secondary" sx={{ width: "60px" , height: "40px"}}> $534.00</Button>
-              </Box>
-            </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              height: "60px",
+            }}
+          >
+            <Box>
+              <Typography variant="subtitle1">sec2Paper</Typography>
+              <Typography variant="subtitle2">sec2Paper</Typography>
+            </Box>
+            <Typography variant="subtitle2">2/5/5555</Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: "60px", height: "40px" }}
+              >
+                {" "}
+                $534.00
+              </Button>
+            </Box>
+          </Paper>
         </Box>
         <Paper
           sx={{
@@ -269,6 +406,12 @@ export default function Dashboard() {
           <Geo title="Geography based traffic" />
         </Paper>
       </Stack>
+    </Stack>
+  ) : (
+    <Stack sx={{ height: "80vh", justifyContent: "center", alignItems: "center" , gap: "20px"}}>
+
+      <Box sx={{ width: "300px", height: "300px"}}><img style={{ width: "100%", height: "100%" }} src={Logo} alt="Logo" /></Box>
+      <Typography variant="h3" sx={{ fontWeight: "bold" , color: "secondary.main"}}>{t("welcome")}</Typography>
     </Stack>
   );
 }

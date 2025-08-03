@@ -1,28 +1,30 @@
-import React from "react";
-
-// Material UI imports
-import Toolbar from "@mui/material/Toolbar";
-import MenuIcon from "@mui/icons-material/Menu";
-import IconButton from "@mui/material/IconButton";
+import React, { useEffect } from "react";
+import {
+  Toolbar,
+  IconButton,
+  InputBase,
+  Stack,
+  Button,
+  Menu,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+  alpha,
+} from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import { styled, alpha, useTheme } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
+import { styled } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import { Stack } from "@mui/material";
-import logo from "../Assests/Images/HayaLogo.jpg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import useMediaQuery from "@mui/material/useMediaQuery";
-
-// Icons imports
 import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import logo from "../Assests/Images/HayaLogo.jpg";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -71,7 +73,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -80,56 +81,68 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+
 function Header({ open, handleDrawerOpen, setMode }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const isMenuOpen = Boolean(anchorEl);
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [languageMenuAnchorEl, setLanguageMenuAnchorEl] = React.useState(null);
+  const [language, setLanguage] = React.useState("en");
+
+  const { i18n, t } = useTranslation();
+
+  // language setup
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang") || "en";
+    setLanguage(savedLang);
+    i18n.changeLanguage(savedLang);
+    document.documentElement.lang = savedLang;
+    document.documentElement.dir = savedLang === "ar" ? "rtl" : "ltr";
+  }, []);
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    setLanguageMenuAnchorEl(null);
+    setAnchorEl(null); // close mobile menu if open
   };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+
+  const handleButtonClick = (e) => setLanguageMenuAnchorEl(e.currentTarget);
+  const handleLanguageMenuClose = () => setLanguageMenuAnchorEl(null);
+
+  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
+  const toggleTheme = () => {
+    const newMode = theme.palette.mode === "dark" ? "light" : "dark";
+    setMode(newMode);
+    localStorage.setItem("mode", newMode);
   };
 
   return (
-    <AppBar
-      position="fixed"
-      open={open}
-      sx={{ background: theme.palette.primary.main }}
-    >
+    <AppBar position="fixed" open={open} sx={{ background: theme.palette.primary.main }}>
       <Toolbar>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={handleDrawerOpen}
           edge="start"
-          sx={{
-            marginRight: 5,
-            ...(open && { display: "none" }),
-          }}
+          sx={{ marginRight: 5, ...(open && { display: "none" }) }}
         >
-          <img
-            src={logo}
-            alt="logo"
-            style={{ width: "40px", height: "40px" }}
-          />
+          <img src={logo} alt="logo" style={{ width: "40px", height: "40px" }} />
         </IconButton>
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-          sx={{ width: "100%" }}
-        >
+
+        <Stack direction="row" justifyContent="flex-end" alignItems="center" sx={{ width: "100%" }}>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
+            <StyledInputBase placeholder={t("search") || "Search…"} inputProps={{ "aria-label": "search" }} />
           </Search>
+
           {isMobile ? (
             <>
               <IconButton color="inherit" onClick={handleMenuOpen}>
@@ -137,65 +150,36 @@ function Header({ open, handleDrawerOpen, setMode }) {
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
-                open={isMenuOpen}
+                open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
-                <MenuItem
-                  onClick={() => {
-                    setMode((mode) => (mode === "dark" ? "light" : "dark"));
-                    localStorage.setItem(
-                      "mode",
-                      theme.palette.mode === "dark" ? "light" : "dark"
-                    );
-                    handleMenuClose();
-                  }}
-                >
-                  {theme.palette.mode === "dark" ? (
-                    <WbSunnyOutlinedIcon />
-                  ) : (
-                    <BedtimeOutlinedIcon />
-                  )}
-                  &nbsp; Theme
+                <MenuItem onClick={() => { toggleTheme(); handleMenuClose(); }}>
+                  {theme.palette.mode === "dark" ? <WbSunnyOutlinedIcon /> : <BedtimeOutlinedIcon />}
+                  &nbsp; {t("theme")}
                 </MenuItem>
                 <MenuItem onClick={handleMenuClose}>
                   <NotificationsNoneOutlinedIcon />
-                  &nbsp; Notifications
+                  &nbsp; {t("notifications")}
                 </MenuItem>
                 <MenuItem onClick={handleMenuClose}>
                   <SettingsOutlinedIcon />
-                  &nbsp; Settings
+                  &nbsp; {t("settings")}
                 </MenuItem>
                 <MenuItem onClick={handleMenuClose}>
                   <PermIdentityOutlinedIcon />
-                  &nbsp; Profile
+                  &nbsp; {t("profile")}
+                </MenuItem>
+                <MenuItem onClick={() => handleLanguageChange(language === "en" ? "ar" : "en")}>
+                  🌐 {language === "en" ? "عربي" : "English"}
                 </MenuItem>
               </Menu>
             </>
           ) : (
-            <Stack direction="row" spacing={1}>
-              <IconButton
-                color="inherit"
-                onClick={() => {
-                  setMode((mode) => (mode === "dark" ? "light" : "dark"));
-                  localStorage.setItem(
-                    "mode",
-                    theme.palette.mode === "dark" ? "light" : "dark"
-                  );
-                }}
-              >
-                {theme.palette.mode === "dark" ? (
-                  <BedtimeOutlinedIcon />
-                ) : (
-                  <WbSunnyOutlinedIcon />
-                )}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <IconButton color="inherit" onClick={toggleTheme}>
+                {theme.palette.mode === "dark" ? <BedtimeOutlinedIcon /> : <WbSunnyOutlinedIcon />}
               </IconButton>
               <IconButton color="inherit">
                 <NotificationsNoneOutlinedIcon />
@@ -206,6 +190,27 @@ function Header({ open, handleDrawerOpen, setMode }) {
               <IconButton color="inherit">
                 <PermIdentityOutlinedIcon />
               </IconButton>
+              <Button
+                onClick={handleButtonClick}
+                sx={{
+                  padding: "5px",
+                  borderRadius: "5px",
+                  border: "1px solid white",
+                  color: "white",
+                }}
+              >
+                {language === "en" ? "English" : "العربية"}
+              </Button>
+              <Menu
+                anchorEl={languageMenuAnchorEl}
+                open={Boolean(languageMenuAnchorEl)}
+                onClose={handleLanguageMenuClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <MenuItem onClick={() => handleLanguageChange("en")}>English</MenuItem>
+                <MenuItem onClick={() => handleLanguageChange("ar")}>العربية</MenuItem>
+              </Menu>
             </Stack>
           )}
         </Stack>

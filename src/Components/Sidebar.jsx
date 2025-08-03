@@ -18,7 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
-import { useLocation, useNavigate, useNavigation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { purple } from "@mui/material/colors";
 
 // mui icons  import
@@ -33,10 +33,10 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import { CloseOutlined } from "@mui/icons-material";
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect, useState } from "react";
-import { useUserStore } from "../Stores/AuthStore";
+import { useAuthStore } from "../Stores/AuthStore";
 
 const drawerWidth = 240;
 const menuItems1 = [
@@ -56,9 +56,13 @@ const menuItems1 = [
     path: "/users",
   },
   {
-    text: "Invoices Balances",
+    text: "Cities",
     icon: <ListAltOutlinedIcon />,
-    path: "/invoices",
+    path: "/cities",
+  },  {
+    text: "Countries",
+    icon: <LanguageOutlinedIcon />,
+    path: "/countries",
   },
 ];
 
@@ -101,8 +105,8 @@ const menuItems3 = [
     path: "/geo",
   },
 ];
-export default function Sidebar({ open, handleDrawerClose, setOpen }) {
-  const { user, logOut, error, getAdminData } = useUserStore();
+export default function Sidebar({ open, handleDrawerClose }) {
+  const { user, logOut, error, getAdminData } = useAuthStore();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -468,6 +472,7 @@ export default function Sidebar({ open, handleDrawerClose, setOpen }) {
       >
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          // @ts-ignore
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >

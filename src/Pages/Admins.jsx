@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-// import '../Styles/main.Css';
+import "../Styles/main.css";
 import {
   Box,
   TextField,
@@ -22,8 +22,8 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useModal } from "../Context/ModalContext";
 import { useAdminStore } from "../Stores/AdminStore";
-import AdminPageForm from "../Components/Forms/AdminPageForm";
 import { PersonAddAlt1 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 // Define CustomToolbar as a separate component
 function CustomToolbar({
@@ -54,8 +54,7 @@ function CustomToolbar({
         mb: 2,
         p: 2,
         borderRadius: 2,
-        backgroundColor:
-          theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+        backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
         border: `1px solid ${theme.palette.divider}`,
       }}
     >
@@ -143,9 +142,7 @@ export default function CustomGridFree() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { admins, getAdmins, DestroyAdmin } = useAdminStore();
-  const [openAddForm, setOpenAddForm] = useState(false);
-  const [openEditForm, setOpenEditForm] = useState(false);
-  const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAdmins();
@@ -226,13 +223,11 @@ export default function CustomGridFree() {
                 height: "30px",
                 minWidth: "30px",
               }}
-              onClick={() => {
-                setSelectedAdmin(params.row);
-                setOpenEditForm(true);
-              }}
+              onClick={() => navigate(`/admin/edit/${params.row.id}`)}
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
+
             <Button
               onClick={() =>
                 showModal("Are you sure you want to delete this admin?", () => {
@@ -323,7 +318,7 @@ export default function CustomGridFree() {
           color="secondary"
           startIcon={<PersonAddAlt1 />}
           sx={{ mb: 2, height: "40px" }}
-          onClick={() => setOpenAddForm(true)}
+          onClick={() => navigate("/admin/add")}
         >
           Add Admin
         </Button>
@@ -388,18 +383,7 @@ export default function CustomGridFree() {
             theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
           border: `1px solid ${theme.palette.divider}`,
         }}
-      >
-        {openAddForm && (
-          <AdminPageForm action="Add Admin" setOpen={setOpenAddForm}  />
-        )}
-        {openEditForm && (
-          <AdminPageForm
-            action="Edit Admin"
-            setOpen={setOpenEditForm}
-            user={selectedAdmin}
-          />
-        )}
-      </Box>
+      ></Box>
     </Box>
   );
 }
