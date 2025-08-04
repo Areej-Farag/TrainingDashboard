@@ -11,14 +11,17 @@ import { useForm } from "react-hook-form";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCountriesStore } from "../../Stores/CountriesStore";
 import { useCitiesStore } from "../../Stores/CitiesStore";
+import { useTranslation } from "react-i18next";
 
 export default function CitiesAndCountriesPageForm({
   fromWhere,
-  action ,
+  action,
   city = {},
   country = {},
   setOpen,
 }) {
+  const {t} = useTranslation();
+
   const { editCountry, addCountry, getCountries, countries } =
     useCountriesStore();
   const { editCity, addCity } = useCitiesStore();
@@ -50,7 +53,6 @@ export default function CitiesAndCountriesPageForm({
       console.log("country from edit:", country);
     }
   }, [city, country, action, setValue]);
-
   const onSubmit = async (data) => {
     const formData = new FormData();
     if (fromWhere === "cities") {
@@ -105,7 +107,9 @@ export default function CitiesAndCountriesPageForm({
           color: "red",
         }}
       />
-      <Typography variant="h6">{action}</Typography>
+      <Typography variant="h6">
+        {action === "Add City" ? `${t("Add City")}` : `${t("Edit City")}`}
+      </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
         encType="multipart/form-data"
@@ -122,35 +126,35 @@ export default function CitiesAndCountriesPageForm({
                 required: "Name in Arabic is required",
                 pattern: {
                   value: /^[ا-ي\s]+$/i,
-                  message: "Invalid name in Arabic",
+                  message: `${t("Invalid name in Arabic")}`,
                 },
               })}
-              placeholder="Name in Arabic"
-              label="Name in Arabic"
+              placeholder={t("Name in Arabic")}
+              label={t("Name in Arabic")}
               error={!!errors.name}
               helperText={errors.name?.message}
             />
             <TextField
-              label="Name in English"
+              label={t("Name in English")}
               sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("name_en", {
-                required: "Name in English is required",
+                required: `${t("Name in English is required")}`,
                 pattern: {
                   value: /^[A-Za-z\s]+$/i, // Allow only letters/,
                   message: "Invalid name in English",
                 },
               })}
-              placeholder="Name in English"
+              placeholder={t("Name in English")}
               error={!!errors.email}
               helperText={errors.email?.message}
             />
           </Stack>
           {fromWhere === "cities" && (
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <label htmlFor="Admin Type">Country</label>
+              <label htmlFor="Admin Type">{t("Select Country")}</label>
               <select
                 style={{
                   height: "40px",
@@ -164,12 +168,14 @@ export default function CitiesAndCountriesPageForm({
                 error={!!errors.type}
               >
                 {countries?.map((country) => (
-                  <option style={{ color: theme.palette.text.primary }} key={country.id} value={country.id}>
-                    { country.name}
-                    {console.log("country:", country.id)}
+                  <option
+                    style={{ color: theme.palette.text.primary }}
+                    key={country.id}
+                    value={country.id}
+                  >
+                    {country.name}
                   </option>
-                )
-                )}
+                ))}
               </select>
               {errors.type && (
                 <Typography color="error" variant="caption">
@@ -179,7 +185,9 @@ export default function CitiesAndCountriesPageForm({
             </Box>
           )}
           <Button variant="contained" color="primary" type="submit">
-            {action === "Add City" || action === "Add Country" ? "Add" : "Update"}
+            {action === "Add City" || action === "Add Country"
+              ? `${t("Add")}`
+              : ` ${t("Edit")}`}
           </Button>
         </Stack>
       </form>

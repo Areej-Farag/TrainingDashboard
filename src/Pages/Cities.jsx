@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
   Box,
   TextField,
@@ -24,6 +25,7 @@ import { useModal } from "../Context/ModalContext";
 import { PersonAddAlt1 } from "@mui/icons-material";
 import { useCitiesStore } from "../Stores/CitiesStore";
 import CitiesAndCountriesPageForm from "../Components/Forms/CitiesAndCountriesForm";
+import { useTranslation } from "react-i18next";
 
 function CustomToolbar({
   search,
@@ -33,6 +35,7 @@ function CustomToolbar({
   exportCSV,
   MyColumns,
 }) {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -68,7 +71,7 @@ function CustomToolbar({
             inputRef={searchInputRef}
             sx={{ flexGrow: 1, minWidth: 200 }}
             size="small"
-            placeholder="Search..."
+            placeholder={t("search")}
             value={search}
             onChange={handleSearchChange}
             InputProps={{
@@ -92,9 +95,9 @@ function CustomToolbar({
             sx={{ color: theme.palette.secondary.dark }}
             onClick={exportCSV}
             variant="outlined"
-            startIcon={<FileDownloadIcon />}
+            startIcon={<FileDownloadIcon sx={{ ml: 1 }}/>}
           >
-            Export CSV
+            {t("Export CSV")}
           </Button>
         </Box>
         <Menu
@@ -142,7 +145,7 @@ export default function Cities() {
   const { getCities, cities, destroyCity } = useCitiesStore();
   const [selectedCity, setSelectedCity] = useState(null);
   const language = localStorage.getItem("lang");
-
+  const { t } = useTranslation();
   useEffect(() => {
     console.log("Fetching cities...");
     getCities();
@@ -155,42 +158,42 @@ export default function Cities() {
   const MyColumns = [
     {
       field: "IDnumber",
-      headerName: "ID",
+      headerName: `${t("ID")}`,
       width: isMobile ? 50 : 70,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "name",
-      headerName: "City Name",
+      headerName: `${t("Name")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Country",
-      headerName: "Country",
+      headerName: `${t("Country")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "CreatedAt",
-      headerName: "Created At",
+      headerName: `${t("Created At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "UpdatedAt",
-      headerName: "Updated At",
+      headerName: `${t("Updated At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Actions",
-      headerName: "Actions",
+      headerName: `${t("Actions")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
@@ -216,9 +219,12 @@ export default function Cities() {
             </Button>
             <Button
               onClick={() =>
-                showModal("Are you sure you want to delete this city?", () => {
-                  destroyCity(params.row.id);
-                })
+                showModal(
+                  t("Are you sure you want to delete this item?"),
+                  () => {
+                    destroyCity(params.row.id);
+                  }
+                )
               }
               sx={{
                 m: "7px",
@@ -243,7 +249,8 @@ export default function Cities() {
         id: City.id,
         IDnumber: City.id,
         name: City.name,
-        Country: language === "en" ? City.country.name_en : City.country.name_ar,
+        Country:
+          language === "en" ? City.country.name_en : City.country.name_ar,
         CreatedAt: new Date(City.created_at).toLocaleString(),
         UpdatedAt: new Date(City.updated_at).toLocaleString(),
       })) || []
@@ -291,22 +298,22 @@ export default function Cities() {
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Box>
-          <Typography variant="h5">Cities</Typography>
+          <Typography variant="h5">{t("Cities")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            List of all Cities
+            {t("List of Cities")}
           </Typography>
         </Box>
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1 />}
+          startIcon={<AddOutlinedIcon sx={{ ml: 2 }} />}
           sx={{ mb: 2, height: "40px" }}
           onClick={() => {
             console.log("Opening Add Modal");
             setOpenAddModal(true); // Fixed typo
           }}
         >
-          Add City
+          {t("Add City")}
         </Button>
       </Stack>
 
@@ -366,7 +373,8 @@ export default function Cities() {
             display: "flex",
             borderRadius: "10px",
             justifyContent: "center",
-            backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
             border: `1px solid ${theme.palette.divider}`,
           }}
         >

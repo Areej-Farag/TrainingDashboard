@@ -13,6 +13,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCitiesStore } from "../../Stores/CitiesStore";
 import { useCountriesStore } from "../../Stores/CountriesStore";
 import { useUserStore } from "../../Stores/UserStore";
+import { useTranslation } from "react-i18next";
 
 export default function UserPageForm() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function UserPageForm() {
   const [user, setUser] = useState(null);
   const { getCities, cities } = useCitiesStore();
   const { countries, getCountries } = useCountriesStore();
+  const {t} = useTranslation();
   const {
     register,
     handleSubmit,
@@ -125,7 +127,7 @@ export default function UserPageForm() {
       }}
     >
       <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
-        {action}
+        {action==="Add User"?t("Add User"):t("Edit User")}
       </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -145,14 +147,14 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> Name</label>
+              <label htmlFor="birth_date"> {t("Name")}</label>
               <TextField
                 sx={{
                   // border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
                 {...register("name", { required: "Name is required" })}
-                placeholder="Name"
+                placeholder={t("Name")}
                 
                 error={!!errors.name}
                 // @ts-ignore
@@ -166,7 +168,7 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> Email</label>
+              <label htmlFor="birth_date"> {t("Email")}</label>
               <TextField
                 
                 sx={{
@@ -180,7 +182,7 @@ export default function UserPageForm() {
                     message: "Invalid email address",
                   },
                 })}
-                placeholder="Email"
+                placeholder={t("Email")}
                 error={!!errors.email}
                 // @ts-ignore
                 helperText={errors.email?.message}
@@ -199,7 +201,7 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> Phone</label>
+              <label htmlFor="birth_date"> {t("Phone")}</label>
               <TextField
                 
                 sx={{
@@ -207,7 +209,7 @@ export default function UserPageForm() {
                   width:  "100%" ,
                 }}
                 {...register("phone", { required: "Phone is required" })}
-                placeholder="Phone"
+                placeholder={t("Phone")}
                 error={!!errors.phone}
                 // @ts-ignore
                 helperText={errors.phone?.message}
@@ -220,7 +222,7 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date">Birth Date</label>
+              <label htmlFor="birth_date">{t("Birth Date")}</label>
               <TextField
                 type="date"
                 sx={{
@@ -239,7 +241,7 @@ export default function UserPageForm() {
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "50%" }}
             >
-              <label htmlFor="City">City</label>
+              <label htmlFor="City">{t("City")}</label>
               <select
                 style={{
                   height: "40px",
@@ -268,7 +270,7 @@ export default function UserPageForm() {
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "50%" }}
             >
-              <label htmlFor="Country">Country</label>
+              <label htmlFor="Country">{t("Country")}</label>
               <select
                 style={{
                   height: "40px",
@@ -299,7 +301,7 @@ export default function UserPageForm() {
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "50%" }}
             >
-              <label htmlFor="Admin Type">User Gender</label>
+              <label htmlFor="Admin Type">{t("Gender")}</label>
               <select
                 style={{
                   height: "40px",
@@ -314,10 +316,10 @@ export default function UserPageForm() {
                 error={!!errors.type}
               >
                 <option value="" disabled>
-                  Select Gender
+                  {t("Select Gender")}
                 </option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
+                <option value="1">{t("Male")}</option>
+                <option value="2">{t("Female")}</option>
               </select>
               {errors.type && (
                 <Typography color="error" variant="caption">
@@ -361,12 +363,12 @@ export default function UserPageForm() {
           </Stack>
 
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <label htmlFor="image">User Image</label>
+            <label htmlFor="image">{t("User Image")}</label>
             <input type="file" {...register("image")} />
           </Box>
 
           <Button variant="contained" color="primary" type="submit">
-            {action === "Add User" ? "Add" : "Update"}
+            {action === "Add User" ?` ${t("Add")}` : `${t("Edit")}`}
           </Button>
         </Stack>
       </form>

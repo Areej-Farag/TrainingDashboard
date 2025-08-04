@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useTransition } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
 
@@ -26,6 +26,7 @@ import AdminPageForm from "../Components/Forms/AdminPageForm";
 import { PersonAddAlt1 } from "@mui/icons-material";
 import { useUserStore } from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Define CustomToolbar as a separate component
 function CustomToolbar({
@@ -36,6 +37,7 @@ function CustomToolbar({
   exportCSV,
   MyColumns,
 }) {
+  const {t} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -72,7 +74,7 @@ function CustomToolbar({
             inputRef={searchInputRef}
             sx={{ flexGrow: 1, minWidth: 200 }}
             size="small"
-            placeholder="Search..."
+            placeholder={`${t("search")}... `}
             value={search}
             onChange={handleSearchChange}
             InputProps={{
@@ -97,9 +99,9 @@ function CustomToolbar({
             sx={{ color: theme.palette.secondary.dark }}
             onClick={exportCSV}
             variant="outlined"
-            startIcon={<FileDownloadIcon />}
+            startIcon={<FileDownloadIcon sx={{ ml: 1 }} />}
           >
-            Export CSV
+            {t("Export CSV")}
           </Button>
         </Box>
 
@@ -139,13 +141,13 @@ function CustomToolbar({
   );
 }
 
-export default function CustomGridFree() {
+export default function Users() {
   const { showModal } = useModal();
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { getUsers, loading, error, users } = useUserStore();
-
+  const {t} = useTranslation();
   useEffect(() => {
     getUsers();
   }, []);
@@ -157,21 +159,21 @@ export default function CustomGridFree() {
   const MyColumns = [
     {
       field: "IDnumber",
-      headerName: "ID",
+      headerName: `${t("ID")}`,
       width: isMobile ? 50 : 70,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "name",
-      headerName: "User Name",
+      headerName: `${t("Name")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Email",
-      headerName: "Email",
+      headerName:` ${t("Email")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
@@ -179,14 +181,14 @@ export default function CustomGridFree() {
     },
     {
       field: "Type",
-      headerName: "Type",
+      headerName: `${t("Type")}`,
       width: 60,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Phone",
-      headerName: "Phone",
+      headerName: `${t("Phone")}`,
       width: isMobile ? 120 : 150,
       align: "center",
       headerAlign: "center",
@@ -194,7 +196,7 @@ export default function CustomGridFree() {
     },
     {
       field: "gender",
-      headerName: "Gender",
+      headerName: `${t("Gender")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
@@ -202,21 +204,21 @@ export default function CustomGridFree() {
     },
     {
       field: "CreatedAt",
-      headerName: "Created At",
+      headerName: `${t("Created At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "UpdatedAt",
-      headerName: "Updated At",
+      headerName: `${t("Updated At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Actions",
-      headerName: "Actions",
+      headerName: `${t("Actions")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
@@ -241,7 +243,7 @@ export default function CustomGridFree() {
             </Button>
             <Button
               onClick={() =>
-                showModal("Are you sure you want to delete this admin?", () => {
+                showModal(t("Are you sure you want to delete this item?"), () => {
                   // DestroyAdmin(adminId);
                 })
               }
@@ -320,19 +322,19 @@ export default function CustomGridFree() {
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Box>
-          <Typography variant="h5">Users</Typography>
+          <Typography variant="h5">{t("Users")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            List of all Users
+            {t("List of Users")}
           </Typography>
         </Box>
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1 />}
+          startIcon={<PersonAddAlt1 sx={{ml: 1 }}/>}
           sx={{ mb: 2, height: "40px" }}
           onClick={() => navigate("/user/add")}
         >
-          Add User
+         {t("Add User")}
         </Button>
       </Stack>
 

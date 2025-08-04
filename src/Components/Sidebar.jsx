@@ -1,7 +1,6 @@
 import MuiDrawer from "@mui/material/Drawer";
 import {
   Button,
-  ButtonBase,
   Stack,
   Typography,
   Snackbar,
@@ -21,7 +20,7 @@ import Avatar from "@mui/material/Avatar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { purple } from "@mui/material/colors";
 
-// mui icons  import
+// mui icons import
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -33,38 +32,13 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../Stores/AuthStore";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
-const menuItems1 = [
-  {
-    text: "Dashboard",
-    icon: <HomeOutlinedIcon />,
-    path: "/",
-  },
-  {
-    text: "Admins",
-    icon: <GroupOutlinedIcon />,
-    path: "/admins",
-  },
-  {
-    text: "Users",
-    icon: <ContactsOutlinedIcon />,
-    path: "/users",
-  },
-  {
-    text: "Cities",
-    icon: <ListAltOutlinedIcon />,
-    path: "/cities",
-  },  {
-    text: "Countries",
-    icon: <LanguageOutlinedIcon />,
-    path: "/countries",
-  },
-];
 
 const menuItems2 = [
   {
@@ -105,7 +79,9 @@ const menuItems3 = [
     path: "/geo",
   },
 ];
+
 export default function Sidebar({ open, handleDrawerClose }) {
+  const { t, i18n } = useTranslation();
   const { user, logOut, error, getAdminData } = useAuthStore();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -117,6 +93,35 @@ export default function Sidebar({ open, handleDrawerClose }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+  const direction = i18n.dir();
+
+  const menuItems1 = [
+    {
+      text: t("Dashboard"),
+      icon: <HomeOutlinedIcon />,
+      path: "/",
+    },
+    {
+      text: t("Admins"),
+      icon: <GroupOutlinedIcon />,
+      path: "/admins",
+    },
+    {
+      text: t("Users"),
+      icon: <ContactsOutlinedIcon />,
+      path: "/users",
+    },
+    {
+      text: t("Cities"),
+      icon: <ListAltOutlinedIcon />,
+      path: "/cities",
+    },
+    {
+      text: t("Countries"),
+      icon: <LanguageOutlinedIcon />,
+      path: "/countries",
+    },
+  ];
 
   const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -163,6 +168,7 @@ export default function Sidebar({ open, handleDrawerClose }) {
       },
     ],
   }));
+
   const handleLogOut = async () => {
     const success = await logOut();
     if (success) {
@@ -179,21 +185,21 @@ export default function Sidebar({ open, handleDrawerClose }) {
       });
     }
   };
+
   const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: direction === "rtl" ? "flex-start" : "flex-end",
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   }));
 
   useEffect(() => {
     if (token) {
       getAdminData();
-      console.log(user);
     }
   }, [token]);
+
   return (
     <div>
       <Drawer
@@ -201,23 +207,24 @@ export default function Sidebar({ open, handleDrawerClose }) {
           position: "fixed",
           zIndex: 100,
           background: theme.palette.primary.main,
+          "& .MuiDrawer-paper": {
+            background: theme.palette.primary.main,
+            direction: direction,
+          },
         }}
         variant={!isMobile ? "permanent" : open ? "permanent" : "temporary"}
+        anchor={direction === "rtl" ? "right" : "left"}
         open={open}
       >
-        <DrawerHeader sx={{ background: theme.palette.primary.main }}>
+        <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
+            {direction === "rtl" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider sx={{ background: "#6A2181" }} />
         <Stack
-          justifyContent={"center"}
-          alignItems={"center"}
+          justifyContent="center"
+          alignItems="center"
           sx={{ background: theme.palette.primary.main }}
         >
           {token ? (
@@ -231,22 +238,29 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   my: 1,
                   border: 2,
                   borderColor: "grey",
-                  transition: "all ease-in-out 1s",
+                  transition: "all ease-in-out 0.3s",
                   "& img": {
                     objectFit: "contain",
                   },
                 }}
               />
-
               <Typography
-                sx={{ fontSize: open ? 18 : 0 }}
-                style={{ transition: " all ease-in-out 1s" }}
+                sx={{
+                  fontSize: open ? 18 : 0,
+                  transition: "all ease-in-out 0.3s",
+                  direction: direction,
+                  textAlign: "center",
+                }}
               >
                 {user?.name}
               </Typography>
               <Typography
-                sx={{ fontSize: open ? 14 : 0 }}
-                style={{ transition: " all ease-in-out 1s" }}
+                sx={{
+                  fontSize: open ? 14 : 0,
+                  transition: "all ease-in-out 0.3s",
+                  direction: direction,
+                  textAlign: "center",
+                }}
                 color="primary"
               >
                 {user?.type}
@@ -262,11 +276,9 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   }}
                   onClick={handleLogOut}
                 >
-                  Log Out
+                  {t("Logout")}
                 </Button>
-              ) : (
-                ""
-              )}
+              ) : null}
             </>
           ) : open ? (
             <Button
@@ -279,13 +291,10 @@ export default function Sidebar({ open, handleDrawerClose }) {
               }}
               onClick={() => navigate("/login")}
             >
-              Login
+              {t("Login")}
             </Button>
-          ) : (
-            ""
-          )}
+          ) : null}
         </Stack>
-
         <Divider sx={{ background: "#6A2181" }} />
         <List sx={{ background: theme.palette.primary.main }}>
           {menuItems1.map((item) => (
@@ -302,44 +311,29 @@ export default function Sidebar({ open, handleDrawerClose }) {
                           ? purple[300]
                           : purple[200]
                         : "",
+                    justifyContent: open ? "initial" : "center",
                   },
-                  open
-                    ? {
-                        justifyContent: "initial",
-                      }
-                    : {
-                        justifyContent: "center",
-                      },
                 ]}
               >
                 <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: "center",
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: "auto",
-                        },
-                  ]}
+                  sx={{
+                    minWidth: 0,
+                    justifyContent: "center",
+                    mr: open ? (direction === "rtl" ? 0 : 3) : "auto",
+                    ml: open ? (direction === "rtl" ? 3 : 0) : "auto",
+                  }}
                 >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.text}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    "& .MuiTypography-root": {
+                      direction: direction,
+                      textAlign: direction === "rtl" ? "right" : "left",
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -361,44 +355,29 @@ export default function Sidebar({ open, handleDrawerClose }) {
                           ? purple[300]
                           : purple[400]
                         : "",
+                    justifyContent: open ? "initial" : "center",
                   },
-                  open
-                    ? {
-                        justifyContent: "initial",
-                      }
-                    : {
-                        justifyContent: "center",
-                      },
                 ]}
               >
                 <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: "center",
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: "auto",
-                        },
-                  ]}
+                  sx={{
+                    minWidth: 0,
+                    justifyContent: "center",
+                    mr: open ? (direction === "rtl" ? 0 : 3) : "auto",
+                    ml: open ? (direction === "rtl" ? 3 : 0) : "auto",
+                  }}
                 >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.text}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    "& .MuiTypography-root": {
+                      direction: direction,
+                      textAlign: direction === "rtl" ? "right" : "left",
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -420,44 +399,29 @@ export default function Sidebar({ open, handleDrawerClose }) {
                           ? purple[300]
                           : purple[400]
                         : "",
+                    justifyContent: open ? "initial" : "center",
                   },
-                  open
-                    ? {
-                        justifyContent: "initial",
-                      }
-                    : {
-                        justifyContent: "center",
-                      },
                 ]}
               >
                 <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: "center",
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: "auto",
-                        },
-                  ]}
+                  sx={{
+                    minWidth: 0,
+                    justifyContent: "center",
+                    mr: open ? (direction === "rtl" ? 0 : 3) : "auto",
+                    ml: open ? (direction === "rtl" ? 3 : 0) : "auto",
+                  }}
                 >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.text}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    "& .MuiTypography-root": {
+                      direction: direction,
+                      textAlign: direction === "rtl" ? "right" : "left",
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -472,7 +436,6 @@ export default function Sidebar({ open, handleDrawerClose }) {
       >
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-          // @ts-ignore
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >

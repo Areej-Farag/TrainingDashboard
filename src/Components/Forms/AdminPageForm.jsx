@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAdminStore } from "../../Stores/AdminStore";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AdminPageForm() {
   const { id } = useParams();
@@ -18,7 +19,8 @@ export default function AdminPageForm() {
   const action = id ? "Edit Admin" : "Add Admin";
   const { admins, AddAdmin, UpdateAdmin } = useAdminStore();
   const [user, setUser] = useState(null);
-
+  const { t } = useTranslation();
+  
   const {
     register,
     handleSubmit,
@@ -89,7 +91,9 @@ export default function AdminPageForm() {
         position: "relative",
       }}
     >
-      <Typography variant="h4" sx={{color: theme.palette.primary.main}}>{action}</Typography>
+      <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
+        {action === "Add Admin" ? `${ t("Add Admin")} `: `${ t("Edit Admin")}`}
+      </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
         encType="multipart/form-data"
@@ -102,66 +106,74 @@ export default function AdminPageForm() {
                 border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
-              {...register("name", { required: "Name is required" })}
-              placeholder="Name"
-              label="Name"
+              {...register("name", {
+                required: ` ${t("Name")} ${t("is required")}`,
+              })}
+              placeholder={t("Name")}
+              label={t("Name")}
               error={!!errors.name}
               // @ts-ignore
               helperText={errors.name?.message}
             />
             <TextField
-              label="Email"
+              label={t("Email")}
               sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("email", {
-                required: "Email is required",
+                required: ` ${t("Email")} ${t("is required")} `,
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email address",
+                  message: `${t("Invalid")} ${t("email")} }`,
                 },
               })}
-              placeholder="Email"
+              placeholder={t("Email")}
               error={!!errors.email}
               // @ts-ignore
               helperText={errors.email?.message}
             />
             <TextField
-              label="Phone"
+              label={t("Phone")}
               sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
-              {...register("phone", { required: "Phone is required" })}
-              placeholder="Phone"
+              {...register("phone", {
+                required: ` ${t("Phone")} ${t("is required")}`,
+              })}
+              placeholder={t("Phone")}
               error={!!errors.phone}
               // @ts-ignore
               helperText={errors.phone?.message}
             />
-        {action === "Add Admin" &&    <TextField
-              label="Password"
-              sx={{
-                border: `1px solid ${theme.palette.divider}`,
-                width: "100%",
-              }}
-              {...register("password", {
-                required:
-                  action === "Add Admin" ? "Password is required" : false,
-              })}
-              placeholder="Password"
-              type="password"
-              error={!!errors.password}
-              // @ts-ignore
-              helperText={errors.password?.message}
-            />}
+            {action === "Add Admin" && (
+              <TextField
+                label={t("Password")}
+                sx={{
+                  border: `1px solid ${theme.palette.divider}`,
+                  width: "100%",
+                }}
+                {...register("password", {
+                  required:
+                    action === "Add Admin"
+                      ? ` ${t("Password")} ${t("is required")}`
+                      : false,
+                })}
+                placeholder={t("Password")}
+                type="password"
+                error={!!errors.password}
+                // @ts-ignore
+                helperText={errors.password?.message}
+              />
+            )}
           </Stack>
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <label htmlFor="image">Admin Image</label>
+            <label htmlFor="image">{t("Admin Image")}</label>
             <input type="file" {...register("image")} />
           </Box>
           <Box>
-            <label htmlFor="Admin Type">Admin Type</label>
+            <label htmlFor="Admin Type" style={{direction:"ltr"}}>{t("Admin Type")}</label>
             <select
               style={{
                 height: "40px",
@@ -175,7 +187,7 @@ export default function AdminPageForm() {
               // @ts-ignore
               error={!!errors.type}
             >
-              <option value="">Select Type</option>
+              <option value="">{t("Select Type")}</option>
               <option value="1">Male</option>
               <option value="2">Other</option>
               <option value="3">Admin</option>
@@ -190,7 +202,7 @@ export default function AdminPageForm() {
             )}
           </Box>
           <Button variant="contained" color="primary" type="submit">
-            {action === "Add Admin" ? "Add" : "Update"}
+            {action === "Add Admin" ? `${t("Add")}` : ` ${t("Edit")}`}
           </Button>
         </Stack>
       </form>

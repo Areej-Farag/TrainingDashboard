@@ -24,6 +24,7 @@ import { useModal } from "../Context/ModalContext";
 import { useAdminStore } from "../Stores/AdminStore";
 import { PersonAddAlt1 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Define CustomToolbar as a separate component
 function CustomToolbar({
@@ -38,6 +39,7 @@ function CustomToolbar({
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const searchInputRef = useRef(null); // Add ref for TextField
+  const { t } = useTranslation();
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
@@ -70,7 +72,7 @@ function CustomToolbar({
             inputRef={searchInputRef} // Attach ref to TextField
             sx={{ flexGrow: 1, minWidth: 200 }}
             size="small"
-            placeholder="Search..."
+            placeholder={`${t("search")}…`}
             value={search}
             onChange={handleSearchChange} // Use custom handler
             InputProps={{
@@ -95,9 +97,9 @@ function CustomToolbar({
             sx={{ color: theme.palette.secondary.dark }}
             onClick={exportCSV}
             variant="outlined"
-            startIcon={<FileDownloadIcon />}
+            startIcon={<FileDownloadIcon sx={{ ml: 1 }}/>}
           >
-            Export CSV
+            {t("Export CSV")}
           </Button>
         </Box>
 
@@ -137,12 +139,13 @@ function CustomToolbar({
   );
 }
 
-export default function CustomGridFree() {
+export default function Admins() {
   const { showModal } = useModal();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { admins, getAdmins, DestroyAdmin } = useAdminStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     getAdmins();
@@ -155,21 +158,22 @@ export default function CustomGridFree() {
   const MyColumns = [
     {
       field: "IDnumber",
-      headerName: "ID",
+      headerName: `${t("ID")}`,
       width: isMobile ? 50 : 70,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "name",
-      headerName: "Admin Name",
+      headerName:` ${t("Name")}`,
+    
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Email",
-      headerName: "Email",
+      headerName: `${t("Email")}`,
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
@@ -177,14 +181,14 @@ export default function CustomGridFree() {
     },
     {
       field: "Type",
-      headerName: "Type",
+      headerName: `${t("Type")}`,
       width: 60,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "Phone",
-      headerName: "Phone",
+      headerName: `${t("Phone")}`,
       width: isMobile ? 120 : 150,
       align: "center",
       headerAlign: "center",
@@ -192,14 +196,14 @@ export default function CustomGridFree() {
     },
     {
       field: "CreatedAt",
-      headerName: "Created At",
+      headerName: `${t("Created At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
     },
     {
       field: "UpdatedAt",
-      headerName: "Updated At",
+      headerName: `${t("Updated At")}`,
       width: 170,
       align: "center",
       headerAlign: "center",
@@ -308,9 +312,9 @@ export default function CustomGridFree() {
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Box>
-          <Typography variant="h5">Admins</Typography>
+          <Typography variant="h5">{t("Admins")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            List of all Admins
+            {t("List of Admins")}
           </Typography>
         </Box>
         <Button
@@ -320,7 +324,7 @@ export default function CustomGridFree() {
           sx={{ mb: 2, height: "40px" }}
           onClick={() => navigate("/admin/add")}
         >
-          Add Admin
+         <Typography variant="body1" sx={{ mx: 2 }}>{t("Add Admin")}</Typography>
         </Button>
       </Stack>
 

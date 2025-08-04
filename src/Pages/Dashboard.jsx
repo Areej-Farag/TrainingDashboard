@@ -98,7 +98,7 @@ export default function Dashboard() {
         }}
       >
         <DownloadOutlined />
-        Download Report{" "}
+        Download Report
       </Button>
       <Stack
         direction={{ md: "row", xs: "column" }}

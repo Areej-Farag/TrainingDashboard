@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
 import { ModalProvider } from "./Context/ModalContext";
 
 // My Components imports
@@ -16,6 +15,7 @@ import Sidebar from "./Components/Sidebar";
 import { myTheme } from "./Theme";
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
+
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -48,7 +48,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <ModalProvider>
-        <Box sx={{ display: "flex", paddingLeft: isMobile ? "0px" : "50px" }}>
+        <Box sx={{ display: "flex" }}>
           <CssBaseline />
           <Header
             open={open}
@@ -62,7 +62,7 @@ export default function App() {
           />
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
-            <Outlet></Outlet>
+            <Outlet />
           </Box>
         </Box>
       </ModalProvider>

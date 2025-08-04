@@ -12,9 +12,11 @@ import React from "react";
 import Logo from "../Assests/Images/HayaLogo.jpg";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../Stores/AuthStore";
+import { useTranslation } from "react-i18next";
 
 export default function LogIn() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { LogIn, error } = useAuthStore();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -89,15 +91,15 @@ export default function LogIn() {
                 textAlign: "center",
               }}
             >
-              LogIn
+              {t("LogIn")}
             </Typography>
             <TextField
-              label="Email"
+              label={t("Email")}
               variant="outlined"
               onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
-              label="Password"
+              label={t("Password")}
               type="password"
               variant="outlined"
               onChange={(e) => setPassword(e.target.value)}
@@ -108,8 +110,8 @@ export default function LogIn() {
               justifyContent={"center"}
               alignItems={"center"}
             >
-              <Typography variant="body1" sx={{ textAlign: "center" }}>
-                Don't have an account?
+              {/* <Typography variant="body1" sx={{ textAlign: "center" }}>
+                {t("DontHaveAccount")}?
               </Typography>
               <Link
                 to={"/signup"}
@@ -120,7 +122,7 @@ export default function LogIn() {
                 }}
               >
                 SignUp
-              </Link>
+              </Link> */}
 
               <Button
                 variant="contained"
@@ -128,7 +130,7 @@ export default function LogIn() {
                 sx={{ width: "60px", height: "40px" }}
                 onClick={handleLogin}
               >
-                LogIn
+                {t("LogIn")}
               </Button>
             </Stack>
           </Stack>

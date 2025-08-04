@@ -27,17 +27,17 @@ const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open, direction }) => ({
-  zIndex: theme.zIndex.drawer, // Below drawer
-  transition: theme.transitions.create(["margin"], {
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: direction === "ltr" ? drawerWidth : 0,
-    marginRight: direction === "rtl" ? drawerWidth : 0,
+    marginRight: theme.direction === "rtl" ? drawerWidth : 0,
+    marginLeft: theme.direction === "ltr" ? drawerWidth : 0,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["margin"], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -77,10 +77,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft:
-      theme.direction === "rtl" ? 0 : `calc(1em + ${theme.spacing(4)})`,
-    paddingRight:
-      theme.direction === "rtl" ? `calc(1em + ${theme.spacing(4)})` : 0,
+    paddingLeft: theme.direction === "rtl" ? 0 : `calc(1em + ${theme.spacing(4)})`,
+    paddingRight: theme.direction === "rtl" ? `calc(1em + ${theme.spacing(4)})` : 0,
     textAlign: theme.direction === "rtl" ? "right" : "left",
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -102,6 +100,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
     const savedLang = localStorage.getItem("lang") || "en";
     setLanguage(savedLang);
     i18n.changeLanguage(savedLang);
+    document.documentElement.lang = savedLang;
     document.documentElement.dir = savedLang === "ar" ? "rtl" : "ltr";
   }, [i18n]);
 
@@ -109,6 +108,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
     setLanguage(lang);
     i18n.changeLanguage(lang);
     localStorage.setItem("lang", lang);
+    document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     setLanguageMenuAnchorEl(null);
     setAnchorEl(null);
@@ -126,12 +126,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
   };
 
   return (
-    <AppBar
-      position="fixed"
-      open={open}
-      direction={i18n.dir()}
-      sx={{ background: theme.palette.primary.main }}
-    >
+    <AppBar position="fixed" open={open} sx={{ background: theme.palette.primary.main }}>
       <Toolbar sx={{ direction: i18n.dir() }}>
         <IconButton
           color="inherit"
@@ -144,11 +139,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
             ...(open && { display: "none" }),
           }}
         >
-          <img
-            src={logo}
-            alt="logo"
-            style={{ width: "40px", height: "40px" }}
-          />
+          <img src={logo} alt="logo" style={{ width: "40px", height: "40px" }} />
         </IconButton>
 
         <Stack
@@ -169,7 +160,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
 
           <Stack
             direction="row"
-            spacing={2}
+            spacing={1}
             alignItems="center"
             sx={{ direction: i18n.dir() }}
           >
@@ -191,17 +182,8 @@ function Header({ open, handleDrawerOpen, setMode }) {
                     horizontal: i18n.dir() === "rtl" ? "left" : "right",
                   }}
                 >
-                  <MenuItem
-                    onClick={() => {
-                      toggleTheme();
-                      handleMenuClose();
-                    }}
-                  >
-                    {theme.palette.mode === "dark" ? (
-                      <WbSunnyOutlinedIcon />
-                    ) : (
-                      <BedtimeOutlinedIcon />
-                    )}
+                  <MenuItem onClick={() => { toggleTheme(); handleMenuClose(); }}>
+                    {theme.palette.mode === "dark" ? <WbSunnyOutlinedIcon /> : <BedtimeOutlinedIcon />}
                     &nbsp; {t("theme")}
                   </MenuItem>
                   <MenuItem onClick={handleMenuClose}>
@@ -216,11 +198,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
                     <PermIdentityOutlinedIcon />
                     &nbsp; {t("profile")}
                   </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      handleLanguageChange(language === "en" ? "ar" : "en")
-                    }
-                  >
+                  <MenuItem onClick={() => handleLanguageChange(language === "en" ? "ar" : "en")}>
                     🌐 {language === "en" ? "عربي" : "English"}
                   </MenuItem>
                 </Menu>
@@ -228,11 +206,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
             ) : (
               <>
                 <IconButton color="inherit" onClick={toggleTheme}>
-                  {theme.palette.mode === "dark" ? (
-                    <BedtimeOutlinedIcon />
-                  ) : (
-                    <WbSunnyOutlinedIcon />
-                  )}
+                  {theme.palette.mode === "dark" ? <BedtimeOutlinedIcon /> : <WbSunnyOutlinedIcon />}
                 </IconButton>
                 <IconButton color="inherit">
                   <NotificationsNoneOutlinedIcon />
@@ -268,12 +242,8 @@ function Header({ open, handleDrawerOpen, setMode }) {
                     horizontal: i18n.dir() === "rtl" ? "left" : "right",
                   }}
                 >
-                  <MenuItem onClick={() => handleLanguageChange("en")}>
-                    English
-                  </MenuItem>
-                  <MenuItem onClick={() => handleLanguageChange("ar")}>
-                    العربية
-                  </MenuItem>
+                  <MenuItem onClick={() => handleLanguageChange("en")}>English</MenuItem>
+                  <MenuItem onClick={() => handleLanguageChange("ar")}>العربية</MenuItem>
                 </Menu>
               </>
             )}
