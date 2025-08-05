@@ -62,17 +62,17 @@ export const useUserStore = create((set, get) => ({
       const newUser = response.data.user;
       setUsers([...(users || []), newUser]);
       await getUsers();
-      return newUser;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
+        console.log(error);
       }
       return null;
     } finally {
       setLoading(false);
     }
   },
-  getInteresties : async () => {
+  getInteresties: async () => {
     const { setInteresties, setError, setLoading } = get();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -82,17 +82,18 @@ export const useUserStore = create((set, get) => ({
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://hayaapp.online/api/interests?lang=${localStorage.getItem("lang")}`,
+        `https://hayaapp.online/api/interests?lang=${localStorage.getItem(
+          "lang"
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(response.data.interesties);
-      const interesties = response.data.interesties;
+      console.log(response.data.data);
+      const interesties = response.data.data;
       setInteresties(interesties);
-      return interesties;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -102,5 +103,33 @@ export const useUserStore = create((set, get) => ({
       setLoading(false);
     }
   },
-  
+  updateUser: async (data) => {
+    const { setError, setLoading, setUsers, users } = get();
+    const Token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        "https://hayaapp.online/api/admin/user/update",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${Token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const updatedUser = response.data.data;
+      const updatedUsers = users.map((admin) =>
+        admin.id === data.id ? { ...admin, ...updatedUser } : admin
+      );
+      console.log("updatedUsers", updatedUsers);
+      setUsers(updatedUsers);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  },
 }));

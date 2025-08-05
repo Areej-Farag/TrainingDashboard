@@ -6,6 +6,8 @@ import {
   TextField,
   useTheme,
   Box,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,11 +21,13 @@ export default function UserPageForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const action = id ? "Edit User" : "Add User";
-  const {users} = useUserStore();
+  const { users, interesties, getInteresties, addNewUser, updateUser } = useUserStore();
   const [user, setUser] = useState(null);
   const { getCities, cities } = useCitiesStore();
   const { countries, getCountries } = useCountriesStore();
-  const {t} = useTranslation();
+  const [selectedInterests, setSelectedInterests] = useState([]);
+
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -45,40 +49,77 @@ export default function UserPageForm() {
   useEffect(() => {
     getCities();
     getCountries();
+    getInteresties();
   }, []);
 
   useEffect(() => {
-    if (action === "Edit User" && user) {
+    if (action === "Edit User" && user && interesties?.length > 0) {
       setValue("id", user.id || "");
       setValue("name", user.name || "");
       setValue("email", user.email || "");
       setValue("phone", user.phone || "");
-      setValue("type", user.type || "");
       setValue("gender", user.gender || "");
       setValue("birth_date", user.birth_date || "");
       setValue("age", user.age || "");
       setValue("country_id", user.country_id || "");
       setValue("city_id", user.city_id || "");
-      setValue("activity", user.activity || "");
-      setValue("interests", user.interests || "");
+      // Ensure interests is an array of numbers
+      let interests = [];
+      if (Array.isArray(user.interests)) {
+        interests = user.interests.map(Number); // Convert to numbers
+      } else if (user.interests) {
+        try {
+          interests = JSON.parse(user.interests).map(Number); // Parse and convert to numbers
+        } catch (e) {
+          console.error("Error parsing user.interests:", e);
+        }
+      }
+      // Validate interests against available interesties
+      const validInterests = interests.filter((id) =>
+        interesties.some((interest) => interest.id === id)
+      );
+      console.log("Raw user.interests:", user.interests);
+      console.log("Parsed interests:", interests);
+      console.log("Valid interests:", validInterests);
+      console.log("Available interesties:", interesties);
+      setValue("interests", validInterests);
+      setSelectedInterests(validInterests);
       setValue("image", user.image || "");
     }
-  }, [user, action]);
+  }, [user, action, setValue, interesties]);
+
+  useEffect(() => {
+    console.log("Current selectedInterests:", selectedInterests);
+  }, [selectedInterests]);
+
   function calculateAge(birthDateString) {
-  const birthDate = new Date(birthDateString);
-  const today = new Date();
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
 
-  let age = today.getFullYear() - birthDate.getFullYear();
+    let age = today.getFullYear() - birthDate.getFullYear();
 
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  const dayDiff = today.getDate() - birthDate.getDate();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
 
-  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-    age--;   }
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
 
-  return age;
-}
+    return age;
+  }
 
+  const handleInterestChange = (interestId, checked) => {
+    const id = Number(interestId); // Ensure interestId is a number
+    let updatedInterests;
+    if (checked) {
+      updatedInterests = [...selectedInterests, id];
+    } else {
+      updatedInterests = selectedInterests.filter((existingId) => existingId !== id);
+    }
+    setSelectedInterests(updatedInterests);
+    setValue("interests", updatedInterests);
+    console.log("Selected Interests:", updatedInterests);
+  };
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -86,31 +127,30 @@ export default function UserPageForm() {
     formData.append("name", data.name);
     formData.append("email", data.email);
     formData.append("phone", data.phone);
-    formData.append("type", data.type);
+    formData.append("type", "user");
     formData.append("gender", data.gender);
     formData.append("birth_date", data.birth_date);
     formData.append("age", calculateAge(data.birth_date));
     formData.append("country_id", data.country_id);
     formData.append("city_id", data.city_id);
-    formData.append("activity", data.activity);
-    formData.append("interests", data.interests);
+    formData.append("interests", JSON.stringify(selectedInterests));
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
 
     try {
       if (action === "Add User") {
-        // await AddAdmin(formData);
+        await addNewUser(formData);
       } else if (action === "Edit User" && user?.id) {
-        // await UpdateAdmin(user.id, formData);
+        await updateUser(user.id, formData);
       }
-
       console.log("Form submitted:", data);
       reset();
+      navigate("/users");
     } catch (error) {
       console.error("Submission error:", error);
+      navigate("/users");
     }
-    navigate("/users");
   };
 
   return (
@@ -127,7 +167,7 @@ export default function UserPageForm() {
       }}
     >
       <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
-        {action==="Add User"?t("Add User"):t("Edit User")}
+        {action === "Add User" ? t("Add User") : t("Edit User")}
       </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -147,17 +187,14 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> {t("Name")}</label>
+              <label htmlFor="name">{t("Name")}</label>
               <TextField
                 sx={{
-                  // border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
                 {...register("name", { required: "Name is required" })}
                 placeholder={t("Name")}
-                
                 error={!!errors.name}
-                // @ts-ignore
                 helperText={errors.name?.message}
               />
             </Box>
@@ -168,9 +205,8 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> {t("Email")}</label>
+              <label htmlFor="email">{t("Email")}</label>
               <TextField
-                
                 sx={{
                   border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
@@ -184,7 +220,6 @@ export default function UserPageForm() {
                 })}
                 placeholder={t("Email")}
                 error={!!errors.email}
-                // @ts-ignore
                 helperText={errors.email?.message}
               />
             </Box>
@@ -201,17 +236,15 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="birth_date"> {t("Phone")}</label>
+              <label htmlFor="phone">{t("Phone")}</label>
               <TextField
-                
                 sx={{
                   border: `1px solid ${theme.palette.divider}`,
-                  width:  "100%" ,
+                  width: "100%",
                 }}
                 {...register("phone", { required: "Phone is required" })}
                 placeholder={t("Phone")}
                 error={!!errors.phone}
-                // @ts-ignore
                 helperText={errors.phone?.message}
               />
             </Box>
@@ -232,7 +265,6 @@ export default function UserPageForm() {
                   required: "Birth Date is required",
                 })}
                 error={!!errors.birth_date}
-                // @ts-ignore
                 helperText={errors.birth_date?.message}
               />
             </Box>
@@ -241,7 +273,7 @@ export default function UserPageForm() {
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "50%" }}
             >
-              <label htmlFor="City">{t("City")}</label>
+              <label htmlFor="city_id">{t("City")}</label>
               <select
                 style={{
                   height: "40px",
@@ -252,8 +284,6 @@ export default function UserPageForm() {
                   backgroundColor: theme.palette.background.default,
                 }}
                 {...register("city_id", { required: "City is required" })}
-                // @ts-ignore
-                error={!!errors.type}
               >
                 {cities?.map((city) => (
                   <option key={city.id} value={city.id}>
@@ -261,16 +291,16 @@ export default function UserPageForm() {
                   </option>
                 ))}
               </select>
-              {errors.type && (
+              {errors.city_id && (
                 <Typography color="error" variant="caption">
-                  {errors.type.message}
+                  {errors.city_id.message}
                 </Typography>
               )}
             </Box>
             <Box
               sx={{ display: "flex", flexDirection: "column", width: "50%" }}
             >
-              <label htmlFor="Country">{t("Country")}</label>
+              <label htmlFor="country_id">{t("Country")}</label>
               <select
                 style={{
                   height: "40px",
@@ -281,27 +311,29 @@ export default function UserPageForm() {
                   backgroundColor: theme.palette.background.default,
                 }}
                 {...register("country_id", { required: "Country is required" })}
-                // @ts-ignore
-                error={!!errors.type}
               >
-                {countries?.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
+                {cities?.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
                   </option>
                 ))}
               </select>
-              {errors.type && (
+              {errors.country_id && (
                 <Typography color="error" variant="caption">
-                  {errors.type.message}
+                  {errors.country_id.message}
                 </Typography>
               )}
             </Box>
           </Stack>
           <Stack direction={"row"} spacing={2} sx={{ width: "100%" }}>
             <Box
-              sx={{ display: "flex", flexDirection: "column", width: "50%" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", md: "50%" },
+              }}
             >
-              <label htmlFor="Admin Type">{t("Gender")}</label>
+              <label htmlFor="gender">{t("Gender")}</label>
               <select
                 style={{
                   height: "40px",
@@ -312,8 +344,6 @@ export default function UserPageForm() {
                   backgroundColor: theme.palette.background.default,
                 }}
                 {...register("gender", { required: "Gender is required" })}
-                // @ts-ignore
-                error={!!errors.type}
               >
                 <option value="" disabled>
                   {t("Select Gender")}
@@ -321,54 +351,82 @@ export default function UserPageForm() {
                 <option value="1">{t("Male")}</option>
                 <option value="2">{t("Female")}</option>
               </select>
-              {errors.type && (
+              {errors.gender && (
                 <Typography color="error" variant="caption">
-                  {errors.type.message}
+                  {errors.gender.message}
                 </Typography>
               )}
             </Box>
             <Box
-              sx={{ display: "flex", flexDirection: "column", width: "50%" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", md: "50%" },
+              }}
             >
-              <label htmlFor="Admin Type">User Type</label>
-              <select
-                style={{
-                  height: "40px",
-                  borderRadius: "5px",
-                  border: `1px solid ${theme.palette.divider}`,
-                  color: theme.palette.text.primary,
-                  width: "100%",
-                  backgroundColor: theme.palette.background.default,
-                }}
-                {...register("type", { required: "Type is required" })}
-                // @ts-ignore
-                error={!!errors.type}
-              >
-                <option value="" disabled>
-                  Select Type
-                </option>
-                <option value="1">Male</option>
-                <option value="2">Other</option>
-                <option value="3">Admin</option>
-                <option value="4">User</option>
-                <option value="5">Super Admin</option>
-                <option value="6">Super User</option>
-              </select>
-              {errors.type && (
+              <label htmlFor="image">{t("User Image")}</label>
+              <input type="file" {...register("image")} />
+            </Box>
+          </Stack>
+          <Stack
+            direction={"row"}
+            spacing={2}
+            sx={{
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", md: "50%" },
+              }}
+            >
+              <label>{t("Interests")}</label>
+              {interesties?.length > 0 ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
+                  {interesties.map((interest) => (
+                    <FormControlLabel
+                      key={interest.id}
+                      control={
+                        <Checkbox
+                          value={interest.id}
+                          checked={selectedInterests.includes(Number(interest.id))}
+                          onChange={(e) =>
+                            handleInterestChange(
+                              parseInt(e.target.value),
+                              e.target.checked
+                            )
+                          }
+                          color="primary"
+                        />
+                      }
+                      label={interest.name}
+                    />
+                  ))}
+                </Box>
+              ) : (
+                <Typography>{t("Loading interests...")}</Typography>
+              )}
+              {errors.interests && (
                 <Typography color="error" variant="caption">
-                  {errors.type.message}
+                  {errors.interests.message}
                 </Typography>
               )}
             </Box>
           </Stack>
 
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <label htmlFor="image">{t("User Image")}</label>
-            <input type="file" {...register("image")} />
-          </Box>
-
           <Button variant="contained" color="primary" type="submit">
-            {action === "Add User" ?` ${t("Add")}` : `${t("Edit")}`}
+            {action === "Add User" ? ` ${t("Add")}` : `${t("Edit")}`}
           </Button>
         </Stack>
       </form>

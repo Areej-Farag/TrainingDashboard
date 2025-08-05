@@ -87,6 +87,7 @@ export default function LogIn() {
               sx={{
                 fontWeight: "bold",
                 mb: "20px",
+              
                 color: theme.palette.secondary.main,
                 textAlign: "center",
               }}
@@ -125,9 +126,9 @@ export default function LogIn() {
               </Link> */}
 
               <Button
-                variant="contained"
+                variant="outlined"
                 color="secondary"
-                sx={{ width: "60px", height: "40px" }}
+                sx={{ width: "100px", height: "40px" , borderWidth: "3px" }}
                 onClick={handleLogin}
               >
                 {t("LogIn")}
