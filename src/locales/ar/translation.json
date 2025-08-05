@@ -82,5 +82,17 @@
     "Birth Date": "تاريخ الميلاد",
   "Male": "ذكر",
   "Female": "انثى",
-  "Other": "اخرى"
+  "Other": "اخرى",
+  "features": {
+    "privateChat": "برايفت شات",
+    "publicChat": "شات عام",
+    "shortVideo": "فيديو قصير",
+    "ads": "اعلانات",
+    "deals": "صفقات",
+    "delivery": "توصيل"
+  },
+    "Name in Arabic is required": "اسم باللغة العربية مطلوب",
+    "Name in English is required": "اسم باللغة الانجليزية مطلوب"
+
+
 }

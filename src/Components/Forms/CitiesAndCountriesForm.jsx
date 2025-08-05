@@ -48,8 +48,8 @@ export default function CitiesAndCountriesPageForm({
       console.log("city from edit:", city);
     } else if (action === "Edit Country" && country) {
       setValue("id", country.id || "");
-      setValue("name_ar", country.name_ar || "");
-      setValue("name_en", country.name_en || "");
+      setValue("name_ar", country.name_ar|| "");
+      setValue("name_en", country.name_en|| "");
       console.log("country from edit:", country);
     }
   }, [city, country, action, setValue]);
@@ -131,8 +131,8 @@ export default function CitiesAndCountriesPageForm({
               })}
               placeholder={t("Name in Arabic")}
               label={t("Name in Arabic")}
-              error={!!errors.name}
-              helperText={errors.name?.message}
+              error={!!errors.name_ar}
+              helperText={errors.name_ar?.message}
             />
             <TextField
               label={t("Name in English")}
@@ -148,8 +148,8 @@ export default function CitiesAndCountriesPageForm({
                 },
               })}
               placeholder={t("Name in English")}
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={!!errors.name_en}
+              helperText={errors.name_en?.message}
             />
           </Stack>
           {fromWhere === "cities" && (

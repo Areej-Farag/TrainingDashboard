@@ -13,7 +13,7 @@ import { ModalProvider } from "./Context/ModalContext";
 import Header from "./Components/Header";
 import Sidebar from "./Components/Sidebar";
 import { myTheme } from "./Theme";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -43,23 +43,30 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const theme = useMemo(() => createTheme(myTheme(mode)), [mode]);
+  const location = useLocation();
 
+  const theme = useMemo(() => createTheme(myTheme(mode)), [mode]);
   return (
     <ThemeProvider theme={theme}>
       <ModalProvider>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          <Header
-            open={open}
-            handleDrawerOpen={handleDrawerOpen}
-            setMode={setMode}
-          />
-          <Sidebar
-            open={open}
-            handleDrawerClose={handleDrawerClose}
-            setOpen={setOpen}
-          />
+          {location.pathname !== "/login" ? (
+            <>
+              <Header
+                open={open}
+                handleDrawerOpen={handleDrawerOpen}
+                setMode={setMode}
+              />
+              <Sidebar
+                open={open}
+                handleDrawerClose={handleDrawerClose}
+                setOpen={setOpen}
+              />
+            </>
+          ) : (
+            <></>
+          )}
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
             <Outlet />

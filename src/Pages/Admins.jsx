@@ -97,7 +97,7 @@ function CustomToolbar({
             sx={{ color: theme.palette.secondary.dark }}
             onClick={exportCSV}
             variant="outlined"
-            startIcon={<FileDownloadIcon sx={{ ml: 1 }}/>}
+            startIcon={<FileDownloadIcon sx={{ ml: 1 }} />}
           >
             {t("Export CSV")}
           </Button>
@@ -146,6 +146,14 @@ export default function Admins() {
   const { admins, getAdmins, DestroyAdmin } = useAdminStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const featureOptions = [
+    { id: 1, value: t("features.privateChat") },
+    { id: 2, value: t("features.publicChat") },
+    { id: 3, value: t("features.shortVideo") },
+    { id: 4, value: t("features.ads") },
+    { id: 5, value: t("features.deals") },
+    { id: 6, value: t("features.delivery") },
+  ];
 
   useEffect(() => {
     getAdmins();
@@ -165,8 +173,8 @@ export default function Admins() {
     },
     {
       field: "name",
-      headerName:` ${t("Name")}`,
-    
+      headerName: ` ${t("Name")}`,
+
       width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
@@ -262,7 +270,7 @@ export default function Admins() {
         IDnumber: admin.id,
         name: admin.name,
         Email: admin.email,
-        Type: admin.type,
+        Type: featureOptions.find((option) => option.id.toString() === admin.type).value,
         Phone: admin.phone,
         CreatedAt: new Date(admin.created_at).toLocaleString(),
         UpdatedAt: new Date(admin.updated_at).toLocaleString(),
@@ -324,7 +332,9 @@ export default function Admins() {
           sx={{ mb: 2, height: "40px" }}
           onClick={() => navigate("/admin/add")}
         >
-         <Typography variant="body1" sx={{ mx: 2 }}>{t("Add Admin")}</Typography>
+          <Typography variant="body1" sx={{ mx: 2 }}>
+            {t("Add Admin")}
+          </Typography>
         </Button>
       </Stack>
 

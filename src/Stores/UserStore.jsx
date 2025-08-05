@@ -61,7 +61,10 @@ export const useUserStore = create((set, get) => ({
       );
       const newUser = response.data.user;
       setUsers([...(users || []), newUser]);
+      console.log("newUser", newUser);
+      
       await getUsers();
+      return response;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -123,9 +126,11 @@ export const useUserStore = create((set, get) => ({
       );
       console.log("updatedUsers", updatedUsers);
       setUsers(updatedUsers);
+      return response;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
+        console.log(error);
       }
       return null;
     } finally {

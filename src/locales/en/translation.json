@@ -82,7 +82,19 @@
   "Name in Arabic": "Name in Arabic",
   "Invalid name in Arabic": "Invalid name in Arabic",
   "Name in English": "Name in English",
-  "Invalid name in English": "Invalid name in English"
+  "Invalid name in English": "Invalid name in English", 
+  "features": {
+    "privateChat": "Private Chat",
+    "publicChat": "Public Chat",
+    "shortVideo": "Short Video",
+    "ads": "Ads",
+    "deals": "Deals",
+    "delivery": "Delivery"
+  },
+  "Name in English is required": "Name in English is required",
+  "Name in Arabic is required": "Name in Arabic is required"
+
+
 
   
   

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Stack,
   Typography,
@@ -26,16 +25,33 @@ export default function UserPageForm() {
   const { getCities, cities } = useCitiesStore();
   const { countries, getCountries } = useCountriesStore();
   const [selectedInterests, setSelectedInterests] = useState([]);
-
+  const [selectedCountry, setSelectedCountry] = useState("");
   const { t } = useTranslation();
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      id: "",
+      name: "",
+      email: "",
+      phone: "",
+      gender: "",
+      birth_date: "",
+      country_id: "",
+      city_id: "",
+      interests: [],
+      image: null,
+    },
+  });
   const theme = useTheme();
+
+  // Watch country_id to react to changes
+  const watchedCountryId = watch("country_id");
 
   useEffect(() => {
     if (id && users?.length > 0) {
@@ -50,7 +66,7 @@ export default function UserPageForm() {
     getCities();
     getCountries();
     getInteresties();
-  }, []);
+  }, [getCities, getCountries, getInteresties]);
 
   useEffect(() => {
     if (action === "Edit User" && user && interesties?.length > 0) {
@@ -60,56 +76,55 @@ export default function UserPageForm() {
       setValue("phone", user.phone || "");
       setValue("gender", user.gender || "");
       setValue("birth_date", user.birth_date || "");
-      setValue("age", user.age || "");
       setValue("country_id", user.country_id || "");
       setValue("city_id", user.city_id || "");
-      // Ensure interests is an array of numbers
+      setSelectedCountry(user.country_id || "");
+      
+      // Handle interests
       let interests = [];
       if (Array.isArray(user.interests)) {
-        interests = user.interests.map(Number); // Convert to numbers
+        interests = user.interests.map(Number);
       } else if (user.interests) {
         try {
-          interests = JSON.parse(user.interests).map(Number); // Parse and convert to numbers
+          interests = JSON.parse(user.interests).map(Number);
         } catch (e) {
           console.error("Error parsing user.interests:", e);
         }
       }
-      // Validate interests against available interesties
       const validInterests = interests.filter((id) =>
-        interesties.some((interest) => interest.id === id)
+        interesties.some((interest) => interest.id === Number(id))
       );
-      console.log("Raw user.interests:", user.interests);
-      console.log("Parsed interests:", interests);
-      console.log("Valid interests:", validInterests);
-      console.log("Available interesties:", interesties);
-      setValue("interests", validInterests);
       setSelectedInterests(validInterests);
-      setValue("image", user.image || "");
+      setValue("interests", validInterests);
+      setValue("image", user.image || null);
     }
   }, [user, action, setValue, interesties]);
 
+  // Update selectedCountry when country_id changes
   useEffect(() => {
-    console.log("Current selectedInterests:", selectedInterests);
-  }, [selectedInterests]);
+    if (watchedCountryId !== selectedCountry) {
+      setSelectedCountry(watchedCountryId);
+      setValue("city_id", "");
+    }
+  }, [watchedCountryId, setValue, selectedCountry]);
+
+  // Filter cities based on selected country
+  const filteredCities = cities?.filter((city) => city.country_id === Number(selectedCountry)) || [];
 
   function calculateAge(birthDateString) {
     const birthDate = new Date(birthDateString);
     const today = new Date();
-
     let age = today.getFullYear() - birthDate.getFullYear();
-
     const monthDiff = today.getMonth() - birthDate.getMonth();
     const dayDiff = today.getDate() - birthDate.getDate();
-
     if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
       age--;
     }
-
     return age;
   }
 
   const handleInterestChange = (interestId, checked) => {
-    const id = Number(interestId); // Ensure interestId is a number
+    const id = Number(interestId);
     let updatedInterests;
     if (checked) {
       updatedInterests = [...selectedInterests, id];
@@ -118,35 +133,44 @@ export default function UserPageForm() {
     }
     setSelectedInterests(updatedInterests);
     setValue("interests", updatedInterests);
-    console.log("Selected Interests:", updatedInterests);
   };
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-    formData.append("id", data.id);
+    formData.append("id", data.id || "");
     formData.append("name", data.name);
     formData.append("email", data.email);
     formData.append("phone", data.phone);
     formData.append("type", "user");
     formData.append("gender", data.gender);
     formData.append("birth_date", data.birth_date);
-    formData.append("age", calculateAge(data.birth_date));
+    formData.append("age", calculateAge(data.birth_date).toString());
     formData.append("country_id", data.country_id);
     formData.append("city_id", data.city_id);
-    formData.append("interests", JSON.stringify(selectedInterests));
+    // Ensure interests is sent as a JSON string or array based on backend requirements
+    if (selectedInterests.length > 0) {
+      formData.append("interests", JSON.stringify(selectedInterests));
+    } else {
+      formData.append("interests", "[]"); // Send empty array if no interests selected
+    }
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
 
     try {
       if (action === "Add User") {
-        await addNewUser(formData);
+        const response = await addNewUser(formData);
+        if (response.status === 201) {
+          reset();
+          navigate("/users");
+        }
       } else if (action === "Edit User" && user?.id) {
-        await updateUser(user.id, formData);
+        const response = await updateUser(user.id, formData);
+        if (response.status === 200) {
+          reset();
+          navigate("/users");
+        }
       }
-      console.log("Form submitted:", data);
-      reset();
-      navigate("/users");
     } catch (error) {
       console.error("Submission error:", error);
       navigate("/users");
@@ -192,7 +216,7 @@ export default function UserPageForm() {
                 sx={{
                   width: "100%",
                 }}
-                {...register("name", { required: "Name is required" })}
+                {...register("name", { required: t("Name is required") })}
                 placeholder={t("Name")}
                 error={!!errors.name}
                 helperText={errors.name?.message}
@@ -212,10 +236,10 @@ export default function UserPageForm() {
                   width: "100%",
                 }}
                 {...register("email", {
-                  required: "Email is required",
+                  required: t("Email is required"),
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Invalid email address",
+                    message: t("Invalid email address"),
                   },
                 })}
                 placeholder={t("Email")}
@@ -242,7 +266,7 @@ export default function UserPageForm() {
                   border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
-                {...register("phone", { required: "Phone is required" })}
+                {...register("phone", { required: t("Phone is required") })}
                 placeholder={t("Phone")}
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
@@ -262,16 +286,61 @@ export default function UserPageForm() {
                   width: "100%",
                 }}
                 {...register("birth_date", {
-                  required: "Birth Date is required",
+                  required: t("Birth Date is required"),
                 })}
                 error={!!errors.birth_date}
                 helperText={errors.birth_date?.message}
               />
             </Box>
           </Stack>
-          <Stack direction={"row"} spacing={2} sx={{ width: "100%" }}>
+          <Stack
+            direction={{ lg: "row", xs: "column" }}
+            spacing={2}
+            sx={{ width: "100%" }}
+          >
             <Box
-              sx={{ display: "flex", flexDirection: "column", width: "50%" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { lg: "50%", xs: "100%" },
+              }}
+            >
+              <label htmlFor="country_id">{t("Country")}</label>
+              <select
+                style={{
+                  height: "40px",
+                  borderRadius: "5px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.primary,
+                  width: "100%",
+                  backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
+                }}
+                {...register("country_id", {
+                  required: t("Country is required"),
+                })}
+              >
+                <option value="" disabled>
+                  {t("Select Country")}
+                </option>
+                {countries?.map((country) => (
+                  <option key={country.id} value={country.id}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+              {errors.country_id && (
+                <Typography color="error" variant="caption">
+                  {errors.country_id.message}
+                </Typography>
+              )}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { lg: "50%", xs: "100%" },
+              }}
             >
               <label htmlFor="city_id">{t("City")}</label>
               <select
@@ -282,10 +351,17 @@ export default function UserPageForm() {
                   color: theme.palette.text.primary,
                   width: "100%",
                   backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
                 }}
-                {...register("city_id", { required: "City is required" })}
+                {...register("city_id", { required: t("City is required") })}
+                disabled={!selectedCountry}
               >
-                {cities?.map((city) => (
+                <option value="" disabled>
+                  {selectedCountry
+                    ? t("Select City")
+                    : t("Select a country first")}
+                </option>
+                {filteredCities.map((city) => (
                   <option key={city.id} value={city.id}>
                     {city.name}
                   </option>
@@ -297,35 +373,12 @@ export default function UserPageForm() {
                 </Typography>
               )}
             </Box>
-            <Box
-              sx={{ display: "flex", flexDirection: "column", width: "50%" }}
-            >
-              <label htmlFor="country_id">{t("Country")}</label>
-              <select
-                style={{
-                  height: "40px",
-                  borderRadius: "5px",
-                  border: `1px solid ${theme.palette.divider}`,
-                  color: theme.palette.text.primary,
-                  width: "100%",
-                  backgroundColor: theme.palette.background.default,
-                }}
-                {...register("country_id", { required: "Country is required" })}
-              >
-                {cities?.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-              {errors.country_id && (
-                <Typography color="error" variant="caption">
-                  {errors.country_id.message}
-                </Typography>
-              )}
-            </Box>
           </Stack>
-          <Stack direction={"row"} spacing={2} sx={{ width: "100%" }}>
+          <Stack
+            direction={{ lg: "row", xs: "column" }}
+            spacing={2}
+            sx={{ width: "100%" }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -342,8 +395,9 @@ export default function UserPageForm() {
                   color: theme.palette.text.primary,
                   width: "100%",
                   backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
                 }}
-                {...register("gender", { required: "Gender is required" })}
+                {...register("gender", { required: t("Gender is required") })}
               >
                 <option value="" disabled>
                   {t("Select Gender")}
@@ -365,11 +419,11 @@ export default function UserPageForm() {
               }}
             >
               <label htmlFor="image">{t("User Image")}</label>
-              <input type="file" {...register("image")} />
+              <input type="file" {...register("image")} accept="image/*" />
             </Box>
           </Stack>
           <Stack
-            direction={"row"}
+            direction="row"
             spacing={2}
             sx={{
               width: "100%",
@@ -424,9 +478,8 @@ export default function UserPageForm() {
               )}
             </Box>
           </Stack>
-
           <Button variant="contained" color="primary" type="submit">
-            {action === "Add User" ? ` ${t("Add")}` : `${t("Edit")}`}
+            {action === "Add User" ? t("Add") : t("Edit")}
           </Button>
         </Stack>
       </form>

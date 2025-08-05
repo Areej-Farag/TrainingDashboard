@@ -146,7 +146,7 @@ export default function Users() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, loading, error, users } = useUserStore();
+  const { getUsers, loading, error, users , } = useUserStore();
   const {t} = useTranslation();
   useEffect(() => {
     getUsers();
@@ -241,23 +241,7 @@ export default function Users() {
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
-            <Button
-              onClick={() =>
-                showModal(t("Are you sure you want to delete this item?"), () => {
-                  // DestroyAdmin(adminId);
-                })
-              }
-              sx={{
-                m: "7px",
-                border: `1px solid ${theme.palette.error.dark}`,
-                color: theme.palette.error.dark,
-                width: "43px",
-                height: "30px",
-                minWidth: "30px",
-              }}
-            >
-              <DeleteOutlineOutlinedIcon sx={{ fontSize: "small" }} />
-            </Button>
+
           </Box>
         );
       },
