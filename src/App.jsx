@@ -15,6 +15,7 @@ import Sidebar from "./Components/Sidebar";
 import { myTheme } from "./Theme";
 import { Outlet, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
+import ErrorSnackbar from "./Components/ErrorSnackBar";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -49,6 +50,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <ModalProvider>
+        <ErrorSnackbar />
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
           {location.pathname !== "/login" ? (

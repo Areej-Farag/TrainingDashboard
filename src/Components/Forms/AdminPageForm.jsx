@@ -52,7 +52,10 @@ export default function AdminPageForm() {
       setValue("name", user.name || "");
       setValue("email", user.email || "");
       setValue("phone", user.phone || "");
-      setValue("type", featureOptions.find((option) => option.id == user.type).value || "");
+      setValue(
+        "type",
+        featureOptions.find((option) => option.id == user.type).value || ""
+      );
     }
   }, [user, action]);
 
@@ -72,17 +75,24 @@ export default function AdminPageForm() {
 
     try {
       if (action === "Add Admin") {
-        await AddAdmin(formData);
-      } else if (action === "Edit Admin" && user?.id) {
-        await UpdateAdmin(user.id, formData);
+        const response = await AddAdmin(formData);
+        console.log("response :" , response);
+        if (response.id ) {
+          reset();
+          navigate("/admins");
+        }
+      } else if (action === "Edit User" && user?.id) {
+        const response = await UpdateAdmin(user.id, formData);
+        if (response.status === 200) {
+          reset();
+          navigate("/admins");
+        }
       }
-
       console.log("Form submitted:", data);
       reset();
     } catch (error) {
       console.error("Submission error:", error);
     }
-    navigate("/admins");
   };
 
   return (
@@ -107,10 +117,13 @@ export default function AdminPageForm() {
         style={{ width: "100%" }}
       >
         <Stack spacing={2} sx={{ width: "100%" }}>
-          <Stack direction={"column"} spacing={2} sx={{ width: "100%" }}>
+          <Stack
+            direction={"column"}
+            spacing={2}
+            sx={{ width: "100%", gap: "10px" }}
+          >
             <TextField
               sx={{
-                border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("name", {
@@ -125,7 +138,6 @@ export default function AdminPageForm() {
             <TextField
               label={t("Email")}
               sx={{
-                border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("email", {
@@ -143,7 +155,6 @@ export default function AdminPageForm() {
             <TextField
               label={t("Phone")}
               sx={{
-                border: `1px solid ${theme.palette.divider}`,
                 width: "100%",
               }}
               {...register("phone", {
@@ -158,7 +169,6 @@ export default function AdminPageForm() {
               <TextField
                 label={t("Password")}
                 sx={{
-                  border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
                 {...register("password", {
@@ -187,7 +197,6 @@ export default function AdminPageForm() {
               style={{
                 height: "40px",
                 borderRadius: "5px",
-                border: `1px solid ${theme.palette.divider}`,
                 color: theme.palette.text.primary,
                 width: "100%",
                 backgroundColor: theme.palette.background.default,
@@ -197,7 +206,11 @@ export default function AdminPageForm() {
               error={!!errors.type}
             >
               {featureOptions.map((option) => (
-                <option key={option.value} value={option.value} style={{color: theme.palette.text.primary}}>
+                <option
+                  key={option.id}
+                  value={option.id}
+                  style={{ color: theme.palette.text.primary }}
+                >
                   {option.value}
                 </option>
               ))}

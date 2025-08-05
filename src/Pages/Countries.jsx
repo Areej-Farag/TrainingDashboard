@@ -153,13 +153,13 @@ export default function Countries() {
   }, [countries]);
 
   const MyColumns = [
-    {
-      field: "IDnumber",
-      headerName: `${t("ID")}`,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
+    // {
+    //   field: "IDnumber",
+    //   headerName: `${t("ID")}`,
+    //   flex: 1,
+    //   align: "center",
+    //   headerAlign: "center",
+    // },
     {
       field: "name",
       headerName: `${t("Name")}`,
@@ -378,7 +378,7 @@ export default function Countries() {
               fromWhere="countries"
               setOpen={setOpenEditModal}
               action="Edit Country"
-              country={selectedCountry}
+              PropCountry={selectedCountry}
             />
           )}
         </Box>

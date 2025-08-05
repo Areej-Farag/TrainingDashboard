@@ -16,15 +16,22 @@ import { useTranslation } from "react-i18next";
 export default function CitiesAndCountriesPageForm({
   fromWhere,
   action,
-  city = {},
-  country = {},
+  PropCity = {},
+  PropCountry = {},
   setOpen,
 }) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
-  const { editCountry, addCountry, getCountries, countries } =
-    useCountriesStore();
-  const { editCity, addCity } = useCitiesStore();
+  const {
+    editCountry,
+    addCountry,
+    getCountries,
+    countries,
+    country,
+    showCountry,
+  } = useCountriesStore();
+  const { editCity, addCity, city, showCity } = useCitiesStore();
+
   const language = localStorage.getItem("lang");
   const {
     register,
@@ -37,6 +44,10 @@ export default function CitiesAndCountriesPageForm({
 
   useEffect(() => {
     getCountries();
+    showCity(PropCity.id);
+    showCountry(PropCountry.id);
+    console.log("PropCity", PropCity);
+    console.log("PropCountry", PropCountry);
   }, []);
 
   useEffect(() => {
@@ -48,8 +59,8 @@ export default function CitiesAndCountriesPageForm({
       console.log("city from edit:", city);
     } else if (action === "Edit Country" && country) {
       setValue("id", country.id || "");
-      setValue("name_ar", country.name_ar|| "");
-      setValue("name_en", country.name_en|| "");
+      setValue("name_ar", country.name_ar || "");
+      setValue("name_en", country.name_en || "");
       console.log("country from edit:", country);
     }
   }, [city, country, action, setValue]);
@@ -123,7 +134,7 @@ export default function CitiesAndCountriesPageForm({
                 width: "100%",
               }}
               {...register("name_ar", {
-                required: "Name in Arabic is required",
+                required: `${t("Name in Arabic is required")}`,
                 pattern: {
                   value: /^[ا-ي\s]+$/i,
                   message: `${t("Invalid name in Arabic")}`,

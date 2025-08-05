@@ -1,17 +1,17 @@
 import axios from "axios";
 import { create } from "zustand";
+import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 
 export const useUserStore = create((set, get) => ({
   users: null,
-  error: null,
   loading: false,
   interesties: null,
   setInteresties: (interesties) => set({ interesties }),
   setUsers: (users) => set({ users }),
-  setError: (error) => set({ error }),
   setLoading: (loading) => set({ loading }),
   getUsers: async () => {
-    const { setUsers, setError, setLoading } = get();
+    const { setUsers, setLoading } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -27,21 +27,21 @@ export const useUserStore = create((set, get) => ({
           },
         }
       );
-      console.log(response.data.users);
       const users = response.data.users;
       setUsers(users);
       return users;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   addNewUser: async (data) => {
-    const { setUsers, setError, setLoading, users, getUsers } = get();
+    const { setUsers, setLoading, users, getUsers } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -61,22 +61,20 @@ export const useUserStore = create((set, get) => ({
       );
       const newUser = response.data.user;
       setUsers([...(users || []), newUser]);
-      console.log("newUser", newUser);
-      
       await getUsers();
       return response;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-        console.log(error);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   getInteresties: async () => {
-    const { setInteresties, setError, setLoading } = get();
+    const { setInteresties, setLoading } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -94,44 +92,47 @@ export const useUserStore = create((set, get) => ({
           },
         }
       );
-      console.log(response.data.data);
       const interesties = response.data.data;
       setInteresties(interesties);
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   updateUser: async (data) => {
-    const { setError, setLoading, setUsers, users } = get();
-    const Token = localStorage.getItem("token");
+    const { setLoading, setUsers, users } = get();
+    const { setError } = useErrorStore.getState();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No token found");
+      return;
+    }
     try {
+      setLoading(true);
       const response = await axios.post(
         "https://hayaapp.online/api/admin/user/update",
         data,
         {
           headers: {
-            Authorization: `Bearer ${Token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         }
       );
       const updatedUser = response.data.data;
-      const updatedUsers = users.map((admin) =>
-        admin.id === data.id ? { ...admin, ...updatedUser } : admin
+      const updatedUsers = users.map((user) =>
+        user.id === data.id ? { ...user, ...updatedUser } : user
       );
-      console.log("updatedUsers", updatedUsers);
       setUsers(updatedUsers);
       return response;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-        console.log(error);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import {
   Box,
   TextField,
@@ -95,7 +95,7 @@ function CustomToolbar({
             sx={{ color: theme.palette.secondary.dark }}
             onClick={exportCSV}
             variant="outlined"
-            startIcon={<FileDownloadIcon sx={{ ml: 1 }}/>}
+            startIcon={<FileDownloadIcon sx={{ ml: 1 }} />}
           >
             {t("Export CSV")}
           </Button>
@@ -156,13 +156,13 @@ export default function Cities() {
   }, [cities]);
 
   const MyColumns = [
-    {
-      field: "IDnumber",
-      headerName: `${t("ID")}`,
-      width: isMobile ? 50 : 70,
-      align: "center",
-      headerAlign: "center",
-    },
+    // {
+    //   field: "IDnumber",
+    //   headerName: `${t("ID")}`,
+    //   width: isMobile ? 50 : 70,
+    //   align: "center",
+    //   headerAlign: "center",
+    // },
     {
       field: "name",
       headerName: `${t("Name")}`,
@@ -224,6 +224,7 @@ export default function Cities() {
                   () => {
                     destroyCity(params.row.id);
                   }
+
                 )
               }
               sx={{
@@ -389,7 +390,7 @@ export default function Cities() {
             <CitiesAndCountriesPageForm
               fromWhere="cities"
               setOpen={setOpenEditModal}
-              city={selectedCity}
+              PropCity={selectedCity}
               action="Edit City"
             />
           )}

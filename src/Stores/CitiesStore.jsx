@@ -1,18 +1,18 @@
 import axios from "axios";
 import { create } from "zustand";
+import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 
 export const useCitiesStore = create((set, get) => ({
   cities: null,
-  error: null,
   loading: false,
   Language: localStorage.getItem("lang"),
   city: null,
-
+  setCity: (city) => set({ city }),
   setCities: (cities) => set({ cities }),
-  setError: (error) => set({ error }),
   setLoading: (loading) => set({ loading }),
   getCities: async () => {
-    const { setCities, setError, setLoading } = get();
+    const { setCities, setLoading } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -34,16 +34,17 @@ export const useCitiesStore = create((set, get) => ({
       setCities(cities);
       return cities;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   destroyCity: async (id) => {
-    const { setCities, setError, setLoading, cities, getCities } = get();
+    const { setCities, setLoading, cities, getCities } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -55,7 +56,7 @@ export const useCitiesStore = create((set, get) => ({
       formData.append("id", id);
       await axios.post(
         "https://hayaapp.online/api/admin/city/delete",
-        formData ,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,18 +67,18 @@ export const useCitiesStore = create((set, get) => ({
       const updatedCities = cities.filter((city) => city.id !== id);
       setCities(updatedCities);
       await getCities();
-      return updatedCities;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   addCity: async (data) => {
-    const { setCities, setError, setLoading, cities, getCities } = get();
+    const { setLoading, getCities } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -97,17 +98,17 @@ export const useCitiesStore = create((set, get) => ({
       );
       await getCities();
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-        console.log(error);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   editCity: async (data) => {
-    const { setCities, setError, setLoading, cities, getCities } = get();
+    const { setLoading, getCities } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -125,19 +126,19 @@ export const useCitiesStore = create((set, get) => ({
           },
         }
       );
-
       await getCities();
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   showCity: async (id) => {
-    const { setError, setLoading, setCity } = get();
+    const { setLoading, setCity } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -159,9 +160,9 @@ export const useCitiesStore = create((set, get) => ({
       setCity(city);
       return city;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);

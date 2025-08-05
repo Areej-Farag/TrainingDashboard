@@ -157,13 +157,13 @@ export default function Users() {
   }, [users]);
 
   const MyColumns = [
-    {
-      field: "IDnumber",
-      headerName: `${t("ID")}`,
-      width: isMobile ? 50 : 70,
-      align: "center",
-      headerAlign: "center",
-    },
+    // {
+    //   field: "IDnumber",
+    //   headerName: `${t("ID")}`,
+    //   width: isMobile ? 50 : 70,
+    //   align: "center",
+    //   headerAlign: "center",
+    // },
     {
       field: "name",
       headerName: `${t("Name")}`,

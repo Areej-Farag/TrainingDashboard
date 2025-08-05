@@ -173,7 +173,6 @@ export default function UserPageForm() {
       }
     } catch (error) {
       console.error("Submission error:", error);
-      navigate("/users");
     }
   };
 
@@ -198,17 +197,18 @@ export default function UserPageForm() {
         encType="multipart/form-data"
         style={{ width: "100%" }}
       >
-        <Stack spacing={2} sx={{ width: "100%" }}>
+        <Stack spacing={2} sx={{ width: "100%" , gap: "10px"}}>
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%" , gap: "10px"}}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: { lg: "50%", xs: "100%" },
+                width: { lg: "50%", xs: "100%"  },
+              
               }}
             >
               <label htmlFor="name">{t("Name")}</label>
@@ -232,7 +232,6 @@ export default function UserPageForm() {
               <label htmlFor="email">{t("Email")}</label>
               <TextField
                 sx={{
-                  border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
                 {...register("email", {
@@ -251,7 +250,7 @@ export default function UserPageForm() {
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%"  , gap: "10px"}}
           >
             <Box
               sx={{
@@ -263,7 +262,6 @@ export default function UserPageForm() {
               <label htmlFor="phone">{t("Phone")}</label>
               <TextField
                 sx={{
-                  border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                 }}
                 {...register("phone", { required: t("Phone is required") })}
@@ -296,7 +294,7 @@ export default function UserPageForm() {
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%" , gap: "10px"}}
           >
             <Box
               sx={{
@@ -377,7 +375,7 @@ export default function UserPageForm() {
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%" , gap: "10px"}}
           >
             <Box
               sx={{
@@ -429,6 +427,8 @@ export default function UserPageForm() {
               width: "100%",
               justifyContent: "space-between",
               alignItems: "center",
+               gab: "10px"
+              
             }}
           >
             <Box

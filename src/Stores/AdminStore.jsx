@@ -1,15 +1,16 @@
+// src/Stores/AdminStore.js
 import axios from "axios";
 import { create } from "zustand";
+import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 
 export const useAdminStore = create((set, get) => ({
   admins: null,
-  error: null,
   loading: false,
   setLoading: (loading) => set({ loading }),
-  setError: (error) => set({ error }),
   setAdmins: (admins) => set({ admins }),
   getAdmins: async () => {
-    const { setAdmins, setError, setLoading } = get();
+    const { setAdmins, setLoading } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -29,16 +30,16 @@ export const useAdminStore = create((set, get) => ({
       setAdmins(admins);
       return admins;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   DestroyAdmin: async (id) => {
-    const { setAdmins, setError, setLoading, admins, getAdmins } = get();
+    const { setAdmins, setLoading, admins, getAdmins } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -60,16 +61,16 @@ export const useAdminStore = create((set, get) => ({
       await getAdmins();
       return updatedAdmins;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
   AddAdmin: async (data) => {
-    const { setAdmins, setError, setLoading, admins, getAdmins } = get();
+    const { setAdmins, setLoading, admins, getAdmins } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
@@ -91,49 +92,52 @@ export const useAdminStore = create((set, get) => ({
       await getAdmins();
       return newAdmin;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
+      console.error("AddAdmin error:", errorMessage);
       return null;
     } finally {
       setLoading(false);
     }
   },
-UpdateAdmin: async (id, formData) => {
-  const { setAdmins, setError, setLoading, admins, getAdmins } = get();
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setError("No token found");
-    return;
-  }
-  try {
-    setLoading(true);
-    const response = await axios.post(
-      `https://hayaapp.online/api/admin/update/data`,
-      formData, // Send FormData directly
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data", // Explicitly set for FormData
-        },
+  UpdateAdmin: async (id, formData) => {
+    const { setAdmins, setLoading, admins, getAdmins } = get();
+    const { setError } = useErrorStore.getState();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No token found");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `https://hayaapp.online/api/admin/update/data`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const updatedAdmin = response.data.data;
+      if (!updatedAdmin || !updatedAdmin.id) {
+        throw new Error("Invalid admin data returned from server");
       }
-    );
-    const updatedAdmin = response.data.data;
-    const updatedAdmins = admins.map((admin) =>
-      admin.id === id ? { ...admin, ...updatedAdmin } : admin
-    );
-    console.log("updatedAdmins", updatedAdmins);
-    setAdmins(updatedAdmins);
-    // Optionally, call getAdmins() only if necessary
-    await getAdmins();
-    return updatedAdmin;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message;
-    setError(errorMessage);
-    console.error("UpdateAdmin error:", errorMessage);
-    return null;
-  } finally {
-    setLoading(false);
-  }
-},
+      const updatedAdmins = admins.map((admin) =>
+        admin.id === id ? { ...admin, ...updatedAdmin } : admin
+      );
+      setAdmins(updatedAdmins);
+      await getAdmins(); // Refresh to ensure consistency
+      console.log("Updated admin:", updatedAdmin);
+      return updatedAdmin;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
+      console.error("UpdateAdmin error:", errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  },
 }));
