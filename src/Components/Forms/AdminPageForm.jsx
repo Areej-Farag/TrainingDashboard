@@ -39,8 +39,9 @@ export default function AdminPageForm() {
 
   useEffect(() => {
     if (id && admins?.length > 0) {
-      const found = admins.find((admin) => admin.id === Number(id));
+      const found = admins.find((admin) => admin.id == Number(id));
       if (found) {
+        console.log("found admin:", found);
         setUser(found);
       }
     }
@@ -72,7 +73,25 @@ export default function AdminPageForm() {
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
-
+  //  try {
+  //     if (action === "Add User") {
+  //       const response = await addNewUser(formData);
+  //       if (response.status === 201) {
+  //         reset();
+  //         navigate("/users");
+  //       }
+  //     } else if (action === "Edit User" && user?.id) {
+  //       const response = await updateUser(formData);
+  //       console.log ("response :" , response);
+  //       if (response.status === 200) {
+  //         reset();
+  //         navigate("/users");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Submission error:", error);
+  //   }
+  // };
     try {
       if (action === "Add Admin") {
         const response = await AddAdmin(formData);
@@ -81,8 +100,9 @@ export default function AdminPageForm() {
           reset();
           navigate("/admins");
         }
-      } else if (action === "Edit User" && user?.id) {
+      } else if (action === "Edit Admin" && user?.id) {
         const response = await UpdateAdmin(user.id, formData);
+        console.log("response :" , response);
         if (response.status === 200) {
           reset();
           navigate("/admins");

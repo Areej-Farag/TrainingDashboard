@@ -130,7 +130,8 @@ export const useAdminStore = create((set, get) => ({
       setAdmins(updatedAdmins);
       await getAdmins(); // Refresh to ensure consistency
       console.log("Updated admin:", updatedAdmin);
-      return updatedAdmin;
+
+      return response;
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);

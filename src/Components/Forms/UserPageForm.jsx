@@ -165,7 +165,8 @@ export default function UserPageForm() {
           navigate("/users");
         }
       } else if (action === "Edit User" && user?.id) {
-        const response = await updateUser(user.id, formData);
+        const response = await updateUser(formData);
+        console.log ("response :" , response);
         if (response.status === 200) {
           reset();
           navigate("/users");
