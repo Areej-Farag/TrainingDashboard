@@ -53,7 +53,7 @@ export default function App() {
         <ErrorSnackbar />
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          {location.pathname !== "/login" ? (
+          {location.pathname !== "/login" || localStorage.getItem("token") ? (
             <>
               <Header
                 open={open}
