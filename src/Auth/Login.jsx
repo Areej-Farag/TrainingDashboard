@@ -51,7 +51,7 @@ export default function LogIn() {
         setTimeout(() => {
           navigate("/dashboard");
         }, 1500);
-      } 
+      }
     } catch (err) {
       setSnackbar({
         open: true,
@@ -169,7 +169,11 @@ export default function LogIn() {
                   type="submit"
                   variant="outlined"
                   color="secondary"
-                  sx={{ width: "100px", height: "40px", borderWidth: "3px" }}
+                  sx={{
+                    width: { md: "100px", xs: "40%" },
+                    height: "40px",
+                    borderWidth: "3px",
+                  }}
                 >
                   {t("LogIn")}
                 </Button>
