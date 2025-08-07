@@ -10,6 +10,7 @@ export const useCountriesStore = create((set, get) => ({
   setCountries: (countries) => set({ countries }),
   setLoading: (loading) => set({ loading }),
   setCountry: (country) => set({ country }),
+  clearCountry: () => set({ country: null }),
   getCountries: async () => {
     const { setCountries, setLoading } = get();
     const { setError } = useErrorStore.getState();

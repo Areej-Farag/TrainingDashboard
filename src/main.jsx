@@ -33,8 +33,10 @@ const Token = localStorage.getItem("token");
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-
-      <Route index element={Token ? <Dashboard /> : <Login />} />
+      <Route
+        index
+        element={localStorage.getItem("token") ? <Dashboard /> : <Login />}
+      />
 
       <Route element={<ProtectedRoute />}>
         <Route path="dashboard" element={<Dashboard />} />
@@ -60,7 +62,6 @@ const router = createBrowserRouter(
     </Route>
   )
 );
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

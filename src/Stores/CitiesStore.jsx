@@ -10,6 +10,7 @@ export const useCitiesStore = create((set, get) => ({
   setCity: (city) => set({ city }),
   setCities: (cities) => set({ cities }),
   setLoading: (loading) => set({ loading }),
+  clearCity: () => set({ city: null }),
   getCities: async () => {
     const { setCities, setLoading } = get();
     const { setError } = useErrorStore.getState();
@@ -130,7 +131,12 @@ export const useCitiesStore = create((set, get) => ({
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
-      setError(errorMessage);
+      console.log(errorMessage);
+      setError(
+        errorMessage == "The id field is required."
+          ? "The id field is required."
+          : errorMessage
+      );
       return null;
     } finally {
       setLoading(false);
@@ -162,6 +168,7 @@ export const useCitiesStore = create((set, get) => ({
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
+      console.log(errorMessage);
       setError(errorMessage);
       return null;
     } finally {

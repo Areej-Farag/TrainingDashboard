@@ -20,7 +20,7 @@ export default function LogIn() {
   const { t } = useTranslation();
   const { LogIn, error } = useAuthStore();
   const navigate = useNavigate();
-  
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -51,17 +51,11 @@ export default function LogIn() {
         setTimeout(() => {
           navigate("/dashboard");
         }, 1500);
-      } else {
-        setSnackbar({
-          open: true,
-          message: error || t("Login failed!"),
-          severity: "error",
-        });
-      }
+      } 
     } catch (err) {
       setSnackbar({
         open: true,
-        message: t("An error occurred during login"),
+        message: error || t("Login failed!"),
         severity: "error",
       });
     }
@@ -115,7 +109,6 @@ export default function LogIn() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <TextField
                 sx={{
-                  border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                   mb: "20px",
                 }}
@@ -135,7 +128,6 @@ export default function LogIn() {
               />
               <TextField
                 sx={{
-                  border: `1px solid ${theme.palette.divider}`,
                   width: "100%",
                   mb: "20px",
                 }}
@@ -160,7 +152,7 @@ export default function LogIn() {
                 justifyContent={"center"}
                 alignItems={"center"}
               >
-                <Typography variant="body1" sx={{ textAlign: "center" }}>
+                {/* <Typography variant="body1" sx={{ textAlign: "center" }}>
                   {t("DontHaveAccount")}?
                 </Typography>
                 <Link
@@ -172,7 +164,7 @@ export default function LogIn() {
                   }}
                 >
                   {t("SignUp")}
-                </Link>
+                </Link> */}
                 <Button
                   type="submit"
                   variant="outlined"

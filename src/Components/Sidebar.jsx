@@ -177,6 +177,9 @@ export default function Sidebar({ open, handleDrawerClose }) {
         message: "Logout successful!",
         severity: "success",
       });
+      setTimeout(() => {
+        navigate("/login");
+      }, 500);
     } else {
       setSnackbar({
         open: true,

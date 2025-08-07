@@ -160,7 +160,8 @@ export default function UserPageForm() {
     try {
       if (action === "Add User") {
         const response = await addNewUser(formData);
-        if (response.status === 201) {
+        console.log ("response :" , response);
+        if (response.status === 200) {
           reset();
           navigate("/users");
         }

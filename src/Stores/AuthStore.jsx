@@ -1,6 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
-
+import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 export const useAuthStore = create((set, get) => ({
   user: null,
   error: null,
@@ -9,7 +9,8 @@ export const useAuthStore = create((set, get) => ({
   setError: (error) => set({ error }),
   setLoading: (loading) => set({ loading }),
   LogIn: async (email, password) => {
-    const { setUser, setError, setLoading } = get();
+    const { setUser, setLoading } = get();
+    const { setError } = useErrorStore.getState();
 
     try {
       setLoading(true);
@@ -36,11 +37,9 @@ export const useAuthStore = create((set, get) => ({
       setUser(user);
       return true;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -48,7 +47,8 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logOut: async () => {
-    const { setUser, setError, setLoading } = get();
+    const { setUser, setLoading } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       return;
@@ -71,9 +71,9 @@ export const useAuthStore = create((set, get) => ({
       console.log("Logout successful!");
       return true;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ export const useAuthStore = create((set, get) => ({
       );
       const admin = response.data.data;
       setUser(admin);
-      console.log("admin data:", admin); 
+      console.log("admin data:", admin);
       return admin;
     } catch (error) {
       console.error("Error fetching admin data:", error);
