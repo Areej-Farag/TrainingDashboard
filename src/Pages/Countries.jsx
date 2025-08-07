@@ -25,6 +25,7 @@ import { PersonAddAlt1 } from "@mui/icons-material";
 import { useCountriesStore } from "../Stores/CountriesStore";
 import CitiesAndCountriesPageForm from "../Components/Forms/CitiesAndCountriesForm";
 import { useTranslation } from "react-i18next";
+
 function CustomToolbar({
   search,
   setSearch,
@@ -33,7 +34,7 @@ function CustomToolbar({
   exportCSV,
   MyColumns,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
@@ -55,6 +56,7 @@ function CustomToolbar({
         borderRadius: 2,
         backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
         border: `1px solid ${theme.palette.divider}`,
+        direction: i18n.dir(),
       }}
     >
       <Stack
@@ -107,6 +109,7 @@ function CustomToolbar({
               maxHeight: 300,
               bgcolor: theme.palette.background.paper,
               color: theme.palette.text.primary,
+              direction: i18n.dir(),
             },
           }}
         >
@@ -137,12 +140,13 @@ function CustomToolbar({
 export default function Countries() {
   const { showModal } = useModal();
   const theme = useTheme();
-  const [OpenEditModal, setOpenEditModal] = useState(false); // Fixed typo
-  const [OpenAddModal, setOpenAddModal] = useState(false); // Fixed typo
+  const [OpenEditModal, setOpenEditModal] = useState(false);
+  const [OpenAddModal, setOpenAddModal] = useState(false);
   const { getCountries, countries, destroyCountry } = useCountriesStore();
   const language = localStorage.getItem("lang");
   const [selectedCountry, setSelectedCountry] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     console.log("Fetching countries...");
     getCountries();
@@ -153,19 +157,14 @@ export default function Countries() {
   }, [countries]);
 
   const MyColumns = [
-    // {
-    //   field: "IDnumber",
-    //   headerName: `${t("ID")}`,
-    //   flex: 1,
-    //   align: "center",
-    //   headerAlign: "center",
-    // },
     {
       field: "name",
       headerName: `${t("Name")}`,
-      flex: 1,
+      width: 150,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "CreatedAt",
@@ -173,6 +172,8 @@ export default function Countries() {
       width: 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "UpdatedAt",
@@ -180,13 +181,17 @@ export default function Countries() {
       width: 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "Actions",
       headerName: `${t("Actions")}`,
-      width: 170,
+      width: 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       renderCell: (params) => {
         return (
           <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
@@ -201,7 +206,7 @@ export default function Countries() {
               }}
               onClick={() => {
                 console.log("Opening Edit Modal for country:", params.row);
-                setOpenEditModal(true); // Fixed typo
+                setOpenEditModal(true);
                 setSelectedCountry(params.row);
               }}
             >
@@ -250,6 +255,13 @@ export default function Countries() {
     Object.fromEntries(MyColumns.map((col) => [col.field, true]))
   );
 
+  useEffect(() => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      Actions: true,
+    }));
+  }, []);
+
   const visibleColumns = MyColumns.filter((col) => columnVisibility[col.field]);
 
   const filteredRows = initialRows?.filter((row) =>
@@ -277,11 +289,12 @@ export default function Countries() {
   return (
     <Box
       sx={{
-        overflow: "hidden",
+        overflow: "auto",
         p: 2,
         width: "90vw",
         m: "auto",
         position: "relative",
+        direction: i18n.dir(),
       }}
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -298,7 +311,7 @@ export default function Countries() {
           sx={{ mb: 2, height: "40px" }}
           onClick={() => {
             console.log("Opening Add Modal");
-            setOpenAddModal(true); // Fixed typo
+            setOpenAddModal(true);
           }}
         >
           {t("Add Country")}
@@ -314,39 +327,43 @@ export default function Countries() {
         MyColumns={MyColumns}
       />
 
-      <Box sx={{ width: "100%", height: "70vh", overflow: "hidden" }}>
-        <Box
+      <Box sx={{ width: "100%", height: "70vh", overflow: "auto" }}>
+        <DataGrid
+          checkboxSelection
+          rows={filteredRows || []}
+          columns={visibleColumns}
+          pageSize={5}
+          rowsPerPageOptions={[5, 10]}
+          disableColumnAutoWidth
+          columnVisibilityModel={columnVisibility}
+          getCellClassName={(params) => `custom-cell ${params.field}-cell`}
+          getHeaderClassName={(params) => `custom-header ${params.field}-header`}
           sx={{
-            width: "100%",
-            height: "100%",
-            overflowX: "auto",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              height: "8px",
+            bgcolor: "background.paper",
+            color: "text.primary",
+            fontSize: 12,
+            direction: i18n.dir(),
+            "& .MuiDataGrid-columnHeaders": {
+              fontSize: 13,
+              whiteSpace: "normal",
+              lineHeight: "1.5",
             },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: theme.palette.grey[400],
-              borderRadius: "4px",
+            "& .MuiDataGrid-cell": {
+              whiteSpace: "normal",
+            },
+            "& .custom-header": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .custom-cell": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              overflowX: "auto",
             },
           }}
-        >
-          <DataGrid
-            checkboxSelection
-            rows={filteredRows || []}
-            columns={visibleColumns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10]}
-            sx={{
-              bgcolor: "background.paper",
-              color: "text.primary",
-              fontSize: 12,
-              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
-              "& .MuiDataGrid-virtualScroller": {
-                overflowX: "auto",
-              },
-            }}
-          />
-        </Box>
+        />
       </Box>
 
       {(OpenAddModal || OpenEditModal) && (
@@ -356,7 +373,7 @@ export default function Countries() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            zIndex: 1300, // Increased zIndex
+            zIndex: 1300,
             width: { xs: "80%", sm: "40%" },
             display: "flex",
             borderRadius: "10px",
@@ -364,6 +381,7 @@ export default function Countries() {
             backgroundColor:
               theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
             border: `1px solid ${theme.palette.divider}`,
+            direction: i18n.dir(),
           }}
         >
           {OpenAddModal && (

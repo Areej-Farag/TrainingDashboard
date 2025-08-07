@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, useRef, useTransition } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
-
 import {
   Box,
   TextField,
@@ -28,7 +27,6 @@ import { useUserStore } from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-// Define CustomToolbar as a separate component
 function CustomToolbar({
   search,
   setSearch,
@@ -37,19 +35,18 @@ function CustomToolbar({
   exportCSV,
   MyColumns,
 }) {
-  const {t} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
-  const searchInputRef = useRef(null); // Add ref for TextField
+  const searchInputRef = useRef(null);
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
 
-  // Maintain focus after typing
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    searchInputRef.current?.focus(); // Ensure focus stays on the input
+    searchInputRef.current?.focus();
   };
 
   return (
@@ -60,6 +57,7 @@ function CustomToolbar({
         borderRadius: 2,
         backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
         border: `1px solid ${theme.palette.divider}`,
+        direction: i18n.dir(),
       }}
     >
       <Stack
@@ -114,6 +112,7 @@ function CustomToolbar({
               maxHeight: 300,
               bgcolor: theme.palette.background.paper,
               color: theme.palette.text.primary,
+              direction: i18n.dir(),
             },
           }}
         >
@@ -129,9 +128,8 @@ function CustomToolbar({
                   setColumnVisibility((prev) => ({
                     ...prev,
                     [col.field]: e.target.checked,
-                  }))
-                }
-              />
+                  }))}
+                />
               {col.headerName}
             </MenuItem>
           ))}
@@ -146,8 +144,9 @@ export default function Users() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, loading, error, users , } = useUserStore();
-  const {t} = useTranslation();
+  const { getUsers, loading, error, users } = useUserStore();
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     getUsers();
   }, []);
@@ -157,26 +156,24 @@ export default function Users() {
   }, [users]);
 
   const MyColumns = [
-    // {
-    //   field: "IDnumber",
-    //   headerName: `${t("ID")}`,
-    //   width: isMobile ? 50 : 70,
-    //   align: "center",
-    //   headerAlign: "center",
-    // },
     {
       field: "name",
       headerName: `${t("Name")}`,
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 120 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+      hide: false, // Keep name visible
     },
     {
       field: "Email",
-      headerName:` ${t("Email")}`,
-      width: isMobile ? 150 : 200,
+      headerName: `${t("Email")}`,
+      width: isMobile ? 120 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       hide: isMobile,
     },
     {
@@ -185,43 +182,57 @@ export default function Users() {
       width: 60,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+      hide: false, // Keep type visible
     },
     {
       field: "Phone",
       headerName: `${t("Phone")}`,
-      width: isMobile ? 120 : 150,
+      width: isMobile ? 100 : 150,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       hide: isMobile,
     },
     {
       field: "gender",
       headerName: `${t("Gender")}`,
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 120 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       hide: isMobile,
     },
     {
       field: "CreatedAt",
       headerName: `${t("Created At")}`,
-      width: 170,
+      width: isMobile ? 140 : 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "UpdatedAt",
       headerName: `${t("Updated At")}`,
-      width: 170,
+      width: isMobile ? 140 : 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "Actions",
       headerName: `${t("Actions")}`,
-      width: 170,
+      width: isMobile ? 150 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+      hide: false, // Explicitly prevent hiding
       renderCell: (params) => {
         const userID = params.row.id;
         return (
@@ -231,7 +242,7 @@ export default function Users() {
                 my: "7px",
                 border: `1px solid ${theme.palette.secondary.main}`,
                 color: theme.palette.secondary.main,
-                width: "40px",
+                width: "35px",
                 height: "30px",
                 minWidth: "30px",
               }}
@@ -241,7 +252,6 @@ export default function Users() {
             >
               <EditOutlinedIcon sx={{ fontSize: "small" }} />
             </Button>
-
           </Box>
         );
       },
@@ -269,6 +279,13 @@ export default function Users() {
     Object.fromEntries(MyColumns.map((col) => [col.field, true]))
   );
 
+  useEffect(() => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      Actions: true,
+    }));
+  }, []);
+
   const visibleColumns = MyColumns.filter((col) => columnVisibility[col.field]);
 
   const filteredRows = initialRows?.filter((row) =>
@@ -285,7 +302,6 @@ export default function Users() {
     const csvContent = [headers, ...data].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", "table.csv");
@@ -297,11 +313,12 @@ export default function Users() {
   return (
     <Box
       sx={{
-        overflow: "hidden",
+        overflow: "auto",
         p: 2,
         width: "90vw",
         m: "auto",
         position: "relative",
+        direction: i18n.dir(),
       }}
     >
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -314,11 +331,11 @@ export default function Users() {
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1 sx={{ml: 1 }}/>}
+          startIcon={<PersonAddAlt1 sx={{ ml: 1 }} />}
           sx={{ mb: 2, height: "40px" }}
           onClick={() => navigate("/user/add")}
         >
-         {t("Add User")}
+          {t("Add User")}
         </Button>
       </Stack>
 
@@ -331,57 +348,53 @@ export default function Users() {
         MyColumns={MyColumns}
       />
 
-      <Box sx={{ width: "100%", height: "70vh", overflow: "hidden" }}>
-        <Box
+      <Box sx={{ width: "100%", height: "70vh", overflow: "auto" }}>
+        <DataGrid
+          checkboxSelection
+          rows={filteredRows || []}
+          columns={visibleColumns}
+          pageSize={8}
+          rowsPerPageOptions={[8, 10]}
+          disableColumnAutoWidth
+          columnVisibilityModel={columnVisibility}
+          getCellClassName={(params) => `custom-cell ${params.field}-cell`}
+          getHeaderClassName={(params) => `custom-header ${params.field}-header`}
           sx={{
-            width: "100%",
-            height: "100%",
-            overflowX: "auto",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              height: "8px",
+            bgcolor: "background.paper",
+            color: "text.primary",
+            fontSize: 12,
+            direction: i18n.dir(),
+            "& .MuiDataGrid-columnHeaders": {
+              fontSize: 13,
+              whiteSpace: "normal",
+              lineHeight: "1.5",
             },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: theme.palette.grey[400],
-              borderRadius: "4px",
+            "& .MuiDataGrid-cell": {
+              whiteSpace: "normal",
+            },
+            "& .custom-header": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .custom-cell": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              overflowX: "auto",
+            },
+            // Force visibility of key columns in RTL/mobile
+            "& .MuiDataGrid-columnHeader:last-child, & .MuiDataGrid-cell:last-child": {
+              minWidth: isMobile ? 150 : 200,
+              display: "flex !important", // Override hidden state for Actions
+            },
+            "& .MuiDataGrid-columnHeader:first-child, & .MuiDataGrid-cell:first-child": {
+              minWidth: isMobile ? 120 : 200,
+              display: "flex !important", // Override hidden state for name
             },
           }}
-        >
-          <DataGrid
-            checkboxSelection
-            rows={filteredRows || []}
-            // @ts-ignore
-            columns={visibleColumns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10]}
-            sx={{
-              bgcolor: "background.paper",
-              color: "text.primary",
-              fontSize: 12,
-              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
-              "& .MuiDataGrid-virtualScroller": {
-                overflowX: "auto",
-              },
-            }}
-          />
-        </Box>
+        />
       </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 100,
-          width: { xs: "80%", sm: "40%" },
-          display: "flex",
-          borderRadius: "10px",
-          justifyContent: "center",
-          backgroundColor:
-            theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
-          border: `1px solid ${theme.palette.divider}`,
-        }}
-      ></Box>
     </Box>
   );
 }

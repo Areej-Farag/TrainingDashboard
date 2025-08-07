@@ -1,4 +1,3 @@
-// src/components/Admins.js
 import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
@@ -28,7 +27,6 @@ import { PersonAddAlt1 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-// CustomToolbar component remains unchanged
 function CustomToolbar({
   search,
   setSearch,
@@ -37,11 +35,11 @@ function CustomToolbar({
   exportCSV,
   MyColumns,
 }) {
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const searchInputRef = useRef(null);
-  const { t } = useTranslation();
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
@@ -59,6 +57,7 @@ function CustomToolbar({
         borderRadius: 2,
         backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f9f9f9",
         border: `1px solid ${theme.palette.divider}`,
+        direction: i18n.dir(),
       }}
     >
       <Stack
@@ -111,6 +110,7 @@ function CustomToolbar({
               maxHeight: 300,
               bgcolor: theme.palette.background.paper,
               color: theme.palette.text.primary,
+              direction: i18n.dir(),
             },
           }}
         >
@@ -144,7 +144,7 @@ export default function Admins() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { admins, getAdmins, DestroyAdmin, loading } = useAdminStore();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const featureOptions = [
     { id: 1, value: t("features.privateChat") },
     { id: 2, value: t("features.publicChat") },
@@ -166,16 +166,20 @@ export default function Admins() {
     {
       field: "name",
       headerName: t("Name"),
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 100 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "Email",
       headerName: t("Email"),
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 100 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       hide: isMobile,
     },
     {
@@ -184,35 +188,46 @@ export default function Admins() {
       width: 60,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "Phone",
       headerName: t("Phone"),
-      width: isMobile ? 120 : 150,
+      width: isMobile ? 80 : 150,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
       hide: isMobile,
     },
     {
       field: "CreatedAt",
       headerName: t("Created At"),
-      width: 170,
+      width: isMobile ? 140 : 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "UpdatedAt",
       headerName: t("Updated At"),
-      width: 170,
+      width: isMobile ? 140 : 170,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
     },
     {
       field: "Actions",
       headerName: t("Actions"),
-      width: 170,
+      width: isMobile ? 130 : 200,
       align: "center",
       headerAlign: "center",
+      headerClassName: "custom-header",
+      cellClassName: "custom-cell",
+      hide: false, // Explicitly prevent hiding
       renderCell: (params) => (
         <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
           <Button
@@ -220,7 +235,7 @@ export default function Admins() {
               my: "7px",
               border: `1px solid ${theme.palette.secondary.main}`,
               color: theme.palette.secondary.main,
-              width: "40px",
+              width: "35px",
               height: "30px",
               minWidth: "30px",
             }}
@@ -238,7 +253,7 @@ export default function Admins() {
               m: "7px",
               border: `1px solid ${theme.palette.error.dark}`,
               color: theme.palette.error.dark,
-              width: "43px",
+              width: "38px",
               height: "30px",
               minWidth: "30px",
             }}
@@ -269,6 +284,13 @@ export default function Admins() {
     Object.fromEntries(MyColumns.map((col) => [col.field, true]))
   );
 
+  useEffect(() => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      Actions: true,
+    }));
+  }, []);
+
   const visibleColumns = MyColumns.filter((col) => columnVisibility[col.field]);
 
   const filteredRows = initialRows?.filter((row) =>
@@ -296,11 +318,12 @@ export default function Admins() {
   return (
     <Box
       sx={{
-        overflow: "hidden",
+        overflow: "auto",
         p: 2,
         width: "90vw",
         m: "auto",
         position: "relative",
+        direction: i18n.dir(),
       }}
     >
       <Stack direction="row" justifyContent="space-between">
@@ -338,40 +361,49 @@ export default function Admins() {
         MyColumns={MyColumns}
       />
 
-      <Box sx={{ width: "100%", height: "70vh", overflow: "hidden" }}>
-        <Box
+      <Box sx={{ width: "100%", height: "70vh", overflow: "auto" }}>
+        <DataGrid
+          checkboxSelection
+          rows={filteredRows || []}
+          columns={visibleColumns}
+          pageSize={5}
+          rowsPerPageOptions={[5, 10]}
+          disableColumnAutoWidth
+          columnVisibilityModel={columnVisibility}
+          getCellClassName={(params) => `custom-cell ${params.field}-cell`}
+          getHeaderClassName={(params) => `custom-header ${params.field}-header`}
           sx={{
-            width: "100%",
-            height: "100%",
-            overflowX: "auto",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              height: "8px",
+            bgcolor: "background.paper",
+            color: "text.primary",
+            fontSize: 12,
+            direction: i18n.dir(),
+            "& .MuiDataGrid-columnHeaders": {
+              fontSize: 13,
+              whiteSpace: "normal",
+              lineHeight: "1.5",
             },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: theme.palette.grey[400],
-              borderRadius: "4px",
+            "& .MuiDataGrid-cell": {
+              whiteSpace: "normal",
+            },
+            "& .custom-header": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .custom-cell": {
+              textAlign: "center",
+              padding: "0 8px",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              overflowX: "auto",
+            },
+            // Force Actions column visibility in RTL/mobile
+            "& .MuiDataGrid-columnHeader:last-child, & .MuiDataGrid-cell:last-child": {
+              minWidth: isMobile ? 130 : 200,
+              display: "flex !important", // Override any hidden state
             },
           }}
-        >
-          <DataGrid
-            checkboxSelection
-            rows={filteredRows || []}
-            columns={visibleColumns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10]}
-            sx={{
-              bgcolor: "background.paper",
-              color: "text.primary",
-              fontSize: 12,
-              "& .MuiDataGrid-columnHeaders": { fontSize: 13 },
-              "& .MuiDataGrid-virtualScroller": {
-                overflowX: "auto",
-              },
-            }}
-            loading={loading}
-          />
-        </Box>
+          loading={loading}
+        />
       </Box>
     </Box>
   );
