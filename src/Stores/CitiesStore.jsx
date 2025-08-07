@@ -5,7 +5,7 @@ import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 export const useCitiesStore = create((set, get) => ({
   cities: null,
   loading: false,
-  Language: localStorage.getItem("lang"),
+  Language: localStorage.getItem("i18nextLng"),
   city: null,
   setCity: (city) => set({ city }),
   setCities: (cities) => set({ cities }),

@@ -6,7 +6,7 @@ export const useCountriesStore = create((set, get) => ({
   countries: null,
   loading: false,
   country: null,
-  Language: localStorage.getItem("lang"),
+  Language: localStorage.getItem("i18nextLng") || "en",
   setCountries: (countries) => set({ countries }),
   setLoading: (loading) => set({ loading }),
   setCountry: (country) => set({ country }),

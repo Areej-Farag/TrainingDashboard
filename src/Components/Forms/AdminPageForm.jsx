@@ -53,12 +53,10 @@ export default function AdminPageForm() {
       setValue("name", user.name || "");
       setValue("email", user.email || "");
       setValue("phone", user.phone || "");
-      setValue(
-        "type",
-        featureOptions.find((option) => option.id == user.type).value || ""
-      );
+      // Set the type to the id, not the translated value
+      setValue("type", user.type || "");
     }
-  }, [user, action]);
+  }, [user, action, setValue]);
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -73,36 +71,17 @@ export default function AdminPageForm() {
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
-  //  try {
-  //     if (action === "Add User") {
-  //       const response = await addNewUser(formData);
-  //       if (response.status === 201) {
-  //         reset();
-  //         navigate("/users");
-  //       }
-  //     } else if (action === "Edit User" && user?.id) {
-  //       const response = await updateUser(formData);
-  //       console.log ("response :" , response);
-  //       if (response.status === 200) {
-  //         reset();
-  //         navigate("/users");
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //   }
-  // };
     try {
       if (action === "Add Admin") {
         const response = await AddAdmin(formData);
-        console.log("response :" , response);
-        if (response.id ) {
+        console.log("response:", response);
+        if (response.id) {
           reset();
           navigate("/admins");
         }
       } else if (action === "Edit Admin" && user?.id) {
         const response = await UpdateAdmin(user.id, formData);
-        console.log("response :" , response);
+        console.log("response:", response);
         if (response.status === 200) {
           reset();
           navigate("/admins");
@@ -129,7 +108,7 @@ export default function AdminPageForm() {
       }}
     >
       <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
-        {action === "Add Admin" ? `${t("Add Admin")} ` : `${t("Edit Admin")}`}
+        {action === "Add Admin" ? `${t("Add Admin")}` : `${t("Edit Admin")}`}
       </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -152,7 +131,6 @@ export default function AdminPageForm() {
               placeholder={t("Name")}
               label={t("Name")}
               error={!!errors.name}
-              // @ts-ignore
               helperText={errors.name?.message}
             />
             <TextField
@@ -169,7 +147,6 @@ export default function AdminPageForm() {
               })}
               placeholder={t("Email")}
               error={!!errors.email}
-              // @ts-ignore
               helperText={errors.email?.message}
             />
             <TextField
@@ -182,7 +159,6 @@ export default function AdminPageForm() {
               })}
               placeholder={t("Phone")}
               error={!!errors.phone}
-              // @ts-ignore
               helperText={errors.phone?.message}
             />
             {action === "Add Admin" && (
@@ -200,7 +176,6 @@ export default function AdminPageForm() {
                 placeholder={t("Password")}
                 type="password"
                 error={!!errors.password}
-                // @ts-ignore
                 helperText={errors.password?.message}
               />
             )}
@@ -222,9 +197,11 @@ export default function AdminPageForm() {
                 backgroundColor: theme.palette.background.default,
               }}
               {...register("type", { required: "Type is required" })}
-              // @ts-ignore
-              error={!!errors.type}
+              defaultValue={user?.type || ""} // Ensure the select reflects the stored type
             >
+              <option value="" disabled>
+                {t("Select Admin Type")}
+              </option>
               {featureOptions.map((option) => (
                 <option
                   key={option.id}
