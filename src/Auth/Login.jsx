@@ -170,7 +170,7 @@ export default function LogIn() {
                   variant="outlined"
                   color="secondary"
                   sx={{
-                    width: { md: "100px", xs: "40%" },
+                    width: { md: "100px", xs: "60%" },
                     height: "40px",
                     borderWidth: "3px",
                   }}
