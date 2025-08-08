@@ -27,6 +27,7 @@ import AdminPageForm from "./Components/Forms/AdminPageForm";
 import UserPageForm from "./Components/Forms/UserPageForm";
 import Countries from "./Pages/Countries";
 import ProtectedRoute from "./utilis/ProtectedRoutes";
+import Verification from "./Pages/Verification";
 
 // Get token
 const Token = localStorage.getItem("token");
@@ -55,6 +56,8 @@ const router = createBrowserRouter(
         <Route path="/admin/edit/:id" element={<AdminPageForm />} />
         <Route path="/user/add" element={<UserPageForm />} />
         <Route path="/user/edit/:id" element={<UserPageForm />} />
+        <Route path="/user/verify/:id" element={<Verification />} />
+        <Route path="*" element={<h1>404</h1>} />
       </Route>
 
       {/* صفحة تسجيل الدخول مفتوحة */}

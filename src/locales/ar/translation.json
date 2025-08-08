@@ -92,7 +92,15 @@
     "delivery": "توصيل"
   },
     "Name in Arabic is required": "اسم باللغة العربية مطلوب",
-    "Name in English is required": "اسم باللغة الانجليزية مطلوب"
+    "Name in English is required": "اسم باللغة الانجليزية مطلوب",
+    "SignIn Type": "نوع تسجيل الدخول",
+      "Privacy": "الخصوصية",
+  "Activity": "النشاط",
+  "terms": "الشروط",
+  "merchant": "تجاري",
+  "user": "مستخدم",
+  "government": "حكومي",
+  "Verification" : "التوثيق"
 
 
 }

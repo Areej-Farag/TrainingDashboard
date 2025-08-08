@@ -92,8 +92,15 @@
     "delivery": "Delivery"
   },
   "Name in English is required": "Name in English is required",
-  "Name in Arabic is required": "Name in Arabic is required"
-
+  "Name in Arabic is required": "Name in Arabic is required",
+  "SignIn Type": "Sign In Type",
+  "Privacy": "Privacy",
+  "Activity": "Activity",
+  "terms": "terms",
+  "merchant": "Merchant",
+  "user": "User",
+  "government": "Governmental",
+  "Verification": "Verification"
 
 
   

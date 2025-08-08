@@ -63,6 +63,7 @@ export default function App() {
               <Sidebar
                 open={open}
                 handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
                 setOpen={setOpen}
               />
             </>

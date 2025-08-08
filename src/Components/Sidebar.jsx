@@ -1,11 +1,5 @@
 import MuiDrawer from "@mui/material/Drawer";
-import {
-  Button,
-  Stack,
-  Typography,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Button, Stack, Typography, Snackbar, Alert } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -80,7 +74,7 @@ const menuItems3 = [
   },
 ];
 
-export default function Sidebar({ open, handleDrawerClose }) {
+export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
   const { t, i18n } = useTranslation();
   const { user, logOut, error, getAdminData } = useAuthStore();
   const [snackbar, setSnackbar] = useState({
@@ -236,6 +230,7 @@ export default function Sidebar({ open, handleDrawerClose }) {
                 alt={user?.name}
                 src={user?.image_url}
                 sx={{
+                  cursor: "pointer",
                   width: open ? 56 : 40,
                   height: open ? 56 : 40,
                   my: 1,
@@ -246,6 +241,7 @@ export default function Sidebar({ open, handleDrawerClose }) {
                     objectFit: "contain",
                   },
                 }}
+                onClick={handleDrawerOpen}
               />
               <Typography
                 sx={{

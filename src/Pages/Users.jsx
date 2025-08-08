@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef, useTransition } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "../Styles/main.css";
 import {
@@ -14,18 +14,18 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Avatar,
+  textFieldClasses,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { useModal } from "../Context/ModalContext";
-import AdminPageForm from "../Components/Forms/AdminPageForm";
-import { PersonAddAlt1 } from "@mui/icons-material";
 import { useUserStore } from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
+import PersonAddAlt1 from "@mui/icons-material/PersonAddAlt1";
 
 function CustomToolbar({
   search,
@@ -128,8 +128,9 @@ function CustomToolbar({
                   setColumnVisibility((prev) => ({
                     ...prev,
                     [col.field]: e.target.checked,
-                  }))}
-                />
+                  }))
+                }
+              />
               {col.headerName}
             </MenuItem>
           ))}
@@ -140,121 +141,171 @@ function CustomToolbar({
 }
 
 export default function Users() {
-  const { showModal } = useModal();
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, loading, error, users } = useUserStore();
+  const { getUsers, users } = useUserStore();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
     getUsers();
   }, []);
 
-  useEffect(() => {
-    console.log("users updated:", users);
-  }, [users]);
-
   const MyColumns = [
+    {
+      field: "image",
+      headerName: `${t("Profile Image")}`,
+      width: isMobile ? 60 : 80,
+      flex: 0,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Avatar
+          src={params.row.image}
+          alt={params.row.name}
+          sx={{ width: 30, height: 30 }}
+        />
+      ),
+    },
     {
       field: "name",
       headerName: `${t("Name")}`,
-      width: isMobile ? 120 : 200,
+      width: isMobile ? 120 : 180,
+      flex: 1,
+      minWidth: 120,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: false, // Keep name visible
+      cellClassName: "truncate-cell",
     },
     {
       field: "Email",
       headerName: `${t("Email")}`,
-      width: isMobile ? 120 : 200,
+      width: isMobile ? 150 : 220,
+      flex: 1,
+      minWidth: 150,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: isMobile,
+      cellClassName: "truncate-cell",
     },
     {
       field: "Type",
       headerName: `${t("Type")}`,
-      width: 60,
+      width: isMobile ? 80 : 100,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: false, // Keep type visible
     },
     {
       field: "Phone",
       headerName: `${t("Phone")}`,
-      width: isMobile ? 100 : 150,
+      width: isMobile ? 120 : 150,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: isMobile,
+    },
+    {
+      field: "sign_in_type",
+      headerName: `${t("SignIn Type")}`,
+      width: isMobile ? 100 : 120,
+      flex: 0,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "gender",
       headerName: `${t("Gender")}`,
-      width: isMobile ? 120 : 200,
+      width: isMobile ? 80 : 100,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: isMobile,
+    },
+    {
+      field: "is_active",
+      headerName: `${t("Activity")}`,
+      width: isMobile ? 90 : 110,
+      flex: 0,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "is_private",
+      headerName: `${t("Privacy")}`,
+      width: isMobile ? 90 : 110,
+      flex: 0,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "CreatedAt",
       headerName: `${t("Created At")}`,
       width: isMobile ? 140 : 170,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
     },
     {
       field: "UpdatedAt",
       headerName: `${t("Updated At")}`,
       width: isMobile ? 140 : 170,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
+    },
+    {
+      field: "isVerified",
+      headerName: `${t("Verification")}`,
+      width: isMobile ? 110 : 140,
+      flex: 0,
+      align: "center",
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            color: params.value === "Verified" ? "blue" : "inherit",
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+      headerAlign: "center",
     },
     {
       field: "Actions",
       headerName: `${t("Actions")}`,
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 150 : 180,
+      flex: 0,
       align: "center",
       headerAlign: "center",
-      headerClassName: "custom-header",
-      cellClassName: "custom-cell",
-      hide: false, // Explicitly prevent hiding
-      renderCell: (params) => {
-        const userID = params.row.id;
-        return (
-          <Box sx={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+      renderCell: (params) => (
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            sx={{
+              minWidth: 30,
+              p: 0.5,
+              border: `1px solid ${theme.palette.secondary.main}`,
+              color: theme.palette.secondary.main,
+            }}
+            onClick={() => navigate(`/user/edit/${params.row.id}`)}
+          >
+            <EditOutlinedIcon sx={{ fontSize: "small" }} />
+          </Button>
+          {(params.row.isVerified === "Pending" ||
+            (params.row.is_verified === 0 &&
+              (params.row.verify_image !== null ||
+                params.row.number_verify !== null))) && (
             <Button
               sx={{
-                my: "7px",
-                border: `1px solid ${theme.palette.secondary.main}`,
-                color: theme.palette.secondary.main,
-                width: "35px",
-                height: "30px",
-                minWidth: "30px",
+                minWidth: 30,
+                p: 0.5,
+                border: `1px solid #0073ffff`,
+                color: "#0073ffff",
               }}
-              onClick={() => {
-                navigate(`/user/edit/${params.row.id}`);
-              }}
+              onClick={() => navigate(`/user/verify/${params.row.id}`)}
             >
-              <EditOutlinedIcon sx={{ fontSize: "small" }} />
+              <VerifiedOutlinedIcon sx={{ fontSize: "15px" }} />
             </Button>
-          </Box>
-        );
-      },
+          )}
+        </Box>
+      ),
     },
   ];
 
@@ -262,29 +313,41 @@ export default function Users() {
     return (
       users?.map((user) => ({
         id: user.id,
-        IDnumber: user.id,
+        image: user.image,
         name: user.name,
         Email: user.email,
         Type: user.type,
         Phone: user.phone,
-        gender: user.gender == 1 ? "Male" : "Female",
+        sign_in_type: user.sign_in_type,
+        gender: user.gender === 1 ? "Male" : "Female",
+        is_active: user.status === 1 ? "Active" : "Inactive",
+        is_private: user.is_private === 1 ? "Private" : "Public",
         CreatedAt: new Date(user.created_at).toLocaleString(),
         UpdatedAt: new Date(user.updated_at).toLocaleString(),
+        isVerified:
+          user.is_verified === 1 ? (
+            <Typography sx={{ color: "green" }}>Verified</Typography>
+          ) : user.is_verified === 0 &&
+            (!user.verify_image || !user.number_verify) ? (
+            "Not Verified"
+          ) : (
+            "Pending"
+          ),
+        is_verified: user.is_verified,
+        verify_image: user.verify_image,
+        number_verify: user.number_verify,
       })) || []
     );
   }, [users]);
 
   const [search, setSearch] = useState("");
-  const [columnVisibility, setColumnVisibility] = useState(
-    Object.fromEntries(MyColumns.map((col) => [col.field, true]))
-  );
-
-  useEffect(() => {
-    setColumnVisibility((prev) => ({
-      ...prev,
-      Actions: true,
-    }));
-  }, []);
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    const initialVisibility = {};
+    MyColumns.forEach((col) => {
+      initialVisibility[col.field] = true;
+    });
+    return initialVisibility;
+  });
 
   const visibleColumns = MyColumns.filter((col) => columnVisibility[col.field]);
 
@@ -304,7 +367,7 @@ export default function Users() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "table.csv");
+    link.setAttribute("download", "users.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -313,15 +376,15 @@ export default function Users() {
   return (
     <Box
       sx={{
-        overflow: "auto",
-        p: 2,
         width: "90vw",
-        m: "auto",
-        position: "relative",
+        maxWidth: "100%",
+        mx: "auto",
+        p: 2,
+        overflow: "hidden",
         direction: i18n.dir(),
       }}
     >
-      <Stack direction={"row"} justifyContent={"space-between"}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box>
           <Typography variant="h5">{t("Users")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
@@ -331,9 +394,9 @@ export default function Users() {
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1 sx={{ ml: 1 }} />}
-          sx={{ mb: 2, height: "40px" }}
+          startIcon={<PersonAddAlt1 />}
           onClick={() => navigate("/user/add")}
+          sx={{ height: 40 }}
         >
           {t("Add User")}
         </Button>
@@ -348,52 +411,62 @@ export default function Users() {
         MyColumns={MyColumns}
       />
 
-      <Box sx={{ width: "100%", height: "70vh", overflow: "auto" }}>
-        <DataGrid
-          checkboxSelection
-          rows={filteredRows || []}
-          columns={visibleColumns}
-          pageSize={8}
-          rowsPerPageOptions={[8, 10]}
-          disableColumnAutoWidth
-          columnVisibilityModel={columnVisibility}
-          getCellClassName={(params) => `custom-cell ${params.field}-cell`}
-          getHeaderClassName={(params) => `custom-header ${params.field}-header`}
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        <Box
           sx={{
-            bgcolor: "background.paper",
-            color: "text.primary",
-            fontSize: 12,
-            direction: i18n.dir(),
-            "& .MuiDataGrid-columnHeaders": {
-              fontSize: 13,
-              whiteSpace: "normal",
-              lineHeight: "1.5",
-            },
-            "& .MuiDataGrid-cell": {
-              whiteSpace: "normal",
-            },
-            "& .custom-header": {
-              textAlign: "center",
-              padding: "0 8px",
-            },
-            "& .custom-cell": {
-              textAlign: "center",
-              padding: "0 8px",
-            },
-            "& .MuiDataGrid-virtualScroller": {
-              overflowX: "auto",
-            },
-            // Force visibility of key columns in RTL/mobile
-            "& .MuiDataGrid-columnHeader:last-child, & .MuiDataGrid-cell:last-child": {
-              minWidth: isMobile ? 150 : 200,
-              display: "flex !important", // Override hidden state for Actions
-            },
-            "& .MuiDataGrid-columnHeader:first-child, & .MuiDataGrid-cell:first-child": {
-              minWidth: isMobile ? 120 : 200,
-              display: "flex !important", // Override hidden state for name
-            },
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: "auto",
           }}
-        />
+        >
+          <DataGrid
+            rows={filteredRows || []}
+            columns={visibleColumns}
+            pageSize={8}
+            rowsPerPageOptions={[8, 10]}
+            columnVisibilityModel={columnVisibility}
+            density={isMobile ? "compact" : "standard"}
+            disableColumnMenu
+            disableSelectionOnClick
+            sx={{
+              width: "fit-content",
+              minWidth: "100%",
+              "& .MuiDataGrid-columnHeader": {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "0 8px",
+                backgroundColor:
+                  theme.palette.mode === "dark" ? "#2d2d2d" : "#f5f5f5",
+              },
+              "& .MuiDataGrid-cell": {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "0 8px",
+                textAlign: "center",
+              },
+              "& .truncate-cell": {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                overflow: "auto !important",
+              },
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   );
