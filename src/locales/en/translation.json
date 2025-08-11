@@ -10,7 +10,6 @@
   "profile": "Profile",
   "search": "Search…",
   "LogIn": "Log In",
-  "Password": "Password",
   "Admins": "Admins",
   "Users": "Users",
   "Logout": "Logout",
@@ -43,7 +42,6 @@
   "Female": "Female",
   "Interests": "Interests",
   "Role": "Role",
-  "Actions": "Actions",
   "Created At": "Created At",
   "Updated At": "Updated At",
   "Export CSV": "Export CSV",
@@ -52,7 +50,6 @@
   "List of Cities": "List of Cities",
   "List of Countries": "List of Countries",
   "ID": "ID",
-  "Export CSV": "Export CSV",
   "Admin": "Admin",
   "User": "User",
   "Admin Image": "Admin Image",
@@ -95,12 +92,27 @@
   "Name in Arabic is required": "Name in Arabic is required",
   "SignIn Type": "Sign In Type",
   "Privacy": "Privacy",
-  "Activity": "Activity",
   "terms": "terms",
   "merchant": "Merchant",
   "user": "User",
   "government": "Governmental",
-  "Verification": "Verification"
+  "Verification": "Verification",
+  "Private Chat": "Private Chat",
+  "List of Chats": "List of Chats",
+  "user type": "User Type",
+  "Acount Type": "Acount Type",
+  "Private": "Private",
+  "Public": "Public",
+  "Acount Activity": "is Active",
+  "Active": "Active",
+  "Inactive": "Inactive",
+  "Select a country first": "Select a country first",
+  "commercial register": "commercial register",
+  "terms and conditions": "terms and conditions",
+  "privacy policy": "privacy policy"
+
+
+
 
 
   

@@ -26,6 +26,7 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect, useState } from "react";
@@ -36,9 +37,9 @@ const drawerWidth = 240;
 
 const menuItems2 = [
   {
-    text: "Profile Form",
-    icon: <Person2OutlinedIcon />,
-    path: "/form",
+    text: "Private Chats",
+    icon: <ChatOutlinedIcon />,
+    path: "/privatechats",
   },
   {
     text: "Calender",
@@ -97,12 +98,12 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
     },
     {
       text: t("Admins"),
-      icon: <GroupOutlinedIcon />,
+      icon: <Person2OutlinedIcon />,
       path: "/admins",
     },
     {
       text: t("Users"),
-      icon: <ContactsOutlinedIcon />,
+      icon: <GroupOutlinedIcon />,
       path: "/users",
     },
     {

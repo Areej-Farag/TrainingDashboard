@@ -22,6 +22,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import logo from "../Assests/Images/HayaLogo.jpg";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -97,6 +98,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
   const [languageMenuAnchorEl, setLanguageMenuAnchorEl] = React.useState(null);
   const [language, setLanguage] = React.useState("en");
   const { i18n, t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedLang = localStorage.getItem("lang") || "en";
@@ -208,7 +210,12 @@ function Header({ open, handleDrawerOpen, setMode }) {
                     <NotificationsNoneOutlinedIcon />
                     &nbsp; {t("notifications")}
                   </MenuItem>
-                  <MenuItem onClick={handleMenuClose}>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/settings");
+                      handleMenuClose();
+                    }}
+                  >
                     <SettingsOutlinedIcon />
                     &nbsp; {t("settings")}
                   </MenuItem>
@@ -238,7 +245,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
                   <NotificationsNoneOutlinedIcon />
                 </IconButton>
                 <IconButton color="inherit">
-                  <SettingsOutlinedIcon />
+                  <SettingsOutlinedIcon onClick={() => navigate("/settings")} />
                 </IconButton>
                 <IconButton color="inherit">
                   <PermIdentityOutlinedIcon />

@@ -9,7 +9,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCitiesStore } from "../../Stores/CitiesStore";
 import { useCountriesStore } from "../../Stores/CountriesStore";
@@ -20,13 +20,29 @@ export default function UserPageForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const action = id ? "Edit User" : "Add User";
-  const { users, interesties, getInteresties, addNewUser, updateUser } = useUserStore();
+  const { users, interesties, getInteresties, addNewUser, updateUser } =
+    useUserStore();
   const [user, setUser] = useState(null);
   const { getCities, cities } = useCitiesStore();
   const { countries, getCountries } = useCountriesStore();
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const { t } = useTranslation();
+  const userType = [
+    {
+      value: "merchant",
+      label: t("merchant"),
+    },
+    {
+      value: "user",
+      label: t("user"),
+    },
+    {
+      value: "government",
+      label: t("government"),
+    },
+  ];
+
   const {
     register,
     handleSubmit,
@@ -44,8 +60,12 @@ export default function UserPageForm() {
       birth_date: "",
       country_id: "",
       city_id: "",
+      type: "",
+      is_private: "",
+      status: "",
       interests: [],
       image: null,
+      commercial_register: "",
     },
   });
   const theme = useTheme();
@@ -55,7 +75,7 @@ export default function UserPageForm() {
 
   useEffect(() => {
     if (id && users?.length > 0) {
-      const found = users.find((admin) => admin.id === Number(id));
+      const found = users.find((user) => user.id === Number(id));
       if (found) {
         setUser(found);
       }
@@ -78,8 +98,12 @@ export default function UserPageForm() {
       setValue("birth_date", user.birth_date || "");
       setValue("country_id", user.country_id || "");
       setValue("city_id", user.city_id || "");
+      setValue("type", user.type || null);
+      setValue("is_private", user.is_private || null);
+      setValue("status", user.status || null);
+      setValue("commercial_register", user.commercial_register || null);
       setSelectedCountry(user.country_id || "");
-      
+
       // Handle interests
       let interests = [];
       if (Array.isArray(user.interests)) {
@@ -109,7 +133,8 @@ export default function UserPageForm() {
   }, [watchedCountryId, setValue, selectedCountry]);
 
   // Filter cities based on selected country
-  const filteredCities = cities?.filter((city) => city.country_id === Number(selectedCountry)) || [];
+  const filteredCities =
+    cities?.filter((city) => city.country_id === Number(selectedCountry)) || [];
 
   function calculateAge(birthDateString) {
     const birthDate = new Date(birthDateString);
@@ -129,7 +154,9 @@ export default function UserPageForm() {
     if (checked) {
       updatedInterests = [...selectedInterests, id];
     } else {
-      updatedInterests = selectedInterests.filter((existingId) => existingId !== id);
+      updatedInterests = selectedInterests.filter(
+        (existingId) => existingId !== id
+      );
     }
     setSelectedInterests(updatedInterests);
     setValue("interests", updatedInterests);
@@ -141,12 +168,15 @@ export default function UserPageForm() {
     formData.append("name", data.name);
     formData.append("email", data.email);
     formData.append("phone", data.phone);
-    formData.append("type", "user");
+    formData.append("type", data.type);
     formData.append("gender", data.gender);
     formData.append("birth_date", data.birth_date);
     formData.append("age", calculateAge(data.birth_date).toString());
     formData.append("country_id", data.country_id);
     formData.append("city_id", data.city_id);
+    formData.append("is_private", data.is_private);
+    formData.append("status", data.status);
+    formData.append("commercial_register", data.commercial_register || null);
     // Ensure interests is sent as a JSON string or array based on backend requirements
     if (selectedInterests.length > 0) {
       formData.append("interests", JSON.stringify(selectedInterests));
@@ -160,14 +190,14 @@ export default function UserPageForm() {
     try {
       if (action === "Add User") {
         const response = await addNewUser(formData);
-        console.log ("response :" , response);
+        console.log("response :", response);
         if (response.status === 200) {
           reset();
           navigate("/users");
         }
       } else if (action === "Edit User" && user?.id) {
         const response = await updateUser(formData);
-        console.log ("response :" , response);
+        console.log("response :", response);
         if (response.status === 200) {
           reset();
           navigate("/users");
@@ -199,18 +229,17 @@ export default function UserPageForm() {
         encType="multipart/form-data"
         style={{ width: "100%" }}
       >
-        <Stack spacing={2} sx={{ width: "100%" , gap: "10px"}}>
+        <Stack spacing={2} sx={{ width: "100%", gap: "10px" }}>
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" , gap: "10px"}}
+            sx={{ width: "100%", gap: "10px" }}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: { lg: "50%", xs: "100%"  },
-              
+                width: { lg: "50%", xs: "100%" },
               }}
             >
               <label htmlFor="name">{t("Name")}</label>
@@ -252,7 +281,7 @@ export default function UserPageForm() {
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%"  , gap: "10px"}}
+            sx={{ width: "100%", gap: "10px" }}
           >
             <Box
               sx={{
@@ -296,7 +325,7 @@ export default function UserPageForm() {
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" , gap: "10px"}}
+            sx={{ width: "100%", gap: "10px" }}
           >
             <Box
               sx={{
@@ -374,16 +403,46 @@ export default function UserPageForm() {
               )}
             </Box>
           </Stack>
+          {user?.type === "merchant" && (
+            <Stack
+              direction={{ lg: "row", xs: "column" }}
+              spacing={2}
+              sx={{ width: "100%", gap: "10px" }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: { lg: "50%", xs: "100%" },
+                }}
+              >
+                <label htmlFor="commercial_register">
+                  {t("commercial register")}
+                </label>
+                <TextField
+                  sx={{
+                    width: "100%",
+                  }}
+                  {...register("commercial_register", {
+                    required: t("commercial register is required"),
+                  })}
+                  placeholder={t("commercial register")}
+                  error={!!errors.commercial_register}
+                  helperText={errors.commercial_register?.message}
+                />
+              </Box>
+            </Stack>
+          )}
           <Stack
             direction={{ lg: "row", xs: "column" }}
             spacing={2}
-            sx={{ width: "100%" , gap: "10px"}}
+            sx={{ width: "100%", gap: "10px" }}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: { xs: "100%", md: "50%" },
+                width: { xs: "100%", lg: "50%" },
               }}
             >
               <label htmlFor="gender">{t("Gender")}</label>
@@ -415,11 +474,95 @@ export default function UserPageForm() {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: { xs: "100%", md: "50%" },
+                width: { xs: "100%", lg: "50%" },
               }}
             >
-              <label htmlFor="image">{t("User Image")}</label>
-              <input type="file" {...register("image")} accept="image/*" />
+              <label htmlFor="type">{t("user type")}</label>
+              <select
+                style={{
+                  height: "40px",
+                  borderRadius: "5px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.primary,
+                  width: "100%",
+                  backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
+                }}
+                {...register("type", { required: t("type is required") })}
+              >
+                <option value="" disabled>
+                  {t("Select type")}
+                </option>
+                {userType.map((type) => (
+                  <option value={type.value}>{type.label}</option>
+                ))}
+              </select>
+              {errors.type && (
+                <Typography color="error" variant="caption">
+                  {errors.type.message}
+                </Typography>
+              )}
+            </Box>
+          </Stack>
+          <Stack
+            direction={{ lg: "row", xs: "column" }}
+            justifyContent={"space-between"}
+            spacing={2}
+            sx={{ width: "100%", gap: "10px" }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { lg: "50%", xs: "100%" },
+              }}
+            >
+              <label htmlFor="type">{t("Acount Type")}</label>
+              <select
+                style={{
+                  height: "40px",
+                  borderRadius: "5px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.primary,
+                  width: "100%",
+                  backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
+                }}
+                {...register("is_private", { required: t("type is required") })}
+              >
+                <option value="" disabled>
+                  {t("Acount Type")}
+                </option>
+                <option value="0">{t("Private")}</option>
+                <option value="1">{t("Public")}</option>
+              </select>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { lg: "50%", xs: "100%" },
+              }}
+            >
+              <label htmlFor="status">{t("Acount Activity")}</label>
+              <select
+                style={{
+                  height: "40px",
+                  borderRadius: "5px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.primary,
+                  width: "100%",
+                  backgroundColor: theme.palette.background.default,
+                  padding: "0 10px",
+                }}
+                {...register("status", { required: t("status is required") })}
+              >
+                <option value="" disabled>
+                  {t("Select type")}
+                </option>
+                <option value="1">{t("Active")}</option>
+                <option value="0">{t("Inactive")}</option>
+              </select>
             </Box>
           </Stack>
           <Stack
@@ -429,10 +572,20 @@ export default function UserPageForm() {
               width: "100%",
               justifyContent: "space-between",
               alignItems: "center",
-               gab: "10px"
-              
+              gab: "10px",
             }}
           >
+            {" "}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", md: "50%" },
+              }}
+            >
+              <label htmlFor="image">{t("User Image")}</label>
+              <input type="file" {...register("image")} accept="image/*" />
+            </Box>
             <Box
               sx={{
                 display: "flex",
@@ -456,7 +609,9 @@ export default function UserPageForm() {
                       control={
                         <Checkbox
                           value={interest.id}
-                          checked={selectedInterests.includes(Number(interest.id))}
+                          checked={selectedInterests.includes(
+                            Number(interest.id)
+                          )}
                           onChange={(e) =>
                             handleInterestChange(
                               parseInt(e.target.value),

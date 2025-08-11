@@ -21,11 +21,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { useUserStore } from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import PersonAddAlt1 from "@mui/icons-material/PersonAddAlt1";
+import useChatStore from "../Stores/Chats";
 
 function CustomToolbar({
   search,
@@ -140,15 +140,15 @@ function CustomToolbar({
   );
 }
 
-export default function Users() {
+export default function PrivateChat() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, users } = useUserStore();
+  const { getMessages, messages } = useChatStore();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    getUsers();
+    getMessages();
   }, []);
 
   const MyColumns = [
@@ -170,7 +170,7 @@ export default function Users() {
     {
       field: "name",
       headerName: `${t("Name")}`,
-      width: isMobile ? 150 : 220,
+      width: isMobile ? 120 : 180,
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -203,14 +203,7 @@ export default function Users() {
       align: "center",
       headerAlign: "center",
     },
-    {
-      field: "sign_in_type",
-      headerName: `${t("SignIn Type")}`,
-      width: isMobile ? 100 : 120,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
+
     {
       field: "gender",
       headerName: `${t("Gender")}`,
@@ -311,34 +304,13 @@ export default function Users() {
 
   const initialRows = useMemo(() => {
     return (
-      users?.map((user) => ({
-        id: user.id,
-        image: user.image,
-        name: user.name,
-        Email: user.email,
-        Type: user.type,
-        Phone: user.phone,
-        sign_in_type: user.sign_in_type,
-        gender: user.gender === 1 ? "Male" : "Female",
-        is_active: user.status === 1 ? "Active" : "Inactive",
-        is_private: user.is_private === 1 ? "Private" : "Public",
-        CreatedAt: new Date(user.created_at).toLocaleString(),
-        UpdatedAt: new Date(user.updated_at).toLocaleString(),
-        isVerified:
-          user.is_verified === 1 ? (
-            <Typography sx={{ color: "green" }}>Verified</Typography>
-          ) : user.is_verified === 0 &&
-            (!user.verify_image || !user.number_verify) ? (
-            "Not Verified"
-          ) : (
-            "Pending"
-          ),
-        is_verified: user.is_verified,
-        verify_image: user.verify_image,
-        number_verify: user.number_verify,
+      messages?.map((message) => ({
+        id: message.id,
+        CreatedAt: new Date(message.created_at).toLocaleString(),
+        UpdatedAt: new Date(message.updated_at).toLocaleString(),
       })) || []
     );
-  }, [users]);
+  }, [messages]);
 
   const [search, setSearch] = useState("");
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -386,17 +358,17 @@ export default function Users() {
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box>
-          <Typography variant="h5">{t("Users")}</Typography>
+          <Typography variant="h5">{t("Private Chat")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            {t("List of Users")}
+            {t("List of Chats")}
           </Typography>
         </Box>
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1  sx={{ml:2}}/>}
+          startIcon={<PersonAddAlt1 />}
           onClick={() => navigate("/user/add")}
-          sx={{ height: 40 , width: 150 }}
+          sx={{ height: 40 }}
         >
           {t("Add User")}
         </Button>
