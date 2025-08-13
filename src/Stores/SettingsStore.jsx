@@ -3,78 +3,65 @@ import axios from "axios";
 import { useErrorStore } from "./UseErrorsStore";
 
 const useSettingsStore = create((set, get) => ({
-  terms: null,
-  privacy: null,
+  settings: null,
   loading: false,
   setLoading: (loading) => set({ loading }),
-  setTerms: (terms) => set({ terms }),
-  setPrivacy: (privacy) => set({ privacy }),
-  getTerms: async () => {
-    const { setTerms, setLoading } = get();
+  setSettings: (settings) => set({ settings }),
+  getSettings: async () => {
+    const { setLoading, setSettings } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axios.get(
-        `https://haya.balance-genius.com/api/terms?lang=${localStorage.getItem(
-          "i18nextLng"
-        )}`,
+        "https://hayaapp.online/api/admin/settings",
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      const terms = response.data.data;
-      console.log("terms", terms);
-      setTerms(terms);
-      return terms;
+      setSettings(response.data.data);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
-      return null;
     } finally {
       setLoading(false);
     }
   },
-
-  getPrivacy: async () => {
-    const { setPrivacy, setLoading } = get();
+  updateSettings: async (data) => {
+    const { setLoading, setSettings } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://haya.balance-genius.com/api/privacy?lang=${localStorage.getItem(
-          "i18nextLng"
-        )}`,
+      const response = await axios.post(
+        "https://hayaapp.online/api/admin/settings/update", // Change to "/add" if the API requires it
+        data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      const privacy = response.data.data;
-      console.log("privacy", privacy);
-      setPrivacy(privacy);
-      return privacy;
+      setSettings(response.data.data);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
-      return null;
     } finally {
       setLoading(false);
     }
   },
 }));
+
 export default useSettingsStore;

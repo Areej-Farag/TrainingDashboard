@@ -23,9 +23,8 @@ import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import PersonAddAlt1 from "@mui/icons-material/PersonAddAlt1";
-import useChatStore from "../Stores/Chats";
+import useMessageStore from "../Stores/MessageStore";
 
 function CustomToolbar({
   search,
@@ -144,7 +143,7 @@ export default function PrivateChat() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getMessages, messages } = useChatStore();
+  const { getMessages, messages } = useMessageStore();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -153,33 +152,28 @@ export default function PrivateChat() {
 
   const MyColumns = [
     {
-      field: "image",
-      headerName: `${t("Profile Image")}`,
-      width: isMobile ? 60 : 80,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Avatar
-          src={params.row.image}
-          alt={params.row.name}
-          sx={{ width: 30, height: 30 }}
-        />
-      ),
-    },
-    {
-      field: "name",
-      headerName: `${t("Name")}`,
-      width: isMobile ? 120 : 180,
-      flex: 1,
-      minWidth: 120,
+      field: "sender_id",
+      headerName: `${t("Sender ID")}`,
+      width: isMobile ? 80 : 100,
+      // flex: 1,
+      minWidth: 80,
       align: "center",
       headerAlign: "center",
       cellClassName: "truncate-cell",
     },
     {
-      field: "Email",
-      headerName: `${t("Email")}`,
+      field: "receiver_id",
+      headerName: `${t("Receiver ID")}`,
+      width: isMobile ? 80 : 100,
+      // flex: 1,
+      minWidth: 80,
+      align: "center",
+      headerAlign: "center",
+      cellClassName: "truncate-cell",
+    },
+    {
+      field: "message",
+      headerName: `${t("Message")}`,
       width: isMobile ? 150 : 220,
       flex: 1,
       minWidth: 150,
@@ -187,47 +181,7 @@ export default function PrivateChat() {
       headerAlign: "center",
       cellClassName: "truncate-cell",
     },
-    {
-      field: "Type",
-      headerName: `${t("Type")}`,
-      width: isMobile ? 80 : 100,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "Phone",
-      headerName: `${t("Phone")}`,
-      width: isMobile ? 120 : 150,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
 
-    {
-      field: "gender",
-      headerName: `${t("Gender")}`,
-      width: isMobile ? 80 : 100,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "is_active",
-      headerName: `${t("Activity")}`,
-      width: isMobile ? 90 : 110,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "is_private",
-      headerName: `${t("Privacy")}`,
-      width: isMobile ? 90 : 110,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
     {
       field: "CreatedAt",
       headerName: `${t("Created At")}`,
@@ -244,68 +198,15 @@ export default function PrivateChat() {
       align: "center",
       headerAlign: "center",
     },
-    {
-      field: "isVerified",
-      headerName: `${t("Verification")}`,
-      width: isMobile ? 110 : 140,
-      flex: 0,
-      align: "center",
-      renderCell: (params) => (
-        <Typography
-          sx={{
-            color: params.value === "Verified" ? "blue" : "inherit",
-          }}
-        >
-          {params.value}
-        </Typography>
-      ),
-      headerAlign: "center",
-    },
-    {
-      field: "Actions",
-      headerName: `${t("Actions")}`,
-      width: isMobile ? 150 : 180,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button
-            sx={{
-              minWidth: 30,
-              p: 0.5,
-              border: `1px solid ${theme.palette.secondary.main}`,
-              color: theme.palette.secondary.main,
-            }}
-            onClick={() => navigate(`/user/edit/${params.row.id}`)}
-          >
-            <EditOutlinedIcon sx={{ fontSize: "small" }} />
-          </Button>
-          {(params.row.isVerified === "Pending" ||
-            (params.row.is_verified === 0 &&
-              (params.row.verify_image !== null ||
-                params.row.number_verify !== null))) && (
-            <Button
-              sx={{
-                minWidth: 30,
-                p: 0.5,
-                border: `1px solid #0073ffff`,
-                color: "#0073ffff",
-              }}
-              onClick={() => navigate(`/user/verify/${params.row.id}`)}
-            >
-              <VerifiedOutlinedIcon sx={{ fontSize: "15px" }} />
-            </Button>
-          )}
-        </Box>
-      ),
-    },
   ];
 
   const initialRows = useMemo(() => {
     return (
       messages?.map((message) => ({
         id: message.id,
+        sender_id: message.sender_id,
+        receiver_id: message.receiver_id,
+        message: message.message,
         CreatedAt: new Date(message.created_at).toLocaleString(),
         UpdatedAt: new Date(message.updated_at).toLocaleString(),
       })) || []
@@ -358,20 +259,11 @@ export default function PrivateChat() {
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box>
-          <Typography variant="h5">{t("Private Chat")}</Typography>
+          <Typography variant="h5">{t("Messages")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            {t("List of Chats")}
+            {t("List of Messages")}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<PersonAddAlt1 />}
-          onClick={() => navigate("/user/add")}
-          sx={{ height: 40 }}
-        >
-          {t("Add User")}
-        </Button>
       </Stack>
 
       <CustomToolbar

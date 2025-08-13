@@ -112,7 +112,38 @@
   "commercial register": "التسجيل التجاري",
   "settings": "الإعدادات",
   "terms and conditions": "الشروط والاحكام",
-  "privacy policy": "سياسة الخصوصية"
+  "privacy policy": "سياسة الخصوصية",
+   "Add Interest": "إضافة صلة",
+  "Edit Interest": "تعديل صلة",
+  "List of Interests": "قائمة الصلات",
+  "Interest": "صلة",
+  "Name Arabic": "الاسم بالعربية",
+  "Name English": "الاسم بالانجليزية",
+  "Receiver ID": "تعريف المستلم",
+  "Sender ID": "تعريف المرسل",
+  "Messages": "الرسائل",
+  "Message": "الرسالة",
+  "List of Messages": "قائمة الرسائل",
+  "List of Notifications": "قائمة الاشعارات",
+  "Notification": "الاشعار",
+  "Notification Type": "نوع الاشعار",
+  "Owner Name": "اسم المالك",
+  "Government Name": "اسم الحكومة",
+  "Logo": "اللوجو",
+  "Governments": "الحكومات",
+  "List of Governments": "قائمة الحكومات",
+  "Add Government": "اضافة حكومة",
+  "Edit Government": "تعديل حكومة",
+  "Merchants": "التجار",
+  "List of Merchants": "قائمة التجار",
+  "Add Merchant": "اضافة تجار",
+  "Edit Merchant": "تعديل تجار",
+  "expiration_date is required": "تاريخ الانتهاء مطلوب",
+  "expiration_date": "تاريخ الانتهاء",
+  "Store Name": "اسم المتجر",
+  "Store Name is required": "اسم المتجر مطلوب"
+
+ 
 
 
 

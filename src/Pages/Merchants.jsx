@@ -24,7 +24,8 @@ import { useUserStore } from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
-import PersonAddAlt1 from "@mui/icons-material/PersonAddAlt1";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import useMerchantStore from "../Stores/MerchantStore";
 
 function CustomToolbar({
   search,
@@ -139,15 +140,15 @@ function CustomToolbar({
   );
 }
 
-export default function Users() {
+export default function Merchants() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, users } = useUserStore();
+  const { merchants, getMerchants } = useMerchantStore();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    getUsers();
+    getMerchants();
   }, []);
 
   const MyColumns = [
@@ -172,6 +173,16 @@ export default function Users() {
       width: isMobile ? 150 : 220,
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
+      cellClassName: "truncate-cell",
+    },
+    {
+      field: "owner_name",
+      headerName: `${t("Owner Name")}`,
+      width: isMobile ? 150 : 220,
+      flex: 1,
+      minWidth: 150,
       align: "center",
       headerAlign: "center",
       cellClassName: "truncate-cell",
@@ -211,10 +222,11 @@ export default function Users() {
       headerAlign: "center",
     },
     {
-      field: "gender",
-      headerName: `${t("Gender")}`,
-      width: isMobile ? 80 : 100,
-      flex: 0,
+      field: "commercial_register",
+      headerName: `${t("commercial register")}`,
+      width: isMobile ? 120 : 140,
+      minWidth: 120,
+      flex: 1,
       align: "center",
       headerAlign: "center",
     },
@@ -283,7 +295,7 @@ export default function Users() {
               border: `1px solid ${theme.palette.secondary.main}`,
               color: theme.palette.secondary.main,
             }}
-            onClick={() => navigate(`/user/edit/user/${params.row.id}`)}
+            onClick={() => navigate(`/user/edit/merchant/${params.row.id}`)}
           >
             <EditOutlinedIcon sx={{ fontSize: "small" }} />
           </Button>
@@ -311,34 +323,36 @@ export default function Users() {
 
   const initialRows = useMemo(() => {
     return (
-      users?.map((user) => ({
-        id: user.id,
-        image: user.image,
-        name: user.name,
-        Email: user.email,
-        Type: user.type,
-        Phone: user.phone,
-        sign_in_type: user.sign_in_type,
-        gender: user.gender === 1 ? "Male" : "Female",
-        is_active: user.status === 1 ? "Active" : "Inactive",
-        is_private: user.is_private === 1 ? "Private" : "Public",
-        CreatedAt: new Date(user.created_at).toLocaleString(),
-        UpdatedAt: new Date(user.updated_at).toLocaleString(),
+      merchants?.map((merchant) => ({
+        id: merchant.id,
+        image: merchant.Store_logo,
+        name: merchant.name,
+        owner_name: merchant.owner_name,
+        Email: merchant.email,
+        Type: merchant.type,
+        Phone: merchant.phone,
+        sign_in_type: merchant.sign_in_type,
+        // gender: merchant.gender === 1 ? "Male" : "Female",
+        commercial_register: merchant.commercial_register,
+        is_active: merchant.status === 1 ? "Active" : "Inactive",
+        is_private: merchant.is_private === 1 ? "Private" : "Public",
+        CreatedAt: new Date(merchant.created_at).toLocaleString(),
+        UpdatedAt: new Date(merchant.updated_at).toLocaleString(),
         isVerified:
-          user.is_verified === 1 ? (
+          merchant.is_verified === 1 ? (
             <Typography sx={{ color: "green" }}>Verified</Typography>
-          ) : user.is_verified === 0 &&
-            (!user.verify_image || !user.number_verify) ? (
+          ) : merchant.is_verified === 0 &&
+            (!merchant.verify_image || !merchant.number_verify) ? (
             "Not Verified"
           ) : (
             "Pending"
           ),
-        is_verified: user.is_verified,
-        verify_image: user.verify_image,
-        number_verify: user.number_verify,
+        is_verified: merchant.is_verified,
+        verify_image: merchant.verify_image,
+        number_verify: merchant.number_verify,
       })) || []
     );
-  }, [users]);
+  }, [merchants]);
 
   const [search, setSearch] = useState("");
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -386,19 +400,19 @@ export default function Users() {
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box>
-          <Typography variant="h5">{t("Users")}</Typography>
+          <Typography variant="h5">{t("Merchants")}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            {t("List of Users")}
+            {t("List of Merchants")}
           </Typography>
         </Box>
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<PersonAddAlt1 sx={{ ml: 2 }} />}
-          onClick={() => navigate("/user/add/user")}
+          startIcon={<AddOutlinedIcon sx={{ ml: 2 }} />}
+          onClick={() => navigate("/user/add/merchant")}
           sx={{ height: 40, width: 150 }}
         >
-          {t("Add User")}
+          {t("Add Merchant")}
         </Button>
       </Stack>
 
@@ -431,11 +445,9 @@ export default function Users() {
         >
           <DataGrid
             rows={filteredRows || []}
-            // @ts-ignore
             columns={visibleColumns}
             pageSize={8}
             rowsPerPageOptions={[8, 10]}
-            // @ts-ignore
             columnVisibilityModel={columnVisibility}
             density={isMobile ? "compact" : "standard"}
             disableColumnMenu

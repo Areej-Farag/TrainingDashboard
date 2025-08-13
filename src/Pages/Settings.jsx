@@ -1,19 +1,42 @@
-import { CircularProgress, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import useSettingsStore from "../Stores/SettingsStore";
-import TermsAndPrivacy from "../Components/TermsAndPrivacy";
+import TermsEditor from "../Components/TermsEditor";
+import PrivacyEditor from "../Components/PrivacyEditor";
+
 export default function Settings() {
   const { t } = useTranslation();
-  const { terms, privacy, loading, getTerms, getPrivacy } = useSettingsStore();
-    const language = localStorage.getItem("i18nextLng");
+  const {
+    terms,
+    privacy,
+    loading,
+    getTerms,
+    getPrivacy,
+    saveTerms,
+    savePrivacy,
+  } = useSettingsStore();
+  const language = localStorage.getItem("i18nextLng");
+
   useEffect(() => {
     getTerms();
     getPrivacy();
   }, [language]);
+
+  const handleTermsSave = (content) => {
+    console.log(content);
+    // saveTerms(content);
+  };
+
+  const handlePrivacySave = (content) => {
+    console.log(content);
+
+    // savePrivacy(content);
+  };
+
   return (
     <Stack sx={{ width: "100%", height: "100vh", alignItems: "center" }}>
-      <Typography variant="h2" >{t("settings")}</Typography>
+      <Typography variant="h2">{t("settings")}</Typography>
       {loading ? (
         <CircularProgress color="secondary" />
       ) : (
@@ -26,29 +49,10 @@ export default function Settings() {
             mt: 5,
           }}
           spacing={5}
-          direction={"column"}
+          direction="column"
         >
-          <Stack
-            sx={{
-              width: { md: "50%", xs: "100%" },
-              height: "100vh",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h4">{t("terms and conditions")}</Typography>
-            <TermsAndPrivacy response={terms} />
-          </Stack>
-          <Stack
-            sx={{
-              width: { md: "50%", xs: "100%" },
-              height: "100vh",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h4">{t("privacy policy")}</Typography>
-
-            <TermsAndPrivacy response={privacy} />
-          </Stack>
+          <TermsEditor initialContent={terms} onSave={handleTermsSave} />
+          <PrivacyEditor initialContent={privacy} onSave={handlePrivacySave} />
         </Stack>
       )}
     </Stack>

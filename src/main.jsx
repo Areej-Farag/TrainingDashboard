@@ -13,6 +13,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import ProtectedRoute from "./utilis/ProtectedRoutes";
+import { MantineProvider } from "@mantine/core";
 
 const Cities = lazy(() => import("./Pages/Cities"));
 const Dashboard = lazy(() => import("./Pages/Dashboard"));
@@ -25,13 +26,16 @@ const BarsChar = lazy(() => import("./Pages/BarsChar"));
 const Users = lazy(() => import("./Pages/Users"));
 const FAQ = lazy(() => import("./Pages/FAQ"));
 const Calender = lazy(() => import("./Pages/Calender"));
-const PrivateChat = lazy(() => import("./Pages/PrivateChat"));
+const PrivateChat = lazy(() => import("./Pages/Messages"));
 const Verification = lazy(() => import("./Pages/Verification"));
 const Login = lazy(() => import("./Auth/Login"));
 const Countries = lazy(() => import("./Pages/Countries"));
 const UserPageForm = lazy(() => import("./Components/Forms/UserPageForm"));
 const AdminPageForm = lazy(() => import("./Components/Forms/AdminPageForm"));
 const Settings = lazy(() => import("./Pages/Settings"));
+const Interests = lazy(() => import("./Pages/Interests"));
+const Merchants = lazy(() => import("./Pages/Merchants"));
+const Governmental = lazy(() => import("./Pages/Governmental"));
 // Get token
 const Token = localStorage.getItem("token");
 const router = createBrowserRouter(
@@ -57,11 +61,15 @@ const router = createBrowserRouter(
         <Route path="calender" element={<Calender />} />
         <Route path="/admin/add" element={<AdminPageForm />} />
         <Route path="/admin/edit/:id" element={<AdminPageForm />} />
-        <Route path="/user/add" element={<UserPageForm />} />
-        <Route path="/user/edit/:id" element={<UserPageForm />} />
+        <Route path="/user/add/:type" element={<UserPageForm />} />
+        <Route path="/user/edit/:type/:id" element={<UserPageForm />} />
         <Route path="/user/verify/:id" element={<Verification />} />
-        <Route path="/privatechats" element={<PrivateChat />} />
+        <Route path="/messages" element={<PrivateChat />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/interests" element={<Interests />} />
+        <Route path="/governmental" element={<Governmental />} />
+        <Route path="/merchants" element={<Merchants />} />
+
         <Route path="*" element={<h1>404</h1>} />
       </Route>
 
@@ -75,12 +83,22 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Suspense
       fallback={
-        <Box sx={{ display: "flex" , justifyContent: "center" , alignItems: "center" , width: "100%" , height: "100vh"}}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100vh",
+          }}
+        >
           <CircularProgress color="secondary" />
         </Box>
       }
     >
-      <RouterProvider router={router} />
+      <MantineProvider withGlobalStyles withNormalizeCSS>
+        <RouterProvider router={router} />
+      </MantineProvider>
     </Suspense>
   </StrictMode>
 );

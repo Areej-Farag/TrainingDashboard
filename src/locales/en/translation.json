@@ -93,7 +93,7 @@
   "SignIn Type": "Sign In Type",
   "Privacy": "Privacy",
   "terms": "terms",
-  "merchant": "Merchant",
+ 
   "user": "User",
   "government": "Governmental",
   "Verification": "Verification",
@@ -109,7 +109,40 @@
   "Select a country first": "Select a country first",
   "commercial register": "commercial register",
   "terms and conditions": "terms and conditions",
-  "privacy policy": "privacy policy"
+  "privacy policy": "privacy policy",
+  "Add Interest": "Add Interest",
+  "Edit Interest": "Edit Interest",
+  "List of Interests": "List of Interests",
+  "Interest": "Interest",
+  "Name Arabic": "Name Arabic",
+  "Name English": "Name English",
+  "Receiver ID": "Receiver ID",
+  "Sender ID": "Sender ID",
+  "Messages": "Messages",
+  "Message": "Message",
+  "List of Messages": "List of Messages",
+  "List of Notifications": "List of Notifications",
+  "Notification": "Notification",
+  "Notification Type": "Notification Type",
+  "Owner Name": "Owner Name",
+  "Government Name": "Government Name",
+  "Logo": "Logo",
+  "Governments": "Governments",
+  "List of Governments": "List of Governments",
+  "Add Government": "Add Government",
+  "Edit Government": "Edit Government",
+  
+   "Merchant": "Merchant",
+   "List of Merchants": "List of Merchants",
+   "Add Merchant": "Add Merchant",
+   "Edit Merchant": "Edit Merchant",
+   "expiration_date is required": "Expiration Date is required",
+   "expiration_date": "Expiration Date",
+   "Store Name": "Store Name",
+  "Store Name is required": "Store Name is required"
+
+ 
+ 
 
 
 

@@ -13,11 +13,15 @@ import { styled, useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { purple } from "@mui/material/colors";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "../Stores/AuthStore";
+import { useTranslation } from "react-i18next";
 
 // mui icons import
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -26,32 +30,13 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import PieChartOutlinedIcon from "@mui/icons-material/PieChartOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import InterestsOutlinedIcon from "@mui/icons-material/InterestsOutlined";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "../Stores/AuthStore";
-import { useTranslation } from "react-i18next";
+import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
 
 const drawerWidth = 240;
 
-const menuItems2 = [
-  {
-    text: "Private Chats",
-    icon: <ChatOutlinedIcon />,
-    path: "/privatechats",
-  },
-  {
-    text: "Calender",
-    icon: <CalendarTodayOutlinedIcon />,
-    path: "/calender",
-  },
-  {
-    text: "FAQ page",
-    icon: <HelpOutlineOutlinedIcon />,
-    path: "/faq",
-  },
-];
 const menuItems3 = [
   {
     text: "Bar Chart",
@@ -72,6 +57,16 @@ const menuItems3 = [
     text: "Geo Chart",
     icon: <MapOutlinedIcon />,
     path: "/geo",
+  },
+  {
+    text: "Calender",
+    icon: <CalendarTodayOutlinedIcon />,
+    path: "/calender",
+  },
+  {
+    text: "FAQ page",
+    icon: <HelpOutlineOutlinedIcon />,
+    path: "/faq",
   },
 ];
 
@@ -105,6 +100,28 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
       text: t("Users"),
       icon: <GroupOutlinedIcon />,
       path: "/users",
+    },
+    {
+      text: t("Merchants"),
+      icon: <StorefrontOutlinedIcon />,
+      path: "/merchants",
+    },
+    {
+      text: t("governmental"),
+      icon: <GavelOutlinedIcon />,
+      path: "/governmental",
+    },
+  ];
+  const menuItems2 = [
+    {
+      text: "Messages",
+      icon: <ChatOutlinedIcon />,
+      path: "/messages",
+    },
+    {
+      text: "Interests",
+      icon: <InterestsOutlinedIcon />,
+      path: "/interests",
     },
     {
       text: t("Cities"),
@@ -436,6 +453,7 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
       >
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          // @ts-ignore
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >
