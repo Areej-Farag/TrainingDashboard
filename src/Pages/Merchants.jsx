@@ -410,7 +410,7 @@ export default function Merchants() {
           color="secondary"
           startIcon={<AddOutlinedIcon sx={{ ml: 2 }} />}
           onClick={() => navigate("/user/add/merchant")}
-          sx={{ height: 40, width: 150 }}
+          sx={{ height: 40, width: 190 }}
         >
           {t("Add Merchant")}
         </Button>

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { useErrorStore } from "./UseErrorsStore";
 
 const useMessageStore = create((set, get) => ({
   messages: null,
@@ -33,29 +34,37 @@ const useMessageStore = create((set, get) => ({
       setLoading(false);
     }
   },
-  filterMessages: async (data) => {
+filterMessages: async ({ message, created_at }) => {
     const { setLoading, setMessages } = get();
+    const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
+      setError("No token found");
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
+      const formData = new FormData();
+      if (message) formData.append("message", message);
+      if (created_at) formData.append("created_at", created_at);
+      
       const response = await axios.post(
-        `https://hayaapp.online/api/admin/messages/filter`, 
-        data,
+        "https://hayaapp.online/api/admin/messages/filter",
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      const messages = response.data.data;
-      setMessages(messages);
-      console.log("Fetched messages:", messages);
-      return messages;
+      setMessages(response.data.data || []);
+      return response.data.data;
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      setError(errorMessage);
+      return null;
     } finally {
       setLoading(false);
     }

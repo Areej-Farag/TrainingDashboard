@@ -141,10 +141,15 @@
   "expiration_date is required": "تاريخ الانتهاء مطلوب",
   "expiration_date": "تاريخ الانتهاء",
   "Store Name": "اسم المتجر",
-  "Store Name is required": "اسم المتجر مطلوب"
-
- 
-
-
-
+  "Store Name is required": "اسم المتجر مطلوب",
+  "about_us_en": " عنا (EN)",
+  "about_us_ar": " عنا (AR)",
+  "terms_and_conditions_en": "الشروط والاحكام (EN)",
+  "terms_and_conditions_ar": "الشروط والاحكام (AR)",
+  "privacy_policy_ar": "سياسة الخصوصية (EN)",
+  "privacy_policy_en": "سياسة الخصوصية (AR)",
+  "about_us" : " عنا",
+  "terms_and_conditions" : "الشروط والاحكام",
+  "privacy_policy" : "سياسة الخصوصية",
+  "start_typing_here": "ابدأ الكتابة هنا..."
 }
