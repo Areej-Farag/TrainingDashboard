@@ -16,6 +16,7 @@ import { myTheme } from "./Theme";
 import { Outlet, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import ErrorSnackbar from "./Components/ErrorSnackBar";
+import { useAuthStore } from "./Stores/AuthStore";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -30,7 +31,7 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState(localStorage.getItem("mode") || "light");
   const { i18n } = useTranslation();
-
+  const { user } = useAuthStore();
   useEffect(() => {
     const lang = i18n.language;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -53,7 +54,7 @@ export default function App() {
         <ErrorSnackbar />
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          {location.pathname !== "/login" || localStorage.getItem("token") ? (
+          {user !== null || localStorage.getItem("token") ? (
             <>
               <Header
                 open={open}

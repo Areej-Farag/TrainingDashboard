@@ -107,19 +107,19 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
       path: "/merchants",
     },
     {
-      text: t("governmental"),
+      text: t("Governments"),
       icon: <GavelOutlinedIcon />,
       path: "/governmental",
     },
   ];
   const menuItems2 = [
     {
-      text: "Messages",
+      text: t("Messages"),
       icon: <ChatOutlinedIcon />,
       path: "/messages",
     },
     {
-      text: "Interests",
+      text: t("Interests"),
       icon: <InterestsOutlinedIcon />,
       path: "/interests",
     },
