@@ -199,9 +199,9 @@ export default function Governmental() {
     {
       field: "Email",
       headerName: `${t("Email")}`,
-      width: isMobile ? 150 : 220,
+      width: isMobile ? 200 : 240,
       flex: 1,
-      minWidth: 150,
+      minWidth: 200,
       align: "center",
       headerAlign: "center",
       cellClassName: "truncate-cell",
@@ -223,14 +223,7 @@ export default function Governmental() {
       align: "center",
       headerAlign: "center",
     },
-    // {
-    //   field: "gender",
-    //   headerName: `${t("Gender")}`,
-    //   width: isMobile ? 80 : 100,
-    //   flex: 0,
-    //   align: "center",
-    //   headerAlign: "center",
-    // },
+
     {
       field: "is_active",
       headerName: `${t("Activity")}`,
@@ -332,6 +325,7 @@ export default function Governmental() {
         Email: gov.email,
         // Type: gov.type,
         Phone: gov.phone,
+        commercial_register: gov.commercial_register,
         sign_in_type: gov.sign_in_type,
         // gender: gov.gender === 1 ? "Male" : "Female",
         is_active: gov.status === 1 ? "Active" : "Inactive",

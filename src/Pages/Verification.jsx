@@ -67,7 +67,7 @@ export default function Verification() {
             Verification Number: {verificationData?.number_verify || "N/A"}
           </Typography>
           <Stack
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", gap: 2 }}
             direction={"row"}
             spacing={2}
             justifyContent={"center"}
@@ -75,6 +75,7 @@ export default function Verification() {
             <Button
               variant="contained"
               color="error"
+              sx={{ width: "100px" }}
               onClick={() => navigate("/users")}
             >
               Cancel

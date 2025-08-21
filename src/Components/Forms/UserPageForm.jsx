@@ -9,7 +9,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCitiesStore } from "../../Stores/CitiesStore";
 import { useCountriesStore } from "../../Stores/CountriesStore";
@@ -20,7 +20,7 @@ import useGovernmentStore from "../../Stores/GovernmentStore";
 
 export default function UserPageForm() {
   const { id, type } = useParams();
-  //type = user , merchant , government
+  // type = user, merchant, government
   const navigate = useNavigate();
   const action = id ? "Edit User" : "Add User";
   const {
@@ -56,6 +56,12 @@ export default function UserPageForm() {
     },
   ];
 
+  // New states for file removals (only during edits)
+  const [removeImage, setRemoveImage] = useState(false);
+  const [removeStoreLogo, setRemoveStoreLogo] = useState(false);
+  const [removeCommercialRegister, setRemoveCommercialRegister] =
+    useState(false);
+
   useEffect(() => {
     if (type === "user") {
       action === "Edit User" ? setTitle("Edit User") : setTitle("Add User");
@@ -90,7 +96,7 @@ export default function UserPageForm() {
       birth_date: "",
       country_id: "",
       city_id: "",
-      type: "",
+      type: type,
       is_private: "",
       status: "",
       interests: [],
@@ -98,6 +104,7 @@ export default function UserPageForm() {
       Store_logo: null,
       activity: "",
       commercial_register: "",
+      is_verified: 0,
     },
   });
   const theme = useTheme();
@@ -112,10 +119,8 @@ export default function UserPageForm() {
           let userData;
           switch (type) {
             case "merchant":
-              {
-                userData = await showMerchant(id);
-                console.log("Merchant Data:", userData);
-              }
+              userData = await showMerchant(id);
+              console.log("Merchant Data:", userData);
               break;
             case "government":
               userData = await showGovernment(id);
@@ -161,10 +166,8 @@ export default function UserPageForm() {
       setValue("birth_date", user.birth_date || "");
       setValue("country_id", user.country_id || "");
       setValue("city_id", user.city_id || "");
-      setValue("type", user.type || null);
       setValue("is_private", user.is_private || null);
       setValue("status", user.status || null);
-      setValue("commercial_register", user.commercial_register || null);
       if (type === "merchant" || type === "government") {
         setValue("activity", user.activity || "");
         setValue("Store_logo", user.Store_logo || null);
@@ -250,22 +253,31 @@ export default function UserPageForm() {
     if (type === "merchant" || type === "government") {
       formData.append("activity", data.activity);
       formData.append("id_num", data.id_num || null);
-      formData.append("commercial_register", data.commercial_register || null);
-      formData.append("Store_logo", data.Store_logo || null);
       formData.append("expiration_date", data.expiration_date || null);
       formData.append("owner_name", data.owner_name || null);
+      formData.append("is_verified", data.is_verified || 0);
+      // Handle store logo
+      if (data.Store_logo && data.Store_logo[0]) {
+        formData.append("Store_logo", data.Store_logo[0]);
+      } else if (removeStoreLogo && action === "Edit User") {
+        formData.append("remove_Store_logo", "1"); // Flag for backend to remove
+      }
+      // Handle commercial register
+      if (data.commercial_register && data.commercial_register[0]) {
+        formData.append("commercial_register", data.commercial_register[0]);
+      } else if (removeCommercialRegister && action === "Edit User") {
+        formData.append("remove_commercial_register", "1"); // Flag for backend to remove
+      }
     }
-    // Ensure interests is sent as a JSON string or array based on backend requirements
-    if (selectedInterests.length > 0) {
-      formData.append("interests", JSON.stringify(selectedInterests));
-    } else {
-      formData.append("interests", "[]"); // Send empty array if no interests selected
-    }
+    // Ensure interests is sent as a JSON string
+    formData.append("interests", JSON.stringify(selectedInterests));
+    // Handle user image
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
+    } else if (removeImage && action === "Edit User") {
+      formData.append("remove_image", "1"); // Flag for backend to remove
     }
     try {
-      //switch case
       if (action === "Add User") {
         switch (type) {
           case "user": {
@@ -301,7 +313,11 @@ export default function UserPageForm() {
           case "user": {
             const response = await updateUser(formData);
             console.log("response:", response);
-            if (response.status === 200) {
+            if (
+              response.message === "تم تحديث بيانات المستخدم بنجاح" ||
+              response.message === "User updated successfully" ||
+              response.errorcode == 0
+            ) {
               reset();
               navigate("/users");
             }
@@ -310,7 +326,10 @@ export default function UserPageForm() {
           case "merchant": {
             const response2 = await editMerchant(formData);
             console.log("response:", response2);
-            if (response2.message === "Merchant updated successfully") {
+            if (
+              response2.message === "Merchant updated successfully" ||
+              response2.errorcode == 0
+            ) {
               reset();
               navigate("/merchants");
             }
@@ -319,7 +338,10 @@ export default function UserPageForm() {
           case "government": {
             const response3 = await editGovernment(formData);
             console.log("response:", response3);
-            if (response3.message === "governmental updated successfully") {
+            if (
+              response3.message === "governmental updated successfully" ||
+              response3.errorcode == 0
+            ) {
               reset();
               navigate("/governmental");
             }
@@ -368,15 +390,11 @@ export default function UserPageForm() {
                 }}
               >
                 <label htmlFor="name">
-                  {type === "user" ? t("Name") : t("Store Name")}
+                  {type === "merchant" ? t("Store Name") : t("Government Name")}
                 </label>
                 <TextField
-                  sx={{
-                    width: "100%",
-                  }}
-                  {...register("name", {
-                    required: t("Name is required"),
-                  })}
+                  sx={{ width: "100%" }}
+                  {...register("name", { required: t("Name is required") })}
                   placeholder={t("name")}
                   error={!!errors.name}
                   helperText={errors.name?.message}
@@ -390,17 +408,19 @@ export default function UserPageForm() {
                 width: { lg: "50%", xs: "100%" },
               }}
             >
-              <label htmlFor="name">
+              <label htmlFor={type === "user" ? "name" : "owner_name"}>
                 {type === "user" ? t("Name") : t("Owner Name")}
               </label>
               <TextField
-                sx={{
-                  width: "100%",
-                }}
-                {...register("owner_name", { required: t("Name is required") })}
+                sx={{ width: "100%" }}
+                {...register(type === "user" ? "name" : "owner_name", {
+                  required: t("Name is required"),
+                })}
                 placeholder={type === "user" ? t("Name") : t("Owner Name")}
-                error={!!errors.name}
-                helperText={errors.name?.message}
+                error={!!errors[type === "user" ? "name" : "owner_name"]}
+                helperText={
+                  errors[type === "user" ? "name" : "owner_name"]?.message
+                }
               />
             </Box>
 
@@ -413,9 +433,7 @@ export default function UserPageForm() {
             >
               <label htmlFor="email">{t("Email")}</label>
               <TextField
-                sx={{
-                  width: "100%",
-                }}
+                sx={{ width: "100%" }}
                 {...register("email", {
                   required: t("Email is required"),
                   pattern: {
@@ -512,7 +530,6 @@ export default function UserPageForm() {
                 <TextField
                   sx={{
                     width: "100%",
-                    
                   }}
                   {...register("activity", {
                     required: t("activity is required"),
@@ -691,7 +708,7 @@ export default function UserPageForm() {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: { xs: "100%", lg: "50%" },
+                  width: "100% ",
                 }}
               >
                 <label htmlFor="gender">{t("Gender")}</label>
@@ -719,7 +736,7 @@ export default function UserPageForm() {
                   </Typography>
                 )}
               </Box>
-              <Box
+              {/* <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -751,7 +768,7 @@ export default function UserPageForm() {
                     {errors.type.message}
                   </Typography>
                 )}
-              </Box>
+              </Box> */}
             </Stack>
           )}
           <Stack
@@ -822,10 +839,9 @@ export default function UserPageForm() {
               width: "100%",
               justifyContent: "space-between",
               alignItems: "center",
-              gab: "10px",
+              gap: "10px",
             }}
           >
-            {" "}
             <Box
               sx={{
                 display: "flex",
@@ -835,7 +851,56 @@ export default function UserPageForm() {
             >
               <label htmlFor="image">{t("User Image")}</label>
               <input type="file" {...register("image")} accept="image/*" />
+              {action === "Edit User" && user.image && (
+                <Box sx={{ mt: 1 }}>
+                  <img
+                    src={user.image}
+                    alt="Current user image"
+                    style={{ width: "100px", height: "auto" }}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={removeImage}
+                        onChange={(e) => setRemoveImage(e.target.checked)}
+                      />
+                    }
+                    label={t("Remove current image")}
+                  />
+                </Box>
+              )}
             </Box>
+
+            {/* <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", md: "50%" },
+              }}
+            >
+              <label htmlFor="image">{t("User Image")}</label>
+              <input type="file" {...register("image")} accept="image/*" />
+              {action === "Edit User" && user.image && (
+                <Box sx={{ mt: 1 }}>
+                  <a
+                    href={user.image}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t("View current user image")}
+                  </a>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={removeImage}
+                        onChange={(e) => setRemoveImage(e.target.checked)}
+                      />
+                    }
+                    label={t("Remove current image")}
+                  />
+                </Box>
+              )}
+            </Box> */}
             {type === "user" && (
               <Box
                 sx={{
@@ -898,16 +963,36 @@ export default function UserPageForm() {
                   <label htmlFor="Store_logo">{t("Store Logo")}</label>
                   <input
                     type="file"
-                    sx={{
-                      width: "100%",
-                    }}
-                    {...register("Store_logo", {
-                      // required: t("store image is required"),
-                    })}
-                    placeholder={t("store image")}
-                    error={!!errors.Store_logo}
-                    helperText={errors.Store_logo?.message}
+                    {...register("Store_logo")}
+                    accept="image/*"
                   />
+                  {errors.Store_logo && (
+                    <Typography color="error" variant="caption">
+                      {errors.Store_logo.message}
+                    </Typography>
+                  )}
+                  {action === "Edit User" && user.Store_logo && (
+                    <Box sx={{ mt: 1 }}>
+                      <a
+                        href={user.Store_logo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t("View current store logo")}
+                      </a>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={removeStoreLogo}
+                            onChange={(e) =>
+                              setRemoveStoreLogo(e.target.checked)
+                            }
+                          />
+                        }
+                        label={t("Remove current store logo")}
+                      />
+                    </Box>
+                  )}
                 </Box>
                 <Box
                   sx={{
@@ -919,18 +1004,34 @@ export default function UserPageForm() {
                   <label htmlFor="commercial_register">
                     {t("commercial register")}
                   </label>
-                  <input
-                    type="file"
-                    sx={{
-                      width: "100%",
-                    }}
-                    {...register("commercial_register", {
-                      required: t("commercial register is required"),
-                    })}
-                    placeholder={t("commercial register")}
-                    error={!!errors.commercial_register}
-                    helperText={errors.commercial_register?.message}
-                  />
+                  <input type="file" {...register("commercial_register")} />
+                  {errors.commercial_register && (
+                    <Typography color="error" variant="caption">
+                      {errors.commercial_register.message}
+                    </Typography>
+                  )}
+                  {action === "Edit User" && user.commercial_register && (
+                    <Box sx={{ mt: 1 }}>
+                      <a
+                        href={user.commercial_register}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t("View current commercial register")}
+                      </a>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={removeCommercialRegister}
+                            onChange={(e) =>
+                              setRemoveCommercialRegister(e.target.checked)
+                            }
+                          />
+                        }
+                        label={t("Remove current commercial register")}
+                      />
+                    </Box>
+                  )}
                 </Box>
               </>
             )}

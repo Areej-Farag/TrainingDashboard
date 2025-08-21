@@ -3,13 +3,10 @@ import "./index.css";
 import "./i18n";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-// Material UI imports
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalProvider } from "./Context/ModalContext";
-
-// My Components imports
 import Header from "./Components/Header";
 import Sidebar from "./Components/Sidebar";
 import { myTheme } from "./Theme";
@@ -18,12 +15,14 @@ import { useMediaQuery } from "@mui/material";
 import ErrorSnackbar from "./Components/ErrorSnackBar";
 import { useAuthStore } from "./Stores/AuthStore";
 
+const drawerWidth = 210;
+const closedDrawerWidth = 65; // Approximate width when sidebar is closed
+
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -32,12 +31,15 @@ export default function App() {
   const [mode, setMode] = useState(localStorage.getItem("mode") || "light");
   const { i18n } = useTranslation();
   const { user } = useAuthStore();
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const location = useLocation();
+  const direction = i18n.dir();
+
   useEffect(() => {
     const lang = i18n.language;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   }, [i18n.language]);
 
-  const isMobile = useMediaQuery("(max-width: 600px)");
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -45,9 +47,20 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const location = useLocation();
 
   const theme = useMemo(() => createTheme(myTheme(mode)), [mode]);
+
+  // Calculate margin and width for both desktop and mobile
+  const mainContentMargin = {
+    marginLeft: direction === "ltr" ? (open ? `${drawerWidth}px` : `${closedDrawerWidth}px`) : "0px",
+    marginRight: direction === "rtl" ? (open ? `${drawerWidth}px` : `${closedDrawerWidth}px`) : "0px",
+    width: `calc(100% - ${open ? drawerWidth : closedDrawerWidth}px)`,
+    transition: theme.transitions.create(["margin-left", "margin-right", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <ModalProvider>
@@ -71,9 +84,18 @@ export default function App() {
           ) : (
             <></>
           )}
-          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              p: 3,
+              ...mainContentMargin,
+            }}
+          >
             <DrawerHeader />
-            <Outlet />
+            <Box sx={{ width: "100%", overflowX: "auto" }}>
+              <Outlet />
+            </Box>
           </Box>
         </Box>
       </ModalProvider>

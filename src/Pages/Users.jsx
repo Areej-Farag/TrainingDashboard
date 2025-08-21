@@ -186,14 +186,7 @@ export default function Users() {
       headerAlign: "center",
       cellClassName: "truncate-cell",
     },
-    {
-      field: "Type",
-      headerName: `${t("Type")}`,
-      width: isMobile ? 80 : 100,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
+
     {
       field: "Phone",
       headerName: `${t("Phone")}`,
@@ -316,7 +309,6 @@ export default function Users() {
         image: user.image,
         name: user.name,
         Email: user.email,
-        Type: user.type,
         Phone: user.phone,
         sign_in_type: user.sign_in_type,
         gender: user.gender === 1 ? "Male" : "Female",

@@ -11,14 +11,12 @@ import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
-import { useLocation, useNavigate } from "react-router-dom";
 import { purple } from "@mui/material/colors";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../Stores/AuthStore";
 import { useTranslation } from "react-i18next";
-
-// mui icons import
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
@@ -38,36 +36,12 @@ import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
 const drawerWidth = 240;
 
 const menuItems3 = [
-  {
-    text: "Bar Chart",
-    icon: <BarChartOutlinedIcon />,
-    path: "/bar",
-  },
-  {
-    text: "Pie Chart",
-    icon: <PieChartOutlinedIcon />,
-    path: "/pie",
-  },
-  {
-    text: "Line Chart",
-    icon: <ShowChartOutlinedIcon />,
-    path: "/line",
-  },
-  {
-    text: "Geo Chart",
-    icon: <MapOutlinedIcon />,
-    path: "/geo",
-  },
-  {
-    text: "Calender",
-    icon: <CalendarTodayOutlinedIcon />,
-    path: "/calender",
-  },
-  {
-    text: "FAQ page",
-    icon: <HelpOutlineOutlinedIcon />,
-    path: "/faq",
-  },
+  { text: "Bar Chart", icon: <BarChartOutlinedIcon />, path: "/bar" },
+  { text: "Pie Chart", icon: <PieChartOutlinedIcon />, path: "/pie" },
+  { text: "Line Chart", icon: <ShowChartOutlinedIcon />, path: "/line" },
+  { text: "Geo Chart", icon: <MapOutlinedIcon />, path: "/geo" },
+  { text: "Calender", icon: <CalendarTodayOutlinedIcon />, path: "/calender" },
+  { text: "FAQ page", icon: <HelpOutlineOutlinedIcon />, path: "/faq" },
 ];
 
 export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
@@ -86,21 +60,9 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
   const direction = i18n.dir();
 
   const menuItems1 = [
-    {
-      text: t("Dashboard"),
-      icon: <HomeOutlinedIcon />,
-      path: "/",
-    },
-    {
-      text: t("Admins"),
-      icon: <Person2OutlinedIcon />,
-      path: "/admins",
-    },
-    {
-      text: t("Users"),
-      icon: <GroupOutlinedIcon />,
-      path: "/users",
-    },
+    { text: t("Dashboard"), icon: <HomeOutlinedIcon />, path: "/" },
+    { text: t("Admins"), icon: <Person2OutlinedIcon />, path: "/admins" },
+    { text: t("Users"), icon: <GroupOutlinedIcon />, path: "/users" },
     {
       text: t("Merchants"),
       icon: <StorefrontOutlinedIcon />,
@@ -113,21 +75,13 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
     },
   ];
   const menuItems2 = [
-    {
-      text: t("Messages"),
-      icon: <ChatOutlinedIcon />,
-      path: "/messages",
-    },
+    { text: t("Messages"), icon: <ChatOutlinedIcon />, path: "/messages" },
     {
       text: t("Interests"),
       icon: <InterestsOutlinedIcon />,
       path: "/interests",
     },
-    {
-      text: t("Cities"),
-      icon: <ListAltOutlinedIcon />,
-      path: "/cities",
-    },
+    { text: t("Cities"), icon: <ListAltOutlinedIcon />, path: "/cities" },
     {
       text: t("Countries"),
       icon: <LanguageOutlinedIcon />,
@@ -453,7 +407,6 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
       >
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-          // @ts-ignore
           severity={snackbar.severity}
           sx={{ width: "100%" }}
         >

@@ -197,14 +197,7 @@ export default function Merchants() {
       headerAlign: "center",
       cellClassName: "truncate-cell",
     },
-    {
-      field: "Type",
-      headerName: `${t("Type")}`,
-      width: isMobile ? 80 : 100,
-      flex: 0,
-      align: "center",
-      headerAlign: "center",
-    },
+
     {
       field: "Phone",
       headerName: `${t("Phone")}`,
@@ -329,7 +322,6 @@ export default function Merchants() {
         name: merchant.name,
         owner_name: merchant.owner_name,
         Email: merchant.email,
-        Type: merchant.type,
         Phone: merchant.phone,
         sign_in_type: merchant.sign_in_type,
         // gender: merchant.gender === 1 ? "Male" : "Female",

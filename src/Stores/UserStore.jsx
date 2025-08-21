@@ -196,6 +196,7 @@ export const useUserStore = create((set, get) => ({
       );
       const data = response.data.user;
       setVerificationData(data);
+      console.log("Verification data:", data);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
