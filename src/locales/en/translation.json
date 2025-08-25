@@ -148,7 +148,12 @@
   "about_us" : "About Us",
   "terms_and_conditions" : "Terms And Conditions",
   "privacy_policy" : "Privacy Policy",
-  "start_typing_here": "Start typing here..."
+  "start_typing_here": "Start typing here...",
+  "Store Logo": "Store Logo",
+  "View current store logo": "View current store logo",
+  "Delete current store logo": "Delete current store logo",
+  "View current commercial register": "View current commercial register",
+  "Delete current commercial register": "Delete current commercial register"
 
  
  

@@ -12,16 +12,25 @@ const useInterstesStore = create((set, get) => {
     loading: false,
     interest: null,
     Language: localStorage.getItem("i18nextLng") || "en",
+    pagination: {
+      currentPage: 1,
+      perPage: 10,
+      total: 0,
+      nextPageUrl: null,
+      prevPageUrl: null,
+    },
     clearInterest: () => set({ interest: null }),
     setLoading: (loading) => set({ loading }),
     setInterest: (interest) => set({ interest }),
     setInteresties: (interesties) => set({ interesties }),
-
-    getInteresties: async () => {
-      const { setInteresties, setLoading } = get();
+    setPagination: (paginationData) =>
+      set((state) => ({
+        pagination: { ...state.pagination, ...paginationData },
+      })),
+    getInteresties: async (pageNumber = null) => {
+      const { setInteresties, setLoading, setPagination, pagination } = get();
       const { setError } = useErrorStore.getState();
-      const token = localStorage.getItem("token"); 
-      console.log("Token during getInteresties:", token);
+      const token = localStorage.getItem("token");
 
       if (!token) {
         setError("No token found");
@@ -30,8 +39,19 @@ const useInterstesStore = create((set, get) => {
 
       try {
         setLoading(true);
+        let url;
+        if (pageNumber) {
+          url = `https://hayaapp.online/api/admin/interests?page=${pageNumber}`;
+        } else if (pagination.currentPage === 1) {
+          url = "https://hayaapp.online/api/admin/interests";
+        } else {
+          url =
+            pagination.nextPageUrl ||
+            pagination.prevPageUrl ||
+            "https://hayaapp.online/api/admin/interests";
+        }
         const response = await axios.post(
-          "https://hayaapp.online/api/admin/interests",
+          url,
           {},
           {
             headers: {
@@ -40,7 +60,14 @@ const useInterstesStore = create((set, get) => {
           }
         );
         const interesties = response.data.data;
-        setInteresties(interesties);
+        setPagination({
+          currentPage: interesties.current_page,
+          perPage: interesties.per_page,
+          total: interesties.total,
+          nextPageUrl: interesties.next_page_url,
+          prevPageUrl: interesties.prev_page_url,
+        });
+        setInteresties(interesties.data);
       } catch (error) {
         const errorMessage =
           error.response?.data?.message || error.message || "An error occurred";
@@ -131,11 +158,15 @@ const useInterstesStore = create((set, get) => {
 
       try {
         setLoading(true);
-        await axios.post("https://hayaapp.online/api/admin/interest/add", data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.post(
+          "https://hayaapp.online/api/admin/interest/add",
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         get().getInteresties();
       } catch (error) {
         const errorMessage =

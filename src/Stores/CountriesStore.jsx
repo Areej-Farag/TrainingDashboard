@@ -7,12 +7,23 @@ export const useCountriesStore = create((set, get) => ({
   loading: false,
   country: null,
   Language: localStorage.getItem("i18nextLng") || "en",
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setCountries: (countries) => set({ countries }),
   setLoading: (loading) => set({ loading }),
   setCountry: (country) => set({ country }),
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
   clearCountry: () => set({ country: null }),
-  getCountries: async () => {
-    const { setCountries, setLoading } = get();
+  getCountries: async (pageNumber = null) => {
+    const { setCountries, setLoading, setPagination, pagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -21,8 +32,23 @@ export const useCountriesStore = create((set, get) => ({
     }
     try {
       setLoading(true);
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/countries?page=${pageNumber}&lang=${
+          get().Language
+        }`;
+      } else if (pagination.currentPage === 1) {
+        url = `https://hayaapp.online/api/admin/countries?lang=${
+          get().Language
+        }`;
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          `https://hayaapp.online/api/admin/countries?lang=${get().Language}`;
+      }
       const response = await axios.post(
-        `https://hayaapp.online/api/admin/countries?lang=${get().Language}`,
+        url,
         {},
         {
           headers: {
@@ -31,9 +57,15 @@ export const useCountriesStore = create((set, get) => ({
         }
       );
       const countries = response.data.data;
-      console.log("countries", countries);
-      setCountries(countries);
-      return countries;
+      setPagination({
+        currentPage: countries.current_page,
+        perPage: countries.per_page,
+        total: countries.total,
+        nextPageUrl: countries.next_page_url,
+        prevPageUrl: countries.prev_page_url,
+      });
+      setCountries(countries.data);
+      return "Countries fetched successfully";
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";

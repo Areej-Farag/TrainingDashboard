@@ -9,32 +9,64 @@ export const useUserStore = create((set, get) => ({
   interesties: null,
   verificationData: null,
   user: null,
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setUser: (user) => set({ user }),
   setVerificationData: (data) => set({ verificationData: data }),
   setInteresties: (interesties) => set({ interesties }),
   setUsers: (users) => set({ users }),
   setLoading: (loading) => set({ loading }),
-  getUsers: async () => {
-    const { setUsers, setLoading } = get();
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
+
+  getUsers: async (pageNumber = null) => {
+    const { setUsers, setLoading, setPagination, pagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found");
       return;
     }
+
     try {
       setLoading(true);
-      const response = await axios.get(
-        "https://hayaapp.online/api/admin/user/all",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const users = response.data.users;
-      setUsers(users);
-      return users;
+
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/user/all?page=${pageNumber}`;
+      } else if (pagination.currentPage === 1) {
+        url = "https://hayaapp.online/api/admin/user/all";
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          "https://hayaapp.online/api/admin/user/all";
+      }
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const usersData = response.data.users;
+
+      setUsers(usersData.data);
+      setPagination({
+        currentPage: usersData.current_page,
+        perPage: usersData.per_page,
+        total: usersData.total,
+        nextPageUrl: usersData.next_page_url,
+        prevPageUrl: usersData.prev_page_url,
+      });
+      return "Get users successfully";
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";
@@ -44,6 +76,7 @@ export const useUserStore = create((set, get) => ({
       setLoading(false);
     }
   },
+
   showUser: async (id) => {
     const { setLoading, setUser } = get();
     const { setError } = useErrorStore.getState();

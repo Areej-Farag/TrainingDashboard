@@ -7,12 +7,23 @@ export const useCitiesStore = create((set, get) => ({
   loading: false,
   Language: localStorage.getItem("i18nextLng"),
   city: null,
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setCity: (city) => set({ city }),
   setCities: (cities) => set({ cities }),
   setLoading: (loading) => set({ loading }),
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
   clearCity: () => set({ city: null }),
-  getCities: async () => {
-    const { setCities, setLoading } = get();
+  getCities: async (pageNumber = null) => {
+    const { setCities, setLoading, pagination, setPagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -21,8 +32,21 @@ export const useCitiesStore = create((set, get) => ({
     }
     try {
       setLoading(true);
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/cities?page=${pageNumber}&lang=${
+          get().Language
+        }`;
+      } else if (pagination.currentPage === 1) {
+        url = `https://hayaapp.online/api/admin/cities?lang=${get().Language}`;
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          `https://hayaapp.online/api/admin/cities?lang=${get().Language}`;
+      }
       const response = await axios.post(
-        `https://hayaapp.online/api/admin/cities?lang=${get().Language}`,
+        url,
         {},
         {
           headers: {
@@ -31,9 +55,15 @@ export const useCitiesStore = create((set, get) => ({
         }
       );
       const cities = response.data.data;
-      console.log("cities", cities);
-      setCities(cities);
-      return cities;
+      setPagination({
+        currentPage: cities.current_page,
+        perPage: cities.per_page,
+        total: cities.total,
+        nextPageUrl: cities.next_page_url,
+        prevPageUrl: cities.prev_page_url,
+      });
+      setCities(cities.data);
+      return "Get cities successfully";
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";

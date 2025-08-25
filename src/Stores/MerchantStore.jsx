@@ -7,11 +7,22 @@ const useMerchantStore = create((set, get) => ({
   loading: false,
   Language: localStorage.getItem("i18nextLng") || "en",
   merchant: null,
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setLoading: (value) => set({ loading: value }),
   setMerchants: (value) => set({ merchants: value }),
   setMerchant: (value) => set({ merchant: value }),
-  getMerchants: async () => {
-    const { setMerchants, setLoading } = get();
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
+  getMerchants: async (pageNumber = null) => {
+    const { setMerchants, setLoading, setPagination, pagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -20,17 +31,32 @@ const useMerchantStore = create((set, get) => ({
     }
     try {
       setLoading(true);
-      const response = await axios.get(
-        "https://hayaapp.online/api/admin/merchants",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const merchants = response.data.data;
-      setMerchants(merchants);
-      return merchants;
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/merchants?page=${pageNumber}`;
+      } else if (pagination.currentPage === 1) {
+        url = "https://hayaapp.online/api/admin/merchants";
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          "https://hayaapp.online/api/admin/merchants";
+      }
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const merchantsData = response.data.data;
+      setPagination({
+        currentPage: merchantsData.current_page,
+        perPage: merchantsData.per_page,
+        total: merchantsData.total,
+        nextPageUrl: merchantsData.next_page_url,
+        prevPageUrl: merchantsData.prev_page_url,
+      });
+      setMerchants(merchantsData.data);
+      return merchantsData.data;
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";

@@ -143,12 +143,12 @@ export default function Users() {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { getUsers, users } = useUserStore();
+  const { getUsers, users, pagination, loading } = useUserStore();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    getUsers(pagination.currentPage);
+  }, [getUsers, pagination.currentPage]);
 
   const MyColumns = [
     {
@@ -419,19 +419,58 @@ export default function Users() {
             right: 0,
             bottom: 0,
             overflow: "auto",
+            // إضافة CSS مخصص لعكس Pagination للغة العربية
+            "& .MuiDataGrid-footerContainer": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
+            },
+            "& .MuiTablePagination-toolbar": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
+              padding: i18n.language === "ar" ? "0 16px 0 0" : "0 0 0 16px",
+            },
+            "& .MuiTablePagination-actions": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
+              marginLeft: i18n.language === "ar" ? "20px" : "0",
+              marginRight: i18n.language === "ar" ? "0" : "20px",
+            },
+            "& .MuiTablePagination-spacer": {
+              flex: i18n.language === "ar" ? "1" : "0",
+            },
+            "& .MuiTablePagination-selectLabel": {
+              margin: i18n.language === "ar" ? "0 0 0 16px" : "0 16px 0 0",
+            },
+            "& .MuiTablePagination-displayedRows": {
+              margin: i18n.language === "ar" ? "0 16px 0 0" : "0 0 0 16px",
+            },
+            // عكس اتجاه أيقونات الأسهم
+            "& .MuiTablePagination-actions > button:first-of-type": {
+              transform: i18n.language === "ar" ? "scaleX(-1)" : "none",
+            },
+            "& .MuiTablePagination-actions > button:last-of-type": {
+              transform: i18n.language === "ar" ? "scaleX(-1)" : "none",
+            },
           }}
         >
           <DataGrid
-            rows={filteredRows || []}
+            rows={filteredRows || users || []}
             // @ts-ignore
             columns={visibleColumns}
-            pageSize={8}
-            rowsPerPageOptions={[8, 10]}
+            pageSizeOptions={[pagination.perPage || 10]}
+            paginationModel={{
+              page: (pagination.currentPage || 1) - 1,
+              pageSize: pagination.perPage || 10,
+            }}
+            onPaginationModelChange={(model) => {
+              getUsers(model.page + 1);
+            }}
             // @ts-ignore
             columnVisibilityModel={columnVisibility}
             density={isMobile ? "compact" : "standard"}
             disableColumnMenu
             disableSelectionOnClick
+            pagination
+            paginationMode="server"
+            rowCount={pagination.total || 0}
+            loading={loading}
             sx={{
               width: "fit-content",
               minWidth: "100%",
@@ -440,9 +479,8 @@ export default function Users() {
                 justifyContent: "center",
                 alignItems: "center",
                 padding: "0 8px",
-                backgroundColor:
-                  theme.palette.mode === "dark" ? "#2d2d2d" : "#f5f5f5",
               },
+
               "& .MuiDataGrid-cell": {
                 display: "flex",
                 justifyContent: "center",
@@ -458,6 +496,14 @@ export default function Users() {
               "& .MuiDataGrid-virtualScroller": {
                 overflow: "auto !important",
               },
+              "& .MuiDataGrid-actionsContainer": {
+                direction: i18n.language === "ar" ? "rtl" : "ltr",
+              },
+              direction: i18n.language === "ar" ? "rtl" : "ltr",
+              // تعديل إضافي لعكس أيقونات الأسهم
+              // "& .MuiSvgIcon-root": {
+              //   transform: i18n.language === "ar" ? "rotateX(145deg)" : "none",
+              // },
             }}
           />
         </Box>

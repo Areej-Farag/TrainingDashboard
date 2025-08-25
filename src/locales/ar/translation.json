@@ -151,5 +151,10 @@
   "about_us" : " عنا",
   "terms_and_conditions" : "الشروط والاحكام",
   "privacy_policy" : "سياسة الخصوصية",
-  "start_typing_here": "ابدأ الكتابة هنا..."
+  "start_typing_here": "ابدأ الكتابة هنا...",
+    "Store Logo": "لوجو المتجر",
+  "View current store logo": "عرض لوجو المتجر الحالي",
+  "Delete current store logo": "حذف لوجو المتجر الحالي",
+    "View current commercial register": "عرض التسجيل التجاري الحالي",
+  "Delete current commercial register": "حذف التسجيل التجاري الحالي"
 }

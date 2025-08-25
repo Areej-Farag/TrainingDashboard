@@ -6,10 +6,21 @@ import { useErrorStore } from "./UseErrorsStore"; // Adjust import path
 export const useAdminStore = create((set, get) => ({
   admins: null,
   loading: false,
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setLoading: (loading) => set({ loading }),
   setAdmins: (admins) => set({ admins }),
-  getAdmins: async () => {
-    const { setAdmins, setLoading } = get();
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
+  getAdmins: async (pageNumber = null) => {
+    const { setAdmins, setLoading, pagination, setPagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -18,19 +29,35 @@ export const useAdminStore = create((set, get) => ({
     }
     try {
       setLoading(true);
-      const response = await axios.get(
-        "https://hayaapp.online/api/admin/admins",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/admins?page=${pageNumber}`;
+      } else if (pagination.currentPage === 1) {
+        url = "https://hayaapp.online/api/admin/admins";
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          "https://hayaapp.online/api/admin/admins";
+      }
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const admins = response.data.data;
-      setAdmins(admins);
+      setPagination({
+        currentPage: admins.current_page,
+        perPage: admins.per_page,
+        total: admins.total,
+        nextPageUrl: admins.next_page_url,
+        prevPageUrl: admins.prev_page_url,
+      });
+      setAdmins(admins.data);
       return admins;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
       return null;
     } finally {
@@ -61,7 +88,8 @@ export const useAdminStore = create((set, get) => ({
       await getAdmins();
       return updatedAdmins;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
       return null;
     } finally {
@@ -92,7 +120,8 @@ export const useAdminStore = create((set, get) => ({
       await getAdmins();
       return newAdmin;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
       console.error("AddAdmin error:", errorMessage);
       return null;
@@ -133,7 +162,8 @@ export const useAdminStore = create((set, get) => ({
 
       return response;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
       setError(errorMessage);
       console.error("UpdateAdmin error:", errorMessage);
       return null;

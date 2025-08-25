@@ -7,11 +7,22 @@ const useGovernmentStore = create((set, get) => ({
   loading: false,
   Language: localStorage.getItem("i18nextLng") || "en",
   government: null,
+  pagination: {
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    nextPageUrl: null,
+    prevPageUrl: null,
+  },
   setGovernment: (government) => set({ government }),
   setLoading: (loading) => set({ loading }),
   setGovernments: (governments) => set({ governments }),
-  getGovernments: async () => {
-    const { setGovernments, setLoading } = get();
+  setPagination: (paginationData) =>
+    set((state) => ({
+      pagination: { ...state.pagination, ...paginationData },
+    })),
+  getGovernments: async (pageNumber = null) => {
+    const { setGovernments, setLoading, pagination, setPagination } = get();
     const { setError } = useErrorStore.getState();
     const token = localStorage.getItem("token");
     if (!token) {
@@ -20,8 +31,19 @@ const useGovernmentStore = create((set, get) => ({
     }
     try {
       setLoading(true);
+      let url;
+      if (pageNumber) {
+        url = `https://hayaapp.online/api/admin/governmentals?page=${pageNumber}`;
+      } else if (pagination.currentPage === 1) {
+        url = "https://hayaapp.online/api/admin/governmentals";
+      } else {
+        url =
+          pagination.nextPageUrl ||
+          pagination.prevPageUrl ||
+          "https://hayaapp.online/api/admin/governmentals";
+      }
       const response = await axios.post(
-        "https://hayaapp.online/api/admin/governmentals",
+        url,
         {},
         {
           headers: {
@@ -30,8 +52,15 @@ const useGovernmentStore = create((set, get) => ({
         }
       );
       const governments = response.data.data;
-      setGovernments(governments);
-      return governments;
+      setPagination({
+        currentPage: governments.current_page,
+        perPage: governments.per_page,
+        total: governments.total,
+        nextPageUrl: governments.next_page_url,
+        prevPageUrl: governments.prev_page_url,
+      });
+      setGovernments(governments.data);
+      return "Governments fetched successfully";
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || "An error occurred";

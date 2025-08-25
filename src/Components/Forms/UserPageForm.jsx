@@ -842,34 +842,36 @@ export default function UserPageForm() {
               gap: "10px",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: { xs: "100%", md: "50%" },
-              }}
-            >
-              <label htmlFor="image">{t("User Image")}</label>
-              <input type="file" {...register("image")} accept="image/*" />
-              {action === "Edit User" && user.image && (
-                <Box sx={{ mt: 1 }}>
-                  <img
-                    src={user.image}
-                    alt="Current user image"
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={removeImage}
-                        onChange={(e) => setRemoveImage(e.target.checked)}
-                      />
-                    }
-                    label={t("Remove current image")}
-                  />
-                </Box>
-              )}
-            </Box>
+            {type === "user" && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: { xs: "100%", md: "50%" },
+                }}
+              >
+                <label htmlFor="image">{t("User Image")}</label>
+                <input type="file" {...register("image")} accept="image/*" />
+                {action === "Edit User" && user.image && (
+                  <Box sx={{ mt: 1 }}>
+                    <img
+                      src={user.image}
+                      alt="Current user image"
+                      style={{ width: "100px", height: "auto" }}
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={removeImage}
+                          onChange={(e) => setRemoveImage(e.target.checked)}
+                        />
+                      }
+                      label={t("Remove current image")}
+                    />
+                  </Box>
+                )}
+              </Box>
+            )}
 
             {/* <Box
               sx={{
@@ -989,7 +991,7 @@ export default function UserPageForm() {
                             }
                           />
                         }
-                        label={t("Remove current store logo")}
+                        label={t("Delete current store logo")}
                       />
                     </Box>
                   )}
@@ -1028,7 +1030,7 @@ export default function UserPageForm() {
                             }
                           />
                         }
-                        label={t("Remove current commercial register")}
+                        label={t("Delete current commercial register")}
                       />
                     </Box>
                   )}

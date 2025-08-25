@@ -143,19 +143,15 @@ export default function Cities() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const { getCities, cities, destroyCity } = useCitiesStore();
+  const { getCities, cities, destroyCity, loading, pagination } =
+    useCitiesStore();
   const [selectedCity, setSelectedCity] = useState(null);
-  const language = localStorage.getItem("lang");
+  const language = localStorage.getItem("i18nextLng");
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    console.log("Fetching cities...");
-    getCities();
-  }, [language]);
-
-  useEffect(() => {
-    console.log("Cities:", cities);
-  }, [cities]);
+    getCities(pagination.currentPage);
+  }, [language, getCities, pagination.currentPage]);
 
   const MyColumns = [
     {
@@ -338,46 +334,115 @@ export default function Cities() {
         MyColumns={MyColumns}
       />
 
-      <Box sx={{ width: "100%", height: "70vh", overflow: "auto" }}>
-        <DataGrid
-          checkboxSelection
-          rows={filteredRows || []}
-          columns={visibleColumns}
-          pageSize={5}
-          rowsPerPageOptions={[5, 10]}
-          disableColumnMenu
-          disableColumnAutoWidth // Prevent auto-width adjustments
-          columnVisibilityModel={columnVisibility}
-          getCellClassName={(params) => `custom-cell ${params.field}-cell`}
-          getHeaderClassName={(params) => `custom-header ${params.field}-header`}
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        <Box
           sx={{
-            bgcolor: "background.paper",
-            color: "text.primary",
-            fontSize: 12,
-            direction: i18n.dir(),
-            "& .MuiDataGrid-columnHeaders": {
-              fontSize: 13,
-              whiteSpace: "normal",
-              lineHeight: "1.5",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: "auto",
+            // إضافة CSS مخصص لعكس Pagination للغة العربية
+            "& .MuiDataGrid-footerContainer": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
             },
-            "& .MuiDataGrid-cell": {
-              whiteSpace: "normal",
+            "& .MuiTablePagination-toolbar": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
+              padding: i18n.language === "ar" ? "0 16px 0 0" : "0 0 0 16px",
             },
-            "& .custom-header": {
-              textAlign: "center",
-              padding: "0 8px", // Adjust padding for better fit
+            "& .MuiTablePagination-actions": {
+              flexDirection: i18n.language === "ar" ? "row-reverse" : "row",
+              marginLeft: i18n.language === "ar" ? "20px" : "0",
+              marginRight: i18n.language === "ar" ? "0" : "20px",
             },
-            "& .custom-cell": {
-              textAlign: "center",
-              padding: "0 8px", // Match header padding
+            "& .MuiTablePagination-spacer": {
+              flex: i18n.language === "ar" ? "1" : "0",
             },
-            "& .MuiDataGrid-virtualScroller": {
-              overflowX: "auto",
+            "& .MuiTablePagination-selectLabel": {
+              margin: i18n.language === "ar" ? "0 0 0 16px" : "0 16px 0 0",
+            },
+            "& .MuiTablePagination-displayedRows": {
+              margin: i18n.language === "ar" ? "0 16px 0 0" : "0 0 0 16px",
+            },
+            // عكس اتجاه أيقونات الأسهم
+            "& .MuiTablePagination-actions > button:first-of-type": {
+              transform: i18n.language === "ar" ? "scaleX(-1)" : "none",
+            },
+            "& .MuiTablePagination-actions > button:last-of-type": {
+              transform: i18n.language === "ar" ? "scaleX(-1)" : "none",
             },
           }}
-        />
-      </Box>
+        >
+          {" "}
+          <DataGrid
+            checkboxSelection
+            rows={filteredRows || []}
+            // @ts-ignore
+            columns={visibleColumns}
+            pageSizeOptions={[pagination.perPage || 10]}
+            paginationModel={{
+              page: (pagination.currentPage || 1) - 1,
+              pageSize: pagination.perPage || 10,
+            }}
+            onPaginationModelChange={(model) => {
+              getCities(model.page + 1);
+            }}
+            disableColumnMenu
+            disableColumnAutoWidth // Prevent auto-width adjustments
+            columnVisibilityModel={columnVisibility}
+            pagination
+            paginationMode="server"
+            rowCount={pagination.total || 0}
+            loading={loading}
+            getCellClassName={(params) => `custom-cell ${params.field}-cell`}
+            getHeaderClassName={(params) =>
+              `custom-header ${params.field}-header`
+            }
+            sx={{
+              width: "fit-content",
+              minWidth: "100%",
+              "& .MuiDataGrid-columnHeader": {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "0 8px",
+              },
 
+              "& .MuiDataGrid-cell": {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "0 8px",
+                textAlign: "center",
+              },
+              "& .truncate-cell": {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                overflow: "auto !important",
+              },
+              "& .MuiDataGrid-actionsContainer": {
+                direction: i18n.language === "ar" ? "rtl" : "ltr",
+              },
+              direction: i18n.language === "ar" ? "rtl" : "ltr",
+              // تعديل إضافي لعكس أيقونات الأسهم
+              // "& .MuiSvgIcon-root": {
+              //   transform: i18n.language === "ar" ? "rotateX(145deg)" : "none",
+              // },
+            }}
+          />
+        </Box>
+      </Box>
       {(openAddModal || openEditModal) && (
         <Box
           sx={{

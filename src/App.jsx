@@ -93,7 +93,7 @@ export default function App() {
             }}
           >
             <DrawerHeader />
-            <Box sx={{ width: "100%", overflowX: "auto" }}>
+            <Box sx={{ width: "100%" }}>
               <Outlet />
             </Box>
           </Box>

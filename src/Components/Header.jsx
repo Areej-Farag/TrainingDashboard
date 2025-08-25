@@ -99,6 +99,12 @@ function Header({ open, handleDrawerOpen, setMode }) {
   const [language, setLanguage] = React.useState("en");
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
+  const LogoClickHandler = () => {
+    if (localStorage.getItem("token")) {
+      navigate("/dashboard");
+    }
+    navigate("/");
+  };
 
   useEffect(() => {
     const savedLang = localStorage.getItem("lang") || "en";
@@ -138,7 +144,7 @@ function Header({ open, handleDrawerOpen, setMode }) {
         <IconButton
           color="inherit"
           aria-label="open drawer"
-          onClick={handleDrawerOpen}
+          onClick={LogoClickHandler}
           edge={i18n.dir() === "rtl" ? "end" : "start"}
           sx={{
             marginRight: i18n.dir() === "rtl" ? 0 : 5,
